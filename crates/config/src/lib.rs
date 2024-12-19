@@ -113,8 +113,8 @@ mod inline;
 pub use inline::{InlineConfig, InlineConfigError, NatSpec};
 
 pub mod soldeer;
-use soldeer::{SoldeerConfig, SoldeerDependencyConfig};
 use resolc::ResolcConfig;
+use soldeer::{SoldeerConfig, SoldeerDependencyConfig};
 mod vyper;
 use vyper::VyperConfig;
 

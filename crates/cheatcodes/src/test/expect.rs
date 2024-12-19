@@ -573,7 +573,7 @@ pub(crate) fn handle_expect_emit(
     // This allows a contract to arbitrarily emit more events than expected (additive behavior),
     // as long as all the previous events were matched in the order they were expected to be.
     if state.expected_emits.iter().all(|expected| expected.found) {
-        return
+        return;
     }
 
     let should_fill_logs = state.expected_emits.iter().any(|expected| expected.log.is_none());
@@ -614,13 +614,13 @@ pub(crate) fn handle_expect_emit(
                 },
             };
         }
-        return
+        return;
     };
 
     event_to_fill_or_check.found = || -> bool {
         // Topic count must match.
         if expected.topics().len() != log.topics().len() {
-            return false
+            return false;
         }
         // Match topics according to the checks.
         if !log
@@ -630,7 +630,7 @@ pub(crate) fn handle_expect_emit(
             .filter(|(i, _)| event_to_fill_or_check.checks[*i])
             .all(|(i, topic)| topic == &expected.topics()[i])
         {
-            return false
+            return false;
         }
         // Maybe match source address.
         if event_to_fill_or_check.address.is_some_and(|addr| addr != log.address) {
@@ -638,7 +638,7 @@ pub(crate) fn handle_expect_emit(
         }
         // Maybe match data.
         if event_to_fill_or_check.checks[4] && expected.data.as_ref() != log.data.data.as_ref() {
-            return false
+            return false;
         }
 
         true
@@ -727,7 +727,7 @@ pub(crate) fn handle_expect_revert(
 
     // Compare only the first 4 bytes if partial match.
     if expected_revert.partial_match && actual_revert.get(..4) == expected_reason.get(..4) {
-        return Ok(success_return())
+        return Ok(success_return());
     }
 
     // Try decoding as known errors.
@@ -740,8 +740,8 @@ pub(crate) fn handle_expect_revert(
         }
     }
 
-    if actual_revert == expected_reason ||
-        (is_cheatcode && memchr::memmem::find(&actual_revert, expected_reason).is_some())
+    if actual_revert == expected_reason
+        || (is_cheatcode && memchr::memmem::find(&actual_revert, expected_reason).is_some())
     {
         Ok(success_return())
     } else {

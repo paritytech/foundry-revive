@@ -284,7 +284,7 @@ fn print_storage(layout: StorageLayout, values: Vec<StorageValue>, pretty: bool)
             "{}",
             serde_json::to_string_pretty(&serde_json::to_value(StorageReport { layout, values })?)?
         )?;
-        return Ok(())
+        return Ok(());
     }
 
     let mut table = Table::new();

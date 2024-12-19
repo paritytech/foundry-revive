@@ -542,9 +542,9 @@ impl ColorChoice {
 #[inline]
 fn supports_color(choice: anstream::ColorChoice) -> bool {
     match choice {
-        anstream::ColorChoice::Always |
-        anstream::ColorChoice::AlwaysAnsi |
-        anstream::ColorChoice::Auto => true,
+        anstream::ColorChoice::Always
+        | anstream::ColorChoice::AlwaysAnsi
+        | anstream::ColorChoice::Auto => true,
         anstream::ColorChoice::Never => false,
     }
 }

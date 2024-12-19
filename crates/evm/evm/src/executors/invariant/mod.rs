@@ -327,7 +327,7 @@ impl<'a> InvariantExecutor<'a> {
     ) -> Result<InvariantFuzzTestResult> {
         // Throw an error to abort test run if the invariant function accepts input params
         if !invariant_contract.invariant_function.inputs.is_empty() {
-            return Err(eyre!("Invariant test function should have no inputs"))
+            return Err(eyre!("Invariant test function should have no inputs"));
         }
 
         let (invariant_test, invariant_strategy) =
@@ -347,7 +347,7 @@ impl<'a> InvariantExecutor<'a> {
 
             // We stop the run immediately if we have reverted, and `fail_on_revert` is set.
             if self.config.fail_on_revert && invariant_test.reverts() > 0 {
-                return Err(TestCaseError::fail("Revert occurred."))
+                return Err(TestCaseError::fail("Revert occurred."));
             }
 
             while current_run.depth < self.config.depth {
@@ -393,7 +393,9 @@ impl<'a> InvariantExecutor<'a> {
                         invariant_test.set_error(InvariantFuzzError::MaxAssumeRejects(
                             self.config.max_assume_rejects,
                         ));
-                        return Err(TestCaseError::fail("Max number of vm.assume rejects reached."))
+                        return Err(TestCaseError::fail(
+                            "Max number of vm.assume rejects reached.",
+                        ));
                     }
                 } else {
                     // Commit executed call result.
@@ -445,7 +447,7 @@ impl<'a> InvariantExecutor<'a> {
                     }
                     // If test cannot continue then stop current run and exit test suite.
                     if !result.can_continue {
-                        return Err(TestCaseError::fail("Test cannot continue."))
+                        return Err(TestCaseError::fail("Test cannot continue."));
                     }
 
                     invariant_test.set_last_call_results(result.call_result);
@@ -562,7 +564,7 @@ impl<'a> InvariantExecutor<'a> {
             &mut failures,
         )?;
         if let Some(error) = failures.error {
-            return Err(eyre!(error.revert_reason().unwrap_or_default()))
+            return Err(eyre!(error.revert_reason().unwrap_or_default()));
         }
 
         Ok((
@@ -623,13 +625,13 @@ impl<'a> InvariantExecutor<'a> {
                 .filter(|func| {
                     !matches!(
                         func.state_mutability,
-                        alloy_json_abi::StateMutability::Pure |
-                            alloy_json_abi::StateMutability::View
+                        alloy_json_abi::StateMutability::Pure
+                            | alloy_json_abi::StateMutability::View
                     )
                 })
-                .count() ==
-                0 &&
-                !self.artifact_filters.excluded.contains(&artifact.identifier())
+                .count()
+                == 0
+                && !self.artifact_filters.excluded.contains(&artifact.identifier())
             {
                 self.artifact_filters.excluded.push(artifact.identifier());
             }
@@ -640,8 +642,8 @@ impl<'a> InvariantExecutor<'a> {
         for contract in selected.targetedArtifacts {
             let identifier = self.validate_selected_contract(contract, &[])?;
 
-            if !self.artifact_filters.targeted.contains_key(&identifier) &&
-                !self.artifact_filters.excluded.contains(&identifier)
+            if !self.artifact_filters.targeted.contains_key(&identifier)
+                && !self.artifact_filters.excluded.contains(&identifier)
             {
                 self.artifact_filters.targeted.insert(identifier, vec![]);
             }
@@ -668,7 +670,7 @@ impl<'a> InvariantExecutor<'a> {
                     .wrap_err(format!("{contract} does not have the selector {selector:?}"))?;
             }
 
-            return Ok(artifact.identifier())
+            return Ok(artifact.identifier());
         }
         eyre::bail!("{contract} not found in the project. Allowed format: `contract_name` or `contract_path:contract_name`.");
     }
@@ -710,12 +712,12 @@ impl<'a> InvariantExecutor<'a> {
             .setup_contracts
             .iter()
             .filter(|&(addr, (identifier, _))| {
-                *addr != to &&
-                    *addr != CHEATCODE_ADDRESS &&
-                    *addr != HARDHAT_CONSOLE_ADDRESS &&
-                    (selected.is_empty() || selected.contains(addr)) &&
-                    (excluded.is_empty() || !excluded.contains(addr)) &&
-                    self.artifact_filters.matches(identifier)
+                *addr != to
+                    && *addr != CHEATCODE_ADDRESS
+                    && *addr != HARDHAT_CONSOLE_ADDRESS
+                    && (selected.is_empty() || selected.contains(addr))
+                    && (excluded.is_empty() || !excluded.contains(addr))
+                    && self.artifact_filters.matches(identifier)
             })
             .map(|(addr, (identifier, abi))| {
                 (*addr, TargetedContract::new(identifier.clone(), abi.clone()))
@@ -826,7 +828,7 @@ impl<'a> InvariantExecutor<'a> {
     ) -> eyre::Result<()> {
         // Do not add address in target contracts if no function selected.
         if selectors.is_empty() {
-            return Ok(())
+            return Ok(());
         }
 
         let contract = match targeted_contracts.entry(address) {

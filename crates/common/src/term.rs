@@ -71,7 +71,7 @@ impl Spinner {
 
     pub fn tick(&mut self) {
         if self.no_progress {
-            return
+            return;
         }
 
         let indicator = self.indicator[self.idx % self.indicator.len()].green();
@@ -98,9 +98,7 @@ pub struct SpinnerReporter {
 }
 
 impl SpinnerReporter {
-
-
-      /// Spawns the [`Spinner`] on a new thread with the given message
+    /// Spawns the [`Spinner`] on a new thread with the given message
     ///
     /// The spinner's message will be updated via the `reporter` events
     ///
@@ -124,7 +122,7 @@ impl SpinnerReporter {
                             // end with a newline
                             println!();
                             let _ = ack.send(());
-                            break
+                            break;
                         }
                         Err(TryRecvError::Disconnected) => break,
                         Err(TryRecvError::Empty) => thread::sleep(Duration::from_millis(100)),
@@ -160,7 +158,7 @@ impl SpinnerReporter {
                             // end with a newline
                             let _ = sh_println!();
                             let _ = ack.send(());
-                            break
+                            break;
                         }
                         Err(TryRecvError::Disconnected) => break,
                         Err(TryRecvError::Empty) => thread::sleep(Duration::from_millis(100)),

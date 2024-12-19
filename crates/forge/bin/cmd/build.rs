@@ -115,7 +115,7 @@ impl BuildArgs {
             Ok(())
         } else {
             let format_json = shell::is_json();
-            let project =ResolcCompiler::create_project(&config)?;
+            let project = ResolcCompiler::create_project(&config)?;
             let project_compiler = ProjectCompiler::new()
                 .print_names(self.names)
                 .print_sizes(self.sizes)
@@ -152,7 +152,6 @@ impl BuildArgs {
         })
     }
 }
-
 
 // Make this args a `figment::Provider` so that it can be merged into the `Config`
 impl Provider for BuildArgs {

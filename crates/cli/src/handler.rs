@@ -8,7 +8,7 @@ pub struct Handler;
 impl EyreHandler for Handler {
     fn debug(&self, error: &(dyn Error + 'static), f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if f.alternate() {
-            return fmt::Debug::fmt(error, f)
+            return fmt::Debug::fmt(error, f);
         }
         write!(f, "{error}")?;
 

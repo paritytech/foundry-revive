@@ -1,0 +1,69 @@
+FROM rust:latest
+
+# Install QEMU and binfmt support
+RUN apt-get update && apt-get install -y \
+    qemu-user-static \
+    binfmt-support
+
+# Install required packages for LLVM
+RUN apt-get install -y \
+    lsb-release \
+    wget \
+    software-properties-common \
+    gnupg \
+    build-essential \
+    pkg-config \
+    git \
+    libffi-dev
+
+# Add multiarch support for x86_64
+RUN dpkg --add-architecture amd64
+RUN apt-get update && apt-get install -y \
+    libc6:amd64 \
+    libstdc++6:amd64 \
+    libgcc1:amd64
+
+# Add LLVM 18 repository
+RUN wget https://apt.llvm.org/llvm.sh && \
+    chmod +x llvm.sh && \
+    ./llvm.sh 18
+
+# Install LLVM 18 and all potentially needed dependencies
+RUN apt-get install -y \
+    llvm-18 \
+    llvm-18-dev \
+    libclang-18-dev \
+    clang-18 \
+    libpolly-18-dev \
+    libllvm18 \
+    liblld-18 \
+    liblld-18-dev \
+    libmlir-18 \
+    libmlir-18-dev \
+    libclang-common-18-dev \
+    libclang-cpp18 \
+    libclang-cpp18-dev \
+    libclang1-18 \
+    libz-dev \
+    zlib1g-dev \
+    cmake \
+    ninja-build \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up LLVM tool alternatives
+RUN update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-18 180 && \
+    update-alternatives --install /usr/bin/llvm-as llvm-as /usr/bin/llvm-as-18 180 && \
+    update-alternatives --install /usr/bin/opt opt /usr/bin/opt-18 180 && \
+    update-alternatives --install /usr/bin/llc llc /usr/bin/llc-18 180
+
+# Set LLVM environment variables
+ENV LLVM_SYS_181_PREFIX=/usr/lib/llvm-18
+ENV CC=clang-18
+ENV CXX=clang++-18
+ENV LLVM_CONFIG_PATH=/usr/bin/llvm-config-18
+ENV PATH="/usr/lib/llvm-18/bin:${PATH}"
+ENV RUSTFLAGS="-C link-args=-lffi"
+
+WORKDIR /workspace
+
+CMD ["bash"]

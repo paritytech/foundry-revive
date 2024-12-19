@@ -122,7 +122,7 @@ impl SolcParser {
                 let contract_data = &n.other;
                 if let Value::String(contract_name) = contract_data.get("name")? {
                     if contract_id.ends_with(contract_name) {
-                        return Some(n)
+                        return Some(n);
                     }
                 }
             }
@@ -164,7 +164,7 @@ impl SolcParser {
             let fn_data = &node.other;
             let fn_name: String = self.get_fn_name(fn_data)?;
             let (fn_docs, docs_src_line) = self.get_node_docs(fn_data)?;
-            return Some((fn_name, fn_docs, docs_src_line))
+            return Some((fn_name, fn_docs, docs_src_line));
         }
 
         None
@@ -193,7 +193,7 @@ impl SolcParser {
                         .unwrap_or_else(|| String::from("<no-src-line-available>"));
 
                     src_line.retain(|c| c != '"');
-                    return Some((comment.into(), src_line))
+                    return Some((comment.into(), src_line));
                 }
             }
         }
@@ -246,15 +246,15 @@ impl SolangParser {
         for item in &pt.0 {
             let pt::SourceUnitPart::ContractDefinition(c) = item else {
                 prev_item_end = item.loc().end();
-                continue
+                continue;
             };
             let Some(id) = c.name.as_ref() else {
                 prev_item_end = item.loc().end();
-                continue
+                continue;
             };
             if id.name != contract_name {
                 prev_item_end = item.loc().end();
-                continue
+                continue;
             };
 
             // Handle doc comments in between the previous contract and the current one.

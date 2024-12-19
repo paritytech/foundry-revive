@@ -11,7 +11,9 @@ use eyre::Result;
 use foundry_block_explorers::contract::Metadata;
 use foundry_compilers::{
     artifacts::{remappings::Remapping, BytecodeObject, Source},
-    compile::resolc::{ output::ResolcProjectCompileOutput, resolc_artifact_output::ResolcArtifactOutput},
+    compile::resolc::{
+        output::ResolcProjectCompileOutput, resolc_artifact_output::ResolcArtifactOutput,
+    },
     compilers::{
         resolc::Resolc,
         solc::{Solc, SolcCompiler},
@@ -132,7 +134,7 @@ impl ProjectCompiler {
     /// Compiles the project using revive.
     pub fn revive_compile(
         mut self,
-        project: &Project<Resolc,ResolcArtifactOutput>,
+        project: &Project<Resolc, ResolcArtifactOutput>,
     ) -> Result<ResolcProjectCompileOutput> {
         // TODO: Avoid process::exit
         if !project.paths.has_input_files() && self.files.is_empty() {
@@ -146,17 +148,15 @@ impl ProjectCompiler {
         // Here we want to display that we using revive perhaps add a version
         {
             let version = Resolc::get_version_for_path(&project.compiler.resolc)?;
-            Report::new(SpinnerReporter::spawn_with(format!("Using revive {:?}", version)));
+            Report::new(SpinnerReporter::spawn_with(format!("Using Revive {:?}", version)));
         }
         self.compile_with_resolc(|| {
             let files_to_compile =
                 if !files.is_empty() { files } else { project.paths.input_files() };
             let sources = Source::read_all(files_to_compile)?;
-            foundry_compilers::resolc::project::ProjectCompiler::with_sources(
-                project, sources,
-            )?
-            .compile()
-            .map_err(Into::into)
+            foundry_compilers::resolc::project::ProjectCompiler::with_sources(project, sources)?
+                .compile()
+                .map_err(Into::into)
         })
     }
 
@@ -234,10 +234,7 @@ impl ProjectCompiler {
     }
 
     #[instrument(target = "forge::compile", skip_all)]
-    fn compile_with_resolc<F>(
-        self,
-        f: F,
-    ) -> Result<ResolcProjectCompileOutput>
+    fn compile_with_resolc<F>(self, f: F) -> Result<ResolcProjectCompileOutput>
     where
         F: FnOnce() -> Result<ResolcProjectCompileOutput>,
     {
@@ -276,10 +273,7 @@ impl ProjectCompiler {
     }
 
     /// If configured, this will print sizes or names
-    fn handle_resolc_output(
-        &self,
-        output: &ResolcProjectCompileOutput,
-    ) {
+    fn handle_resolc_output(&self, output: &ResolcProjectCompileOutput) {
         let print_names = self.print_names.unwrap_or(false);
         let print_sizes = self.print_sizes.unwrap_or(false);
 

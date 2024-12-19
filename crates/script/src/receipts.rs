@@ -56,7 +56,7 @@ pub async fn check_tx_status(
                 trace!("tx is still known to the node, waiting for receipt");
             } else {
                 trace!("eth_getTransactionByHash returned null, assuming dropped");
-                break
+                break;
             }
         }
 

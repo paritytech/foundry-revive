@@ -332,9 +332,9 @@ edition = "2021"
         } else {
             r#"alloy = { git = "https://github.com/alloy-rs/alloy", features = ["sol-types", "contract"] }"#.to_string()
         };
-        let toml_consistent = cargo_toml_contents.contains(&name_check) &&
-            cargo_toml_contents.contains(&version_check) &&
-            cargo_toml_contents.contains(&alloy_dep_check);
+        let toml_consistent = cargo_toml_contents.contains(&name_check)
+            && cargo_toml_contents.contains(&version_check)
+            && cargo_toml_contents.contains(&alloy_dep_check);
         eyre::ensure!(
             toml_consistent,
             r#"The contents of Cargo.toml do not match the expected output of the latest `sol!` version.
