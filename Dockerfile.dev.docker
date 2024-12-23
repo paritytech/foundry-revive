@@ -14,7 +14,9 @@ RUN apt-get install -y \
     build-essential \
     pkg-config \
     git \
-    libffi-dev
+    libffi-dev \
+    curl \
+    openssh-client
 
 # Add multiarch support for x86_64
 RUN dpkg --add-architecture amd64
@@ -28,7 +30,7 @@ RUN wget https://apt.llvm.org/llvm.sh && \
     chmod +x llvm.sh && \
     ./llvm.sh 18
 
-# Install LLVM 18 and all potentially needed dependencies
+# Install LLVM 18 and dependencies (unchanged)
 RUN apt-get install -y \
     llvm-18 \
     llvm-18-dev \
@@ -50,13 +52,13 @@ RUN apt-get install -y \
     ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
-# Set up LLVM tool alternatives
+# LLVM setup (unchanged)
 RUN update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-18 180 && \
     update-alternatives --install /usr/bin/llvm-as llvm-as /usr/bin/llvm-as-18 180 && \
     update-alternatives --install /usr/bin/opt opt /usr/bin/opt-18 180 && \
     update-alternatives --install /usr/bin/llc llc /usr/bin/llc-18 180
 
-# Set LLVM environment variables
+# Environment variables (unchanged)
 ENV LLVM_SYS_181_PREFIX=/usr/lib/llvm-18
 ENV CC=clang-18
 ENV CXX=clang++-18
@@ -64,6 +66,21 @@ ENV LLVM_CONFIG_PATH=/usr/bin/llvm-config-18
 ENV PATH="/usr/lib/llvm-18/bin:${PATH}"
 ENV RUSTFLAGS="-C link-args=-lffi"
 
+# Install Node.js and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+
 WORKDIR /workspace
+
+# Clone Uniswap v4-core repository and install forge-std
+RUN git clone https://github.com/Uniswap/v4-core.git && \
+    cd v4-core && \
+    mkdir -p lib && \
+    cd lib && \
+    git clone https://github.com/foundry-rs/forge-std.git && \
+    cd ..
+
+# Set the working directory to the v4-core project
+WORKDIR /workspace/v4-core
 
 CMD ["bash"]
