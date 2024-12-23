@@ -1,17 +1,17 @@
 use std::path::PathBuf;
 
 use alloy_primitives::map::HashMap;
-use foundry_compilers::artifacts::Severity;
-use foundry_compilers::compile::resolc;
+use foundry_compilers::artifacts::{remappings, Remapping, Severity};
 use foundry_compilers::compile::resolc::resolc_artifact_output::ResolcArtifactOutput;
+use foundry_compilers::compilers::resolc::ResolcCliSettings;
 use foundry_compilers::compilers::resolc::{Resolc, ResolcOptimizer, ResolcSettings};
-use foundry_compilers::solc::Solc;
-use foundry_compilers::solc::SolcCompiler;
+
 use foundry_compilers::{error::SolcError, solc::SolcLanguage, ProjectPathsConfig};
 use foundry_compilers::{Project, ProjectBuilder};
 use foundry_config::Config;
 use foundry_config::{SkipBuildFilters, SolcReq};
 use semver::Version;
+use tracing::trace;
 pub struct ResolcCompiler();
 impl ResolcCompiler {
     pub fn config_ensure_resolc(
@@ -61,61 +61,32 @@ impl ResolcCompiler {
             .allowed_paths(&config.libs)
             .allowed_paths(&config.allow_paths)
             .include_paths(&config.include_paths);
-
         builder.build_with_root(&config.root)
-    }
-    fn config_solc_compiler(config: &Config) -> Result<SolcCompiler, SolcError> {
-        if let Some(path) = &config.resolc_config.solc_path {
-            if !path.is_file() {
-                return Err(SolcError::msg(format!("`solc` {} does not exist", path.display())));
-            }
-            let version = Resolc::get_solc_version_info(path)?.version;
-            let solc = Solc::new_with_version(
-                path,
-                Version::new(version.major, version.minor, version.patch),
-            );
-            return Ok(SolcCompiler::Specific(solc));
-        }
-
-        if let Some(ref solc) = config.solc {
-            let solc = match solc {
-                SolcReq::Version(version) => {
-                    let maybe_solc = Resolc::find_installed_version(&version)?;
-                    let path = if let Some(solc) = maybe_solc {
-                        solc
-                    } else {
-                        Resolc::blocking_install(&version)?
-                    };
-                    Solc::new_with_version(
-                        path,
-                        Version::new(version.major, version.minor, version.patch),
-                    )
-                }
-                SolcReq::Local(path) => {
-                    if !path.is_file() {
-                        return Err(SolcError::msg(format!(
-                            "`solc` {} does not exist",
-                            path.display()
-                        )));
-                    }
-                    let version = Resolc::get_solc_version_info(path)?.version;
-                    Solc::new_with_version(
-                        path,
-                        Version::new(version.major, version.minor, version.patch),
-                    )
-                }
-            };
-            Ok(SolcCompiler::Specific(solc))
-        } else {
-            Ok(SolcCompiler::AutoDetect)
-        }
     }
 
     pub fn solc_to_resolc_settings(config: &Config) -> Result<ResolcSettings, SolcError> {
-        Ok(ResolcSettings::new(
+        let remappings: Vec<Remapping> = config
+            .remappings
+            .iter()
+            .map(|r| Remapping {
+                name: r.name.clone(),
+                path: r.path.path.to_string_lossy().to_string(),
+                context: Some(r.context.clone().unwrap_or_default()),
+            })
+            .collect();
+
+        trace!("Remappings: {:?}", remappings);
+
+        let settings = ResolcSettings::new(
             ResolcOptimizer::new(config.optimizer, config.optimizer_runs as u64),
             HashMap::<String, HashMap<String, Vec<String>>>::default(),
-        ))
+            ResolcCliSettings::default(),
+            remappings,
+        );
+
+        trace!("Final settings: {:?}", settings);
+
+        Ok(settings)
     }
 
     pub fn create_project(

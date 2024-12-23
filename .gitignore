@@ -5,3 +5,7 @@ snapshots/
 out.json
 .idea
 .vscode
+./Dockerfile.dev.docker
+Dockerfile.dev.docker
+/v4-core/
+/lib/
