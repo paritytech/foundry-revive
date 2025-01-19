@@ -102,6 +102,7 @@ watchexec-signals = "3.0"
 clearscreen = "3.0"
 evm-disassembler.workspace = true
 foundry-resolc = { workspace = true }
+revive-llvm-builder = { workspace = true }
 
 
 # doc server

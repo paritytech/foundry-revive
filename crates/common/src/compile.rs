@@ -150,10 +150,14 @@ impl ProjectCompiler {
             let version = Resolc::get_version_for_path(&project.compiler.resolc)?;
             Report::new(SpinnerReporter::spawn_with(format!("Using Revive {:?}", version)));
         }
+
         self.compile_with_resolc(|| {
-            let files_to_compile =
-                if !files.is_empty() { files } else { project.paths.input_files() };
-            let sources = Source::read_all(files_to_compile)?;
+            let sources = if !files.is_empty() {
+                Source::read_all(files)?
+            } else {
+                project.paths.read_input_files()?
+            };
+
             foundry_compilers::resolc::project::ProjectCompiler::with_sources(project, sources)?
                 .compile()
                 .map_err(Into::into)

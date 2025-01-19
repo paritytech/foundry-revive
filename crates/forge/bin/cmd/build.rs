@@ -116,7 +116,20 @@ impl BuildArgs {
         } else {
             let format_json = shell::is_json();
             let project = ResolcCompiler::create_project(&config)?;
+            // Collect sources to compile if build subdirectories specified.
+            let mut files = vec![];
+            if let Some(paths) = &self.paths {
+                for path in paths {
+                    let joined = project.root().join(path);
+                    let path = if joined.exists() { &joined } else { path };
+                    files.extend(source_files_iter(path, MultiCompilerLanguage::FILE_EXTENSIONS));
+                }
+                if files.is_empty() {
+                    eyre::bail!("No source files found in specified build paths.")
+                }
+            }
             let project_compiler = ProjectCompiler::new()
+                .files(files)
                 .print_names(self.names)
                 .print_sizes(self.sizes)
                 .quiet(format_json)

@@ -1,17 +1,20 @@
 use std::path::PathBuf;
 
 use alloy_primitives::map::HashMap;
-use foundry_compilers::artifacts::{remappings, Remapping, Severity};
+use foundry_compilers::artifacts::{remappings, Libraries, Remapping, Severity};
 use foundry_compilers::compile::resolc::resolc_artifact_output::ResolcArtifactOutput;
 use foundry_compilers::compilers::resolc::ResolcCliSettings;
 use foundry_compilers::compilers::resolc::{Resolc, ResolcOptimizer, ResolcSettings};
 
+use foundry_compilers::{cache, Project, ProjectBuilder};
 use foundry_compilers::{error::SolcError, solc::SolcLanguage, ProjectPathsConfig};
-use foundry_compilers::{Project, ProjectBuilder};
 use foundry_config::Config;
 use foundry_config::{SkipBuildFilters, SolcReq};
 use semver::Version;
 use tracing::trace;
+pub const RESOLC_FILES_CACHE_FILENAME: &str = "resolc-files-cache.json";
+pub const RESOLC_ARTIFACTS_DIR: &str = "resolc-out";
+
 pub struct ResolcCompiler();
 impl ResolcCompiler {
     pub fn config_ensure_resolc(
@@ -50,38 +53,46 @@ impl ResolcCompiler {
     }
     pub fn config_project_paths(config: &Config) -> ProjectPathsConfig<SolcLanguage> {
         let builder = ProjectPathsConfig::builder()
-            .cache(config.cache_path.clone())
-            .sources(&config.src.clone())
+            .cache(&config.cache_path.join(RESOLC_FILES_CACHE_FILENAME))
+            .sources(&config.src)
             .tests(&config.test)
             .scripts(&config.script)
-            .artifacts(config.root.clone())
+            .artifacts(&config.root.join(RESOLC_ARTIFACTS_DIR))
             .libs(config.libs.iter())
             .remappings(config.get_all_remappings())
             .allowed_path(&config.root)
             .allowed_paths(&config.libs)
             .allowed_paths(&config.allow_paths)
             .include_paths(&config.include_paths);
+
+        /*if let Some(build_info_path) = &config.build_info_path {
+            builder = builder.build_infos(build_info_path);
+        }*/
+
         builder.build_with_root(&config.root)
     }
 
     pub fn solc_to_resolc_settings(config: &Config) -> Result<ResolcSettings, SolcError> {
         let remappings: Vec<Remapping> = config
-            .remappings
-            .iter()
+            .get_all_remappings()
             .map(|r| Remapping {
-                name: r.name.clone(),
-                path: r.path.path.to_string_lossy().to_string(),
-                context: Some(r.context.clone().unwrap_or_default()),
+                name: r.name,
+                path: r.path,
+                context: Some(r.context.unwrap_or_default()),
             })
             .collect();
-
-        trace!("Remappings: {:?}", remappings);
+        let libraries = match config.parsed_libraries() {
+            Ok(libs) => config.project_paths::<ProjectPathsConfig>().apply_lib_remappings(libs),
+            Err(e) => return Err(SolcError::msg(format!("Failed to parse libraries: {e}"))),
+        };
 
         let settings = ResolcSettings::new(
             ResolcOptimizer::new(config.optimizer, config.optimizer_runs as u64),
             HashMap::<String, HashMap<String, Vec<String>>>::default(),
             ResolcCliSettings::default(),
             remappings,
+            Some(config.evm_version),
+            libraries,
         );
 
         trace!("Final settings: {:?}", settings);
@@ -118,8 +129,10 @@ impl ResolcCompiler {
         } else if !config.offline {
             // ideally here we want to fetch the latest version from github but
             // for now we can hardcode the latest version
-            let default_version = Version::parse("0.1.0-dev.6").unwrap();
+            let default_version = Version::parse("0.1.0-dev.8").unwrap();
+            trace!("Checking for resolc compiler");
             let mut resolc = Resolc::find_installed_version(&default_version)?;
+            trace!("{:?}", format!("Installing revive {:?}", &default_version));
             if resolc.is_none() {
                 Resolc::blocking_install(&default_version)?;
                 resolc = Resolc::find_installed_version(&default_version)?;

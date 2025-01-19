@@ -173,8 +173,8 @@ foundry-resolc = { path = "crates/resolc" }
 foundry-block-explorers = { version = "0.9.0", default-features = false }
 #foundry-compilers = { version = "0.12.5", default-features = false }
 foundry-compilers = { git = "https://github.com/Brianspha/foundry-revive-compiler.git", branch = "resolc-compiler" }
-revive-solidity = { git = "https://github.com/paritytech/revive", tag = "v0.1.0-dev-4", package = "revive-solidity" }
-revive-llvm-context = { git = "https://github.com/paritytech/revive", tag = "v0.1.0-dev-4", package = "revive-llvm-context" }
+revive-solidity = { git = "https://github.com/paritytech/revive", tag = "v0.1.0-dev.8", package = "revive-solidity" }
+revive-llvm-builder = { git = "https://github.com/paritytech/revive", tag = "v0.1.0-dev.8", package = "revive-llvm-builder" }
 
 foundry-fork-db = "0.8.0"
 solang-parser = "=0.3.3"
