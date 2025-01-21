@@ -28,9 +28,9 @@ use foundry_evm::{
         },
     },
     traces::CallTraceNode,
-    utils::alphanet_handler_register,
+    utils::odyssey_handler_register,
 };
-use revm::{db::WrapDatabaseRef, primitives::MAX_BLOB_GAS_PER_BLOCK};
+use revm::db::WrapDatabaseRef;
 use std::sync::Arc;
 
 /// Represents an executed transaction (transacted on the DB)
@@ -57,7 +57,7 @@ impl ExecutedTransaction {
         let status_code = u8::from(self.exit_reason as u8 <= InstructionResult::SelfDestruct as u8);
         let receipt_with_bloom: ReceiptWithBloom = Receipt {
             status: (status_code == 1).into(),
-            cumulative_gas_used: *cumulative_gas_used as u128,
+            cumulative_gas_used: *cumulative_gas_used,
             logs,
         }
         .into();
@@ -106,7 +106,7 @@ pub struct TransactionExecutor<'a, Db: ?Sized, V: TransactionValidator> {
     /// Cumulative blob gas used by all executed transactions
     pub blob_gas_used: u64,
     pub enable_steps_tracing: bool,
-    pub alphanet: bool,
+    pub odyssey: bool,
     pub print_logs: bool,
     /// Precompiles to inject to the EVM.
     pub precompile_factory: Option<Arc<dyn PrecompileFactory>>,
@@ -148,22 +148,22 @@ impl<DB: Db + ?Sized, V: TransactionValidator> TransactionExecutor<'_, DB, V> {
                 }
                 TransactionExecutionOutcome::Exhausted(tx) => {
                     trace!(target: "backend",  tx_gas_limit = %tx.pending_transaction.transaction.gas_limit(), ?tx,  "block gas limit exhausting, skipping transaction");
-                    continue;
+                    continue
                 }
                 TransactionExecutionOutcome::BlobGasExhausted(tx) => {
                     trace!(target: "backend",  blob_gas = %tx.pending_transaction.transaction.blob_gas().unwrap_or_default(), ?tx,  "block blob gas limit exhausting, skipping transaction");
-                    continue;
+                    continue
                 }
                 TransactionExecutionOutcome::Invalid(tx, _) => {
                     trace!(target: "backend", ?tx,  "skipping invalid transaction");
                     invalid.push(tx);
-                    continue;
+                    continue
                 }
                 TransactionExecutionOutcome::DatabaseError(_, err) => {
                     // Note: this is only possible in forking mode, if for example a rpc request
                     // failed
                     trace!(target: "backend", ?err,  "Failed to execute transaction due to database error");
-                    continue;
+                    continue
                 }
             };
             if is_cancun {
@@ -281,15 +281,15 @@ impl<DB: Db + ?Sized, V: TransactionValidator> Iterator for &mut TransactionExec
         // check that we comply with the block's gas limit, if not disabled
         let max_gas = self.gas_used.saturating_add(env.tx.gas_limit);
         if !env.cfg.disable_block_gas_limit && max_gas > env.block.gas_limit.to::<u64>() {
-            return Some(TransactionExecutionOutcome::Exhausted(transaction));
+            return Some(TransactionExecutionOutcome::Exhausted(transaction))
         }
 
         // check that we comply with the block's blob gas limit
         let max_blob_gas = self.blob_gas_used.saturating_add(
             transaction.pending_transaction.transaction.transaction.blob_gas().unwrap_or(0),
         );
-        if max_blob_gas > MAX_BLOB_GAS_PER_BLOCK {
-            return Some(TransactionExecutionOutcome::BlobGasExhausted(transaction));
+        if max_blob_gas > alloy_eips::eip4844::MAX_DATA_GAS_PER_BLOCK {
+            return Some(TransactionExecutionOutcome::BlobGasExhausted(transaction))
         }
 
         // validate before executing
@@ -299,7 +299,7 @@ impl<DB: Db + ?Sized, V: TransactionValidator> Iterator for &mut TransactionExec
             &env,
         ) {
             warn!(target: "backend", "Skipping invalid tx execution [{:?}] {}", transaction.hash(), err);
-            return Some(TransactionExecutionOutcome::Invalid(transaction, err));
+            return Some(TransactionExecutionOutcome::Invalid(transaction, err))
         }
 
         let nonce = account.nonce;
@@ -314,7 +314,7 @@ impl<DB: Db + ?Sized, V: TransactionValidator> Iterator for &mut TransactionExec
         }
 
         let exec_result = {
-            let mut evm = new_evm_with_inspector(&mut *self.db, env, &mut inspector, self.alphanet);
+            let mut evm = new_evm_with_inspector(&mut *self.db, env, &mut inspector, self.odyssey);
             if let Some(factory) = &self.precompile_factory {
                 inject_precompiles(&mut evm, factory.precompiles());
             }
@@ -398,20 +398,20 @@ fn build_logs_bloom(logs: Vec<Log>, bloom: &mut Bloom) {
     }
 }
 
-/// Creates a database with given database and inspector, optionally enabling alphanet features.
+/// Creates a database with given database and inspector, optionally enabling odyssey features.
 pub fn new_evm_with_inspector<DB: revm::Database>(
     db: DB,
     env: EnvWithHandlerCfg,
     inspector: &mut dyn revm::Inspector<DB>,
-    alphanet: bool,
+    odyssey: bool,
 ) -> revm::Evm<'_, &mut dyn revm::Inspector<DB>, DB> {
     let EnvWithHandlerCfg { env, handler_cfg } = env;
 
     let mut handler = revm::Handler::new(handler_cfg);
 
     handler.append_handler_register_plain(revm::inspector_handle_register);
-    if alphanet {
-        handler.append_handler_register_plain(alphanet_handler_register);
+    if odyssey {
+        handler.append_handler_register_plain(odyssey_handler_register);
     }
 
     let context = revm::Context::new(revm::EvmContext::new_with_env(db, env), inspector);
@@ -424,10 +424,10 @@ pub fn new_evm_with_inspector_ref<'a, DB>(
     db: DB,
     env: EnvWithHandlerCfg,
     inspector: &mut dyn revm::Inspector<WrapDatabaseRef<DB>>,
-    alphanet: bool,
+    odyssey: bool,
 ) -> revm::Evm<'a, &mut dyn revm::Inspector<WrapDatabaseRef<DB>>, WrapDatabaseRef<DB>>
 where
     DB: revm::DatabaseRef,
 {
-    new_evm_with_inspector(WrapDatabaseRef(db), env, inspector, alphanet)
+    new_evm_with_inspector(WrapDatabaseRef(db), env, inspector, odyssey)
 }

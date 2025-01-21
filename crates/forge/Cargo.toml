@@ -9,6 +9,7 @@ authors.workspace = true
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
+
 [lints]
 workspace = true
 
@@ -33,7 +34,7 @@ foundry-evm.workspace = true
 foundry-wallets.workspace = true
 foundry-linking.workspace = true
 forge-script-sequence.workspace = true
-ethers-contract-abigen = { workspace = true, features = ["providers"] }
+
 revm-inspectors.workspace = true
 
 comfy-table.workspace = true
@@ -77,7 +78,7 @@ dialoguer = { version = "0.11", default-features = false }
 dunce.workspace = true
 futures.workspace = true
 indicatif = "0.17"
-inferno = { version = "0.11", default-features = false }
+inferno = { version = "0.12", default-features = false }
 itertools.workspace = true
 parking_lot.workspace = true
 regex = { workspace = true, default-features = false }
@@ -86,19 +87,17 @@ semver.workspace = true
 serde_json.workspace = true
 similar = { version = "2", features = ["inline"] }
 solang-parser.workspace = true
-solar-ast.workspace = true
 solar-parse.workspace = true
 strum = { workspace = true, features = ["derive"] }
 thiserror.workspace = true
 tokio = { workspace = true, features = ["time"] }
 toml = { workspace = true, features = ["preserve_order"] }
 toml_edit = "0.22"
-watchexec = "4.1"
-watchexec-events = "3.0"
-watchexec-signals = "3.0"
+watchexec = "5.0"
+watchexec-events = "4.0"
+watchexec-signals = "4.0"
 clearscreen = "3.0"
 evm-disassembler.workspace = true
-foundry-resolc = { workspace = true }
 
 # doc server
 axum = { workspace = true, features = ["ws"] }

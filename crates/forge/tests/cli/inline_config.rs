@@ -30,16 +30,24 @@ Ran 1 test suite [ELAPSED]: 2 tests passed, 0 failed, 0 skipped (2 total tests)
 
     // Make sure inline config is parsed in coverage too.
     cmd.forge_fuse().arg("coverage").assert_success().stdout_eq(str![[r#"
-...
+[COMPILING_FILES] with [SOLC_VERSION]
+[SOLC_VERSION] [ELAPSED]
+Compiler run successful!
+Analysing contracts...
+Running tests...
+
 Ran 2 tests for test/inline.sol:Inline
 [PASS] test1(bool) (runs: 2, [AVG_GAS])
 [PASS] test2(bool) (runs: 3, [AVG_GAS])
 Suite result: ok. 2 passed; 0 failed; 0 skipped; [ELAPSED]
 
 Ran 1 test suite [ELAPSED]: 2 tests passed, 0 failed, 0 skipped (2 total tests)
+
+╭-------+---------------+---------------+---------------+---------------╮
 | File  | % Lines       | % Statements  | % Branches    | % Funcs       |
-|-------|---------------|---------------|---------------|---------------|
++=======================================================================+
 | Total | 100.00% (0/0) | 100.00% (0/0) | 100.00% (0/0) | 100.00% (0/0) |
+╰-------+---------------+---------------+---------------+---------------╯
 
 "#]]);
 });
@@ -57,7 +65,7 @@ forgetest!(invalid_profile, |prj, cmd| {
     .unwrap();
 
     cmd.arg("test").assert_failure().stderr_eq(str![[r#"
-Error: Inline config error at test/inline.sol:0:0:0: invalid profile `unknown.fuzz.runs = 2`; valid profiles: default
+Error: Inline config error at test/inline.sol:80:123:0: invalid profile `unknown.fuzz.runs = 2`; valid profiles: default
 
 "#]]);
 });
@@ -246,14 +254,14 @@ forgetest_init!(evm_version, |prj, cmd| {
     )
     .unwrap();
 
-    cmd.arg("test").arg("--evm-version=cancun").assert_success().stdout_eq(str![[r#"
+    cmd.args(["test", "--evm-version=cancun", "-j1"]).assert_success().stdout_eq(str![[r#"
 ...
-Ran 2 tests for test/inline.sol:FunctionConfig
+Ran 2 tests for test/inline.sol:ContractConfig
 [PASS] test_new() ([GAS])
 [PASS] test_old() ([GAS])
 Suite result: ok. 2 passed; 0 failed; 0 skipped; [ELAPSED]
 
-Ran 2 tests for test/inline.sol:ContractConfig
+Ran 2 tests for test/inline.sol:FunctionConfig
 [PASS] test_new() ([GAS])
 [PASS] test_old() ([GAS])
 Suite result: ok. 2 passed; 0 failed; 0 skipped; [ELAPSED]

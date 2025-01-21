@@ -75,6 +75,7 @@ use anvil_core::eth::{
 };
 use anvil_rpc::error::RpcError;
 use chrono::Datelike;
+use eyre::{Context, Result};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 use foundry_evm::{
     backend::{DatabaseError, DatabaseResult, RevertStateSnapshotAction},
@@ -96,9 +97,7 @@ use op_alloy_consensus::{TxDeposit, DEPOSIT_TX_TYPE_ID};
 use parking_lot::{Mutex, RwLock};
 use revm::{
     db::WrapDatabaseRef,
-    primitives::{
-        calc_blob_gasprice, BlobExcessGasAndPrice, HashMap, OptimismFields, ResultAndState,
-    },
+    primitives::{BlobExcessGasAndPrice, HashMap, OptimismFields, ResultAndState},
 };
 use std::{
     collections::BTreeMap,
@@ -194,7 +193,7 @@ pub struct Backend {
     active_state_snapshots: Arc<Mutex<HashMap<U256, (u64, B256)>>>,
     enable_steps_tracing: bool,
     print_logs: bool,
-    alphanet: bool,
+    odyssey: bool,
     /// How to keep history state
     prune_state_history_config: PruneStateHistoryConfig,
     /// max number of blocks with transactions in memory
@@ -222,14 +221,14 @@ impl Backend {
         fork: Arc<RwLock<Option<ClientFork>>>,
         enable_steps_tracing: bool,
         print_logs: bool,
-        alphanet: bool,
+        odyssey: bool,
         prune_state_history_config: PruneStateHistoryConfig,
         max_persisted_states: Option<usize>,
         transaction_block_keeper: Option<usize>,
         automine_block_time: Option<Duration>,
         cache_path: Option<PathBuf>,
         node_config: Arc<AsyncRwLock<NodeConfig>>,
-    ) -> Self {
+    ) -> Result<Self> {
         // if this is a fork then adjust the blockchain storage
         let blockchain = if let Some(fork) = fork.read().as_ref() {
             trace!(target: "backend", "using forked blockchain at {}", fork.block_number());
@@ -274,7 +273,7 @@ impl Backend {
             (cfg.slots_in_an_epoch, cfg.precompile_factory.clone())
         };
 
-        let (capabilities, executor_wallet) = if alphanet {
+        let (capabilities, executor_wallet) = if odyssey {
             // Insert account that sponsors the delegated txs. And deploy P256 delegation contract.
             let mut db = db.write().await;
 
@@ -325,7 +324,7 @@ impl Backend {
             active_state_snapshots: Arc::new(Mutex::new(Default::default())),
             enable_steps_tracing,
             print_logs,
-            alphanet,
+            odyssey,
             prune_state_history_config,
             transaction_block_keeper,
             node_config,
@@ -341,8 +340,8 @@ impl Backend {
         }
 
         // Note: this can only fail in forking mode, in which case we can't recover
-        backend.apply_genesis().await.expect("Failed to create genesis");
-        backend
+        backend.apply_genesis().await.wrap_err("failed to create genesis")?;
+        Ok(backend)
     }
 
     /// Writes the CREATE2 deployer code directly to the database at the address provided.
@@ -443,7 +442,7 @@ impl Backend {
     /// Returns `true` if the account is already impersonated
     pub fn impersonate(&self, addr: Address) -> bool {
         if self.cheats.impersonated_accounts().contains(&addr) {
-            return true;
+            return true
         }
         // Ensure EIP-3607 is disabled
         let mut env = self.env.write();
@@ -500,7 +499,7 @@ impl Backend {
                     // `setup_fork_db_config`
                     node_config.base_fee.take();
 
-                    node_config.setup_fork_db_config(eth_rpc_url, &mut env, &self.fees).await
+                    node_config.setup_fork_db_config(eth_rpc_url, &mut env, &self.fees).await?
                 };
 
                 *self.db.write().await = Box::new(db);
@@ -536,7 +535,7 @@ impl Backend {
 
                     let mut env = self.env.read().clone();
                     let (forked_db, client_fork_config) =
-                        node_config.setup_fork_db_config(fork_url, &mut env, &self.fees).await;
+                        node_config.setup_fork_db_config(fork_url, &mut env, &self.fees).await?;
 
                     *self.db.write().await = Box::new(forked_db);
                     let fork = ClientFork::new(client_fork_config, Arc::clone(&self.db));
@@ -751,7 +750,7 @@ impl Backend {
     /// Returns an error if op-stack deposits are not active
     pub fn ensure_op_deposits_active(&self) -> Result<(), BlockchainError> {
         if self.is_optimism() {
-            return Ok(());
+            return Ok(())
         }
         Err(BlockchainError::DepositTransactionUnsupported)
     }
@@ -921,10 +920,28 @@ impl Backend {
             let fork_num_and_hash = self.get_fork().map(|f| (f.block_number(), f.block_hash()));
 
             if let Some((number, hash)) = fork_num_and_hash {
-                // If loading state file on a fork, set best number to the fork block number.
-                // Ref: https://github.com/foundry-rs/foundry/pull/9215#issue-2618681838
-                self.blockchain.storage.write().best_number = U64::from(number);
-                self.blockchain.storage.write().best_hash = hash;
+                let best_number = state.best_block_number.unwrap_or(block.number.to::<U64>());
+                trace!(target: "backend", state_block_number=?best_number, fork_block_number=?number);
+                // If the state.block_number is greater than the fork block number, set best number
+                // to the state block number.
+                // Ref: https://github.com/foundry-rs/foundry/issues/9539
+                if best_number.to::<u64>() > number {
+                    self.blockchain.storage.write().best_number = best_number;
+                    let best_hash =
+                        self.blockchain.storage.read().hash(best_number.into()).ok_or_else(
+                            || {
+                                BlockchainError::RpcError(RpcError::internal_error_with(format!(
+                                    "Best hash not found for best number {best_number}",
+                                )))
+                            },
+                        )?;
+                    self.blockchain.storage.write().best_hash = best_hash;
+                } else {
+                    // If loading state file on a fork, set best number to the fork block number.
+                    // Ref: https://github.com/foundry-rs/foundry/pull/9215#issue-2618681838
+                    self.blockchain.storage.write().best_number = U64::from(number);
+                    self.blockchain.storage.write().best_hash = hash;
+                }
             } else {
                 let best_number = state.best_block_number.unwrap_or(block.number.to::<U64>());
                 self.blockchain.storage.write().best_number = best_number;
@@ -998,7 +1015,7 @@ impl Backend {
         &'i mut dyn revm::Inspector<WrapDatabaseRef<&'db dyn DatabaseRef<Error = DatabaseError>>>,
         WrapDatabaseRef<&'db dyn DatabaseRef<Error = DatabaseError>>,
     > {
-        let mut evm = new_evm_with_inspector_ref(db, env, inspector, self.alphanet);
+        let mut evm = new_evm_with_inspector_ref(db, env, inspector, self.odyssey);
         if let Some(factory) = &self.precompile_factory {
             inject_precompiles(&mut evm, factory.precompiles());
         }
@@ -1079,7 +1096,7 @@ impl Backend {
             enable_steps_tracing: self.enable_steps_tracing,
             print_logs: self.print_logs,
             precompile_factory: self.precompile_factory.clone(),
-            alphanet: self.alphanet,
+            odyssey: self.odyssey,
         };
 
         // create a new pending block
@@ -1161,7 +1178,7 @@ impl Backend {
                     blob_gas_used: 0,
                     enable_steps_tracing: self.enable_steps_tracing,
                     print_logs: self.print_logs,
-                    alphanet: self.alphanet,
+                    odyssey: self.odyssey,
                     precompile_factory: self.precompile_factory.clone(),
                 };
                 let executed_tx = executor.execute();
@@ -1232,7 +1249,7 @@ impl Backend {
                 if storage.blocks.len() > transaction_block_keeper {
                     let to_clear = block_number
                         .to::<u64>()
-                        .saturating_sub(transaction_block_keeper.try_into().unwrap());
+                        .saturating_sub(transaction_block_keeper.try_into().unwrap_or(u64::MAX));
                     storage.remove_block_transactions_by_number(to_clear)
                 }
             }
@@ -1270,8 +1287,10 @@ impl Backend {
 
         // update next base fee
         self.fees.set_base_fee(next_block_base_fee);
-        self.fees
-            .set_blob_excess_gas_and_price(BlobExcessGasAndPrice::new(next_block_excess_blob_gas));
+        self.fees.set_blob_excess_gas_and_price(BlobExcessGasAndPrice::new(
+            next_block_excess_blob_gas,
+            false,
+        ));
 
         // notify all listeners
         self.notify_on_new_block(header, block_hash);
@@ -1492,10 +1511,10 @@ impl Backend {
                                 .into())
                         }
                         GethDebugBuiltInTracerType::NoopTracer => Ok(NoopFrame::default().into()),
-                        GethDebugBuiltInTracerType::FourByteTracer
-                        | GethDebugBuiltInTracerType::PreStateTracer
-                        | GethDebugBuiltInTracerType::MuxTracer
-                        | GethDebugBuiltInTracerType::FlatCallTracer => {
+                        GethDebugBuiltInTracerType::FourByteTracer |
+                        GethDebugBuiltInTracerType::PreStateTracer |
+                        GethDebugBuiltInTracerType::MuxTracer |
+                        GethDebugBuiltInTracerType::FlatCallTracer => {
                             Err(RpcError::invalid_params("unsupported tracer type").into())
                         }
                     },
@@ -1503,7 +1522,7 @@ impl Backend {
                     GethDebugTracerType::JsTracer(_code) => {
                         Err(RpcError::invalid_params("unsupported tracer type").into())
                     }
-                };
+                }
             }
 
             // defaults to StructLog tracer used since no tracer is specified
@@ -1741,7 +1760,7 @@ impl Backend {
         }
 
         if let Some(fork) = self.get_fork() {
-            return Ok(fork.block_by_hash_full(hash).await?);
+            return Ok(fork.block_by_hash_full(hash).await?)
         }
 
         Ok(None)
@@ -1792,7 +1811,7 @@ impl Backend {
         if let Some(fork) = self.get_fork() {
             let number = self.convert_block_number(Some(number));
             if fork.predates_fork_inclusive(number) {
-                return Ok(fork.block_by_number(number).await?);
+                return Ok(fork.block_by_number(number).await?)
             }
         }
 
@@ -1811,7 +1830,7 @@ impl Backend {
         if let Some(fork) = self.get_fork() {
             let number = self.convert_block_number(Some(number));
             if fork.predates_fork_inclusive(number) {
-                return Ok(fork.block_by_number_full(number).await?);
+                return Ok(fork.block_by_number_full(number).await?)
             }
         }
 
@@ -2139,7 +2158,7 @@ impl Backend {
         }
 
         if let Some(fork) = self.get_fork() {
-            return Ok(fork.trace_transaction(hash).await?);
+            return Ok(fork.trace_transaction(hash).await?)
         }
 
         Ok(vec![])
@@ -2183,7 +2202,7 @@ impl Backend {
         }
 
         if let Some(fork) = self.get_fork() {
-            return Ok(fork.debug_trace_transaction(hash, opts).await?);
+            return Ok(fork.debug_trace_transaction(hash, opts).await?)
         }
 
         Ok(GethTrace::Default(Default::default()))
@@ -2209,7 +2228,7 @@ impl Backend {
 
         if let Some(fork) = self.get_fork() {
             if fork.predates_fork(number) {
-                return Ok(fork.trace_block(number).await?);
+                return Ok(fork.trace_block(number).await?)
             }
         }
 
@@ -2322,7 +2341,8 @@ impl Backend {
 
         // Cancun specific
         let excess_blob_gas = block.header.excess_blob_gas;
-        let blob_gas_price = calc_blob_gasprice(excess_blob_gas.unwrap_or_default());
+        let blob_gas_price =
+            alloy_eips::eip4844::calc_blob_gasprice(excess_blob_gas.unwrap_or_default());
         let blob_gas_used = transaction.blob_gas();
 
         let effective_gas_price = match transaction.transaction {
@@ -2390,14 +2410,14 @@ impl Backend {
             transaction_hash: info.transaction_hash,
             transaction_index: Some(info.transaction_index),
             block_number: Some(block.header.number),
-            gas_used: info.gas_used as u128,
+            gas_used: info.gas_used,
             contract_address: info.contract_address,
             effective_gas_price,
             block_hash: Some(block_hash),
             from: info.from,
             to: info.to,
             blob_gas_price: Some(blob_gas_price),
-            blob_gas_used: blob_gas_used.map(|g| g as u128),
+            blob_gas_used,
             authorization_list: None,
         };
 
@@ -2441,9 +2461,7 @@ impl Backend {
         if let Some(fork) = self.get_fork() {
             let number = self.convert_block_number(Some(number));
             if fork.predates_fork(number) {
-                return Ok(fork
-                    .transaction_by_block_number_and_index(number, index.into())
-                    .await?);
+                return Ok(fork.transaction_by_block_number_and_index(number, index.into()).await?)
             }
         }
 
@@ -2460,7 +2478,7 @@ impl Backend {
         }
 
         if let Some(fork) = self.get_fork() {
-            return Ok(fork.transaction_by_block_hash_and_index(hash, index.into()).await?);
+            return Ok(fork.transaction_by_block_hash_and_index(hash, index.into()).await?)
         }
 
         Ok(None)
@@ -2499,10 +2517,7 @@ impl Backend {
         }
 
         if let Some(fork) = self.get_fork() {
-            return fork
-                .transaction_by_hash(hash)
-                .await
-                .map_err(BlockchainError::AlloyForkProvider);
+            return fork.transaction_by_hash(hash).await.map_err(BlockchainError::AlloyForkProvider)
         }
 
         Ok(None)
@@ -2687,7 +2702,7 @@ fn get_pool_transactions_nonce(
         .max()
     {
         let tx_count = highest_nonce.saturating_add(1);
-        return Some(tx_count);
+        return Some(tx_count)
     }
     None
 }
@@ -2717,8 +2732,8 @@ impl TransactionValidator for Backend {
             if chain_id.to::<u64>() != tx_chain_id {
                 if let Some(legacy) = tx.as_legacy() {
                     // <https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md>
-                    if env.handler_cfg.spec_id >= SpecId::SPURIOUS_DRAGON
-                        && legacy.tx().chain_id.is_none()
+                    if env.handler_cfg.spec_id >= SpecId::SPURIOUS_DRAGON &&
+                        legacy.tx().chain_id.is_none()
                     {
                         warn!(target: "backend", ?chain_id, ?tx_chain_id, "incompatible EIP155-based V");
                         return Err(InvalidTransactionError::IncompatibleEIP155);
@@ -2790,17 +2805,17 @@ impl TransactionValidator for Backend {
 
             // Ensure there are blob hashes.
             if blob_count == 0 {
-                return Err(InvalidTransactionError::NoBlobHashes);
+                return Err(InvalidTransactionError::NoBlobHashes)
             }
 
             // Ensure the tx does not exceed the max blobs per block.
             if blob_count > MAX_BLOBS_PER_BLOCK {
-                return Err(InvalidTransactionError::TooManyBlobs(MAX_BLOBS_PER_BLOCK, blob_count));
+                return Err(InvalidTransactionError::TooManyBlobs(blob_count))
             }
 
             // Check for any blob validation errors
             if let Err(err) = tx.validate(env.cfg.kzg_settings.get()) {
-                return Err(InvalidTransactionError::BlobTransactionValidationError(err));
+                return Err(InvalidTransactionError::BlobTransactionValidationError(err))
             }
         }
 
@@ -2882,7 +2897,7 @@ pub fn transaction_build(
             gas_limit,
         };
 
-        let ser = serde_json::to_value(&dep_tx).unwrap();
+        let ser = serde_json::to_value(&dep_tx).expect("could not serialize TxDeposit");
         let maybe_deposit_fields = OtherFields::try_from(ser);
 
         match maybe_deposit_fields {
@@ -2970,7 +2985,6 @@ pub fn transaction_build(
             let new_signed = Signed::new_unchecked(t, sig, hash);
             AnyTxEnvelope::Ethereum(TxEnvelope::Eip7702(new_signed))
         }
-        _ => unreachable!("unknown tx type"),
     };
 
     let tx = Transaction {
@@ -3019,7 +3033,7 @@ pub fn prove_storage(storage: &HashMap<U256, U256>, keys: &[B256]) -> Vec<Vec<By
 
 pub fn is_arbitrum(chain_id: u64) -> bool {
     if let Ok(chain) = NamedChain::try_from(chain_id) {
-        return chain.is_arbitrum();
+        return chain.is_arbitrum()
     }
     false
 }

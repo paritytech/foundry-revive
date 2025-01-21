@@ -72,16 +72,21 @@ contract Dummy {
 });
 
 forgetest!(initcode_size_exceeds_limit, |prj, cmd| {
+    prj.write_config(Config { optimizer: Some(true), ..Default::default() });
     prj.add_source("LargeContract", generate_large_contract(5450).as_str()).unwrap();
-    cmd.args(["build", "--sizes"]).assert_failure().stdout_eq(str![
-        r#"
-...
+    cmd.args(["build", "--sizes"]).assert_failure().stdout_eq(str![[r#"
+[COMPILING_FILES] with [SOLC_VERSION]
+[SOLC_VERSION] [ELAPSED]
+Compiler run successful!
+
+╭--------------+------------------+-------------------+--------------------+---------------------╮
 | Contract     | Runtime Size (B) | Initcode Size (B) | Runtime Margin (B) | Initcode Margin (B) |
-|--------------|------------------|-------------------|--------------------|---------------------|
-| HugeContract |              194 |            49,344 |             24,382 |                -192 |
-...
-"#
-    ]);
++================================================================================================+
+| HugeContract | 194              | 49,344            | 24,382             | -192                |
+╰--------------+------------------+-------------------+--------------------+---------------------╯
+
+
+"#]]);
 
     cmd.forge_fuse().args(["build", "--sizes", "--json"]).assert_failure().stdout_eq(
         str![[r#"
@@ -99,16 +104,21 @@ forgetest!(initcode_size_exceeds_limit, |prj, cmd| {
 });
 
 forgetest!(initcode_size_limit_can_be_ignored, |prj, cmd| {
+    prj.write_config(Config { optimizer: Some(true), ..Default::default() });
     prj.add_source("LargeContract", generate_large_contract(5450).as_str()).unwrap();
-    cmd.args(["build", "--sizes", "--ignore-eip-3860"]).assert_success().stdout_eq(str![
-        r#"
-...
+    cmd.args(["build", "--sizes", "--ignore-eip-3860"]).assert_success().stdout_eq(str![[r#"
+[COMPILING_FILES] with [SOLC_VERSION]
+[SOLC_VERSION] [ELAPSED]
+Compiler run successful!
+
+╭--------------+------------------+-------------------+--------------------+---------------------╮
 | Contract     | Runtime Size (B) | Initcode Size (B) | Runtime Margin (B) | Initcode Margin (B) |
-|--------------|------------------|-------------------|--------------------|---------------------|
-| HugeContract |              194 |            49,344 |             24,382 |                -192 |
-...
-"#
-    ]);
++================================================================================================+
+| HugeContract | 194              | 49,344            | 24,382             | -192                |
+╰--------------+------------------+-------------------+--------------------+---------------------╯
+
+
+"#]]);
 
     cmd.forge_fuse()
         .args(["build", "--sizes", "--ignore-eip-3860", "--json"])
@@ -141,19 +151,22 @@ Compiler run successful!
 // tests build output is as expected
 forgetest_init!(build_sizes_no_forge_std, |prj, cmd| {
     prj.write_config(Config {
+        optimizer: Some(true),
         solc: Some(foundry_config::SolcReq::Version(semver::Version::new(0, 8, 27))),
         ..Default::default()
     });
 
-    cmd.args(["build", "--sizes"]).assert_success().stdout_eq(str![
-        r#"
+    cmd.args(["build", "--sizes"]).assert_success().stdout_eq(str![[r#"
 ...
+
+╭----------+------------------+-------------------+--------------------+---------------------╮
 | Contract | Runtime Size (B) | Initcode Size (B) | Runtime Margin (B) | Initcode Margin (B) |
-|----------|------------------|-------------------|--------------------|---------------------|
-| Counter  |              236 |               263 |             24,340 |              48,889 |
-...
-"#
-    ]);
++============================================================================================+
+| Counter  | 236              | 263               | 24,340             | 48,889              |
+╰----------+------------------+-------------------+--------------------+---------------------╯
+
+
+"#]]);
 
     cmd.forge_fuse().args(["build", "--sizes", "--json"]).assert_success().stdout_eq(
         str![[r#"

@@ -203,7 +203,7 @@ impl Executor {
             .ok_or_else(|| BackendError::MissingAccount(DEFAULT_CREATE2_DEPLOYER))?;
 
         // If the deployer is not currently deployed, deploy the default one.
-        if create2_deployer_account.code.map_or(true, |code| code.is_empty()) {
+        if create2_deployer_account.code.is_none_or(|code| code.is_empty()) {
             let creator = DEFAULT_CREATE2_DEPLOYER_DEPLOYER;
 
             // Probably 0, but just in case.
@@ -708,8 +708,12 @@ pub enum EvmError {
     #[error("{_0}")]
     Skip(SkipReason),
     /// Any other error.
-    #[error(transparent)]
-    Eyre(eyre::Error),
+    #[error("{}", foundry_common::errors::display_chain(.0))]
+    Eyre(
+        #[from]
+        #[source]
+        eyre::Report,
+    ),
 }
 
 impl From<ExecutionErr> for EvmError {
@@ -721,16 +725,6 @@ impl From<ExecutionErr> for EvmError {
 impl From<alloy_sol_types::Error> for EvmError {
     fn from(err: alloy_sol_types::Error) -> Self {
         Self::Abi(err.into())
-    }
-}
-
-impl From<eyre::Error> for EvmError {
-    fn from(err: eyre::Report) -> Self {
-        let mut chained_cause = String::new();
-        for cause in err.chain() {
-            chained_cause.push_str(format!("{cause}; ").as_str());
-        }
-        Self::Eyre(eyre::format_err!("{chained_cause}"))
     }
 }
 
@@ -938,7 +932,7 @@ fn convert_executed_result(
             (reason.into(), 0_u64, gas_used, None, vec![])
         }
     };
-    let stipend = revm::interpreter::gas::validate_initial_tx_gas(
+    let gas = revm::interpreter::gas::calculate_initial_tx_gas(
         env.spec_id(),
         &env.tx.data,
         env.tx.transact_to.is_create(),
@@ -970,7 +964,7 @@ fn convert_executed_result(
         result,
         gas_used,
         gas_refunded,
-        stipend,
+        stipend: gas.initial_gas,
         logs,
         labels,
         traces,

@@ -2,9 +2,9 @@ use clap::{ArgAction, Parser};
 use foundry_common::shell::{ColorChoice, OutputFormat, OutputMode, Shell, Verbosity};
 use serde::{Deserialize, Serialize};
 
-/// Global options.
+/// Global arguments for the CLI.
 #[derive(Clone, Debug, Default, Serialize, Deserialize, Parser)]
-pub struct GlobalOpts {
+pub struct GlobalArgs {
     /// Verbosity level of the log messages.
     ///
     /// Pass multiple times to increase the verbosity (e.g. -v, -vv, -vvv).
@@ -36,7 +36,7 @@ pub struct GlobalOpts {
     threads: Option<usize>,
 }
 
-impl GlobalOpts {
+impl GlobalArgs {
     /// Initialize the global options.
     pub fn init(&self) -> eyre::Result<()> {
         // Set the global shell.
@@ -48,11 +48,6 @@ impl GlobalOpts {
         }
 
         Ok(())
-    }
-
-    /// Initialize the global thread pool.
-    pub fn force_init_thread_pool(&self) -> eyre::Result<()> {
-        init_thread_pool(self.threads.unwrap_or(0))
     }
 
     /// Create a new shell instance.
@@ -68,6 +63,11 @@ impl GlobalOpts {
         };
 
         Shell::new_with(format, mode, color, self.verbosity)
+    }
+
+    /// Initialize the global thread pool.
+    pub fn force_init_thread_pool(&self) -> eyre::Result<()> {
+        init_thread_pool(self.threads.unwrap_or(0))
     }
 }
 
