@@ -2958,19 +2958,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1435fa1053d8b2fbbe9be7e97eca7f33d37b28409959813daefc1446a14247f1"
 
 [[package]]
-name = "downloader"
-version = "0.2.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ac1e888d6830712d565b2f3a974be3200be9296bc1b03db8251a4cbf18a4a34"
-dependencies = [
- "futures",
- "rand",
- "reqwest",
- "thiserror 1.0.69",
- "tokio",
-]
-
-[[package]]
 name = "dunce"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3513,8 +3500,6 @@ dependencies = [
  "rayon",
  "regex",
  "reqwest",
- "revive-llvm-builder",
- "revive-solidity",
  "revm-inspectors",
  "semver 1.0.24",
  "serde",
@@ -4276,7 +4261,6 @@ dependencies = [
  "eyre",
  "foundry-compilers",
  "foundry-config",
- "revive-solidity",
  "revm-inspectors",
  "semver 1.0.24",
  "serde",
@@ -7865,26 +7849,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "revive-llvm-builder"
-version = "0.1.0-dev.8"
-source = "git+https://github.com/paritytech/revive?tag=v0.1.0-dev.8#fe1b3258d2956e51e2edd86f2e77898e6b142729"
-dependencies = [
- "anyhow",
- "clap",
- "downloader",
- "env_logger",
- "flate2",
- "fs_extra",
- "log",
- "num_cpus",
- "path-slash",
- "regex",
- "serde",
- "tar",
- "toml 0.8.19",
-]
-
-[[package]]
 name = "revive-llvm-context"
 version = "0.1.0-dev.8"
 source = "git+https://github.com/paritytech/revive?tag=v0.1.0-dev.8#fe1b3258d2956e51e2edd86f2e77898e6b142729"
@@ -9362,17 +9326,6 @@ name = "tap"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "55937e1799185b12863d447f42597ed69d9928686b8d88a1df17376a097d8369"
-
-[[package]]
-name = "tar"
-version = "0.4.43"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c65998313f8e17d0d553d28f91a0df93e4dbbbf770279c7bc21ca0f09ea1a1f6"
-dependencies = [
- "filetime",
- "libc",
- "xattr",
-]
 
 [[package]]
 name = "tempfile"
@@ -10874,17 +10827,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05f360fc0b24296329c78fda852a1e9ae82de9cf7b27dae4b7f62f118f77b9ed"
 dependencies = [
  "tap",
-]
-
-[[package]]
-name = "xattr"
-version = "1.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e105d177a3871454f754b33bb0ee637ecaaac997446375fd3e5d43a2ed00c909"
-dependencies = [
- "libc",
- "linux-raw-sys",
- "rustix",
 ]
 
 [[package]]

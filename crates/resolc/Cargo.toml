@@ -19,5 +19,4 @@ serde_json.workspace = true
 serde.workspace = true
 semver.workspace = true
 revm-inspectors.workspace = true
-revive-solidity.workspace= true
 eyre = "0.6"

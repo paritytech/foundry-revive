@@ -33,11 +33,8 @@ foundry-evm.workspace = true
 foundry-wallets.workspace = true
 foundry-linking.workspace = true
 forge-script-sequence.workspace = true
-
 ethers-contract-abigen = { workspace = true, features = ["providers"] }
-
 revm-inspectors.workspace = true
-revive-solidity.workspace= true
 
 comfy-table.workspace = true
 eyre.workspace = true
@@ -102,8 +99,6 @@ watchexec-signals = "3.0"
 clearscreen = "3.0"
 evm-disassembler.workspace = true
 foundry-resolc = { workspace = true }
-revive-llvm-builder = { workspace = true }
-
 
 # doc server
 axum = { workspace = true, features = ["ws"] }
