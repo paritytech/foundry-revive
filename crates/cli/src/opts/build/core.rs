@@ -84,7 +84,6 @@ pub struct CoreBuildArgs {
     #[arg(long, help_heading = "Compiler options")]
     #[serde(skip)]
     pub no_metadata: bool,
-
     /// The path to the contract artifacts folder.
     #[arg(
         long = "out",
@@ -185,14 +184,17 @@ impl<'a> From<&'a CoreBuildArgs> for Figment {
         remappings
             .extend(figment.extract_inner::<Vec<Remapping>>("remappings").unwrap_or_default());
         figment = figment.merge(("remappings", remappings.into_inner())).merge(args);
-
+        let revive = args
+            .compiler
+            .revive_args
+            .apply_overrides(figment.extract_inner("revive_config").unwrap_or_default());
         if let Some(skip) = &args.skip {
             let mut skip = skip.iter().map(|s| s.file_pattern().to_string()).collect::<Vec<_>>();
             skip.extend(figment.extract_inner::<Vec<String>>("skip").unwrap_or_default());
             figment = figment.merge(("skip", skip));
         };
 
-        figment
+        figment.merge(("revive_config", revive))
     }
 }
 

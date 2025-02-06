@@ -1,10 +1,12 @@
 use clap::Parser;
 use foundry_compilers::artifacts::{output_selection::ContractOutputSelection, EvmVersion};
+use foundry_config::revive::ReviveConfig;
 use serde::Serialize;
 
 mod core;
 pub use self::core::CoreBuildArgs;
-
+mod revive;
+pub use self::revive::ReviveArgs;
 mod paths;
 pub use self::paths::ProjectPathsArgs;
 
@@ -54,6 +56,10 @@ pub struct CompilerArgs {
     #[arg(long, num_args(1..), value_name = "SELECTOR")]
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub extra_output_files: Vec<ContractOutputSelection>,
+
+    #[clap(flatten)]
+    #[serde(skip)]
+    pub revive_args: ReviveArgs,
 }
 
 #[cfg(test)]

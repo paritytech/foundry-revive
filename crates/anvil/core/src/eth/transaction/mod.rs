@@ -1259,9 +1259,12 @@ impl From<TypedReceipt<Receipt<alloy_rpc_types::Log>>> for OtsReceipt {
             TypedReceipt::Deposit(_) => 0x7E,
         } as u8;
         let receipt = ReceiptWithBloom::<Receipt<alloy_rpc_types::Log>>::from(value);
-        let status = receipt.status();
-        let cumulative_gas_used = receipt.cumulative_gas_used() as u64;
-        let logs = receipt.logs().to_vec();
+        let status = receipt.receipt.status.coerce_status();
+        // TODO: Come back here once the master branch for foundry-revive-compilers has been fixed to revert changes
+        // These changes are here because there is a depedency issue with revive included in the compilers repo 
+        // The latest changes will exlcude revive and this should work 
+        let cumulative_gas_used = receipt.receipt.cumulative_gas_used.clamp(0, u64::MAX.into()) as u64;
+        let logs = receipt.receipt.logs.to_vec();
         let logs_bloom = receipt.logs_bloom;
 
         Self { status, cumulative_gas_used, logs: Some(logs), logs_bloom: Some(logs_bloom), r#type }
