@@ -111,7 +111,8 @@ impl StorageArgs {
         if project.paths.has_input_files() {
             // Find in artifacts and pretty print
             add_storage_layout_output(&mut project);
-            let out = ProjectCompiler::new().quiet(shell::is_json()).compile(&project)?;
+            let out =
+                ProjectCompiler::new().quiet(shell::is_json()).compile(&project, &config.revive)?;
             let artifact = out.artifacts().find(|(_, artifact)| {
                 artifact.get_deployed_bytecode_bytes().is_some_and(|b| *b == address_code)
             });
@@ -157,7 +158,7 @@ impl StorageArgs {
         };
 
         // Compile
-        let mut out = ProjectCompiler::new().quiet(true).compile(&project)?;
+        let mut out = ProjectCompiler::new().quiet(true).compile(&project, &config.revive)?;
         let artifact = {
             let (_, mut artifact) = out
                 .artifacts()
@@ -169,7 +170,9 @@ impl StorageArgs {
                 sh_warn!("The requested contract was compiled with {version} while the minimum version for storage layouts is {MIN_SOLC} and as a result the output may be empty.")?;
                 let solc = Solc::find_or_install(&MIN_SOLC)?;
                 project.compiler = SolcCompiler::Specific(solc);
-                if let Ok(output) = ProjectCompiler::new().quiet(true).compile(&project) {
+                if let Ok(output) =
+                    ProjectCompiler::new().quiet(true).compile(&project, &config.revive)
+                {
                     out = output;
                     let (_, new_artifact) = out
                         .artifacts()

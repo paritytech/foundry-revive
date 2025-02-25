@@ -52,11 +52,10 @@ impl VerificationContext {
         project.update_output_selection(|selection| {
             *selection = OutputSelection::common_output_selection(["abi".to_string()])
         });
-
         let output = ProjectCompiler::new()
             .quiet(true)
             .files([self.target_path.clone()])
-            .compile(&project)?;
+            .compile(&project, &self.config.revive)?;
 
         let artifact = output
             .find(&self.target_path, &self.target_name)
@@ -75,7 +74,7 @@ impl VerificationContext {
         let output = ProjectCompiler::new()
             .quiet(true)
             .files([self.target_path.clone()])
-            .compile(&project)?;
+            .compile(&project, &self.config.revive)?;
 
         let artifact = output
             .find(&self.target_path, &self.target_name)

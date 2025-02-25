@@ -1,11 +1,11 @@
 use clap::Parser;
 use foundry_compilers::artifacts::{output_selection::ContractOutputSelection, EvmVersion};
+use revive::ReviveOpts;
 use serde::Serialize;
-
 mod core;
 pub use self::core::BuildOpts;
-
 mod paths;
+pub mod revive;
 pub use self::paths::ProjectPathOpts;
 
 // A set of solc compiler settings that can be set via command line arguments, which are intended
@@ -54,6 +54,11 @@ pub struct CompilerOpts {
     #[arg(long, num_args(1..), value_name = "SELECTOR")]
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub extra_output_files: Vec<ContractOutputSelection>,
+
+    /// Compiler settings for revive.
+    #[clap(flatten)]
+    #[serde(skip)]
+    pub revive_opts: ReviveOpts,
 }
 
 #[cfg(test)]

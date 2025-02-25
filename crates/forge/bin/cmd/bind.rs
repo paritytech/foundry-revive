@@ -105,12 +105,12 @@ impl BindArgs {
             eyre::bail!("`--ethers` bindings have been removed. Use `--alloy` (default) instead.");
         }
 
+        let config = self.load_config()?;
         if !self.skip_build {
             let project = self.build.project()?;
-            let _ = ProjectCompiler::new().compile(&project)?;
+            let _ = ProjectCompiler::new().compile(&project, &config.revive)?;
         }
 
-        let config = self.load_config()?;
         let artifacts = config.out;
         let bindings_root = self.bindings.clone().unwrap_or_else(|| artifacts.join("bindings"));
 

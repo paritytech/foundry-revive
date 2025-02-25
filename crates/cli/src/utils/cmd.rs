@@ -339,7 +339,7 @@ pub async fn handle_traces(
         let _ = sh_println!("Compiling project to generate artifacts");
         let project = config.project()?;
         let compiler = ProjectCompiler::new();
-        let output = compiler.compile(&project)?;
+        let output = compiler.compile(&project, &config.revive)?;
         (
             Some(ContractsByArtifact::new(
                 output.artifact_ids().map(|(id, artifact)| (id, artifact.clone().into())),
@@ -392,7 +392,7 @@ pub async fn handle_traces(
                 .sources(sources)
                 .build();
             debugger.try_run_tui()?;
-            return Ok(())
+            return Ok(());
         }
 
         decoder.debug_identifier = Some(DebugTraceIdentifier::new(sources));

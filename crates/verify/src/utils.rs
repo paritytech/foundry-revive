@@ -84,7 +84,7 @@ pub fn build_project(
     let project = config.project()?;
     let compiler = ProjectCompiler::new();
 
-    let mut output = compiler.compile(&project)?;
+    let mut output = compiler.compile(&project, &config.revive)?;
 
     let artifact = output
         .remove_contract(&args.contract)

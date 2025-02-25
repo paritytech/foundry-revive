@@ -308,7 +308,7 @@ impl TestArgs {
         let compiler =
             ProjectCompiler::new().quiet(shell::is_json() || self.junit).files(sources_to_compile);
 
-        let output = compiler.compile(&project)?;
+        let output = compiler.compile(&project, &config.revive)?;
 
         // Create test options from general project settings and compiler output.
         let project_root = &project.paths.root;

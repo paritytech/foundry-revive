@@ -90,10 +90,11 @@ impl SelectorsSubcommands {
                     },
                     ..Default::default()
                 };
-
+                let config = Config::load()?;
                 // compile the project to get the artifacts/abis
                 let project = build_args.project()?;
-                let outcome = ProjectCompiler::new().quiet(true).compile(&project)?;
+                let outcome =
+                    ProjectCompiler::new().quiet(true).compile(&project, &config.revive)?;
                 cache_local_signatures(&outcome, Config::foundry_cache_dir().unwrap())?
             }
             Self::Upload { contract, all, project_paths } => {
@@ -105,13 +106,13 @@ impl SelectorsSubcommands {
                     },
                     ..Default::default()
                 };
-
+                let config = Config::load()?;
                 let project = build_args.project()?;
                 let output = if let Some(name) = &contract {
                     let target_path = project.find_contract_path(name)?;
-                    compile_target(&target_path, &project, false)?
+                    compile_target(&target_path, &project, false, &config.revive)?
                 } else {
-                    ProjectCompiler::new().compile(&project)?
+                    ProjectCompiler::new().compile(&project, &config.revive)?
                 };
                 let artifacts = if all {
                     output
@@ -141,7 +142,7 @@ impl SelectorsSubcommands {
                 while let Some((contract, artifact)) = artifacts.next() {
                     let abi = artifact.abi.ok_or_else(|| eyre::eyre!("Unable to fetch abi"))?;
                     if abi.functions.is_empty() && abi.events.is_empty() && abi.errors.is_empty() {
-                        continue
+                        continue;
                     }
 
                     sh_println!("Uploading selectors for {contract}...")?;
@@ -169,8 +170,8 @@ impl SelectorsSubcommands {
                     *contract_path = target_path.to_string_lossy().to_string();
                     compiler = compiler.files([target_path]);
                 }
-
-                let output = compiler.compile(&project)?;
+                let config = Config::load()?;
+                let output = compiler.compile(&project, &config.revive)?;
 
                 // Check method selectors for collisions
                 let methods = |contract: &ContractInfo| -> eyre::Result<_> {
@@ -224,7 +225,9 @@ impl SelectorsSubcommands {
 
                 // compile the project to get the artifacts/abis
                 let project = build_args.project()?;
-                let outcome = ProjectCompiler::new().quiet(true).compile(&project)?;
+                let config = Config::load()?;
+                let outcome =
+                    ProjectCompiler::new().quiet(true).compile(&project, &config.revive)?;
                 let artifacts = if let Some(contract) = contract {
                     let found_artifact = outcome.find_first(&contract);
                     let artifact = found_artifact
@@ -262,7 +265,7 @@ impl SelectorsSubcommands {
                 while let Some((contract, artifact)) = artifacts.next() {
                     let abi = artifact.abi.ok_or_else(|| eyre::eyre!("Unable to fetch abi"))?;
                     if abi.functions.is_empty() && abi.events.is_empty() && abi.errors.is_empty() {
-                        continue
+                        continue;
                     }
 
                     sh_println!("{contract}")?;
@@ -311,7 +314,9 @@ impl SelectorsSubcommands {
                 };
 
                 let project = build_args.project()?;
-                let outcome = ProjectCompiler::new().quiet(true).compile(&project)?;
+                let config = Config::load()?;
+                let outcome =
+                    ProjectCompiler::new().quiet(true).compile(&project, &config.revive)?;
                 let artifacts = outcome
                     .into_artifacts_with_files()
                     .filter(|(file, _, _)| {

@@ -71,7 +71,7 @@ impl DocArgs {
         let root = &config.root;
         let project = config.project()?;
         let compiler = ProjectCompiler::new().quiet(true);
-        let _output = compiler.compile(&project)?;
+        let _output = compiler.compile(&project, &config.revive)?;
 
         let mut doc_config = config.doc;
         if let Some(out) = self.out {

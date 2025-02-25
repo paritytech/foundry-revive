@@ -370,7 +370,7 @@ impl VerifyArgs {
             let provider = utils::get_provider(&config)?;
             let code = provider.get_code_at(self.address).await?;
 
-            let output = ProjectCompiler::new().compile(&project)?;
+            let output = ProjectCompiler::new().compile(&project, &config.revive)?;
             let contracts = ContractsByArtifact::new(
                 output.artifact_ids().map(|(id, artifact)| (id, artifact.clone().into())),
             );

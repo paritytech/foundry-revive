@@ -9,7 +9,6 @@ authors.workspace = true
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
-
 [lints]
 workspace = true
 
@@ -27,7 +26,6 @@ foundry-evm.workspace = true
 foundry-wallets.workspace = true
 foundry-linking.workspace = true
 forge-script-sequence.workspace = true
-
 revm-inspectors.workspace = true
 
 comfy-table.workspace = true

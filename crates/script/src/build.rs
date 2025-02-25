@@ -17,6 +17,7 @@ use foundry_compilers::{
     utils::source_files_iter,
     ArtifactId, ProjectCompileOutput,
 };
+use foundry_config::revive::ReviveConfig;
 use foundry_evm::traces::debug::ContractSources;
 use foundry_linking::Linker;
 use std::{path::PathBuf, str::FromStr, sync::Arc};
@@ -188,8 +189,8 @@ impl PreprocessedState {
             MultiCompilerLanguage::FILE_EXTENSIONS,
         )
         .chain([target_path.to_path_buf()]);
-
-        let output = ProjectCompiler::new().files(sources_to_compile).compile(&project)?;
+        let revive: ReviveConfig = args.build.compiler.revive_opts.clone().into();
+        let output = ProjectCompiler::new().files(sources_to_compile).compile(&project, &revive)?;
 
         let mut target_id: Option<ArtifactId> = None;
 
