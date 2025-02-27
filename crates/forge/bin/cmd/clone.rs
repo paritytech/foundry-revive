@@ -554,7 +554,7 @@ pub fn compile_project(root: &Path) -> Result<ProjectCompileOutput> {
     config.extra_output.push(ContractOutputSelection::StorageLayout);
     let project = config.project()?;
     let compiler = ProjectCompiler::new();
-    compiler.compile(&project)
+    compiler.revive_config(&config.revive).compile(&project)
 }
 
 /// Find the artifact of the contract with the specified name.

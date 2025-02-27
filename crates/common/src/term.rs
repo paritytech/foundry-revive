@@ -71,7 +71,7 @@ impl Spinner {
 
     pub fn tick(&mut self) {
         if self.no_progress {
-            return
+            return;
         }
 
         let indicator = self.indicator[self.idx % self.indicator.len()].green();
@@ -98,6 +98,42 @@ pub struct SpinnerReporter {
 }
 
 impl SpinnerReporter {
+    /// Spawns the [`Spinner`] on a new thread with the given message
+    ///
+    /// The spinner's message will be updated via the `reporter` events
+    ///
+    /// On drop the channel will disconnect and the thread will terminate
+    pub fn spawn_with(msg: impl Into<String> + Send + 'static) -> Self {
+        let (sender, rx) = mpsc::channel::<SpinnerMsg>();
+
+        std::thread::Builder::new()
+            .name("spinner".into())
+            .spawn(move || {
+                let mut spinner = Spinner::new(msg);
+                loop {
+                    spinner.tick();
+                    match rx.try_recv() {
+                        Ok(SpinnerMsg::Msg(msg)) => {
+                            spinner.message(msg);
+                            // new line so past messages are not overwritten
+                            let _ = sh_println!();
+                        }
+                        Ok(SpinnerMsg::Shutdown(ack)) => {
+                            // end with a newline
+                            let _ = sh_println!();
+                            let _ = ack.send(());
+                            break;
+                        }
+                        Err(TryRecvError::Disconnected) => break,
+                        Err(TryRecvError::Empty) => thread::sleep(Duration::from_millis(100)),
+                    }
+                }
+            })
+            .expect("failed to spawn thread");
+
+        Self { sender }
+    }
+
     /// Spawns the [`Spinner`] on a new thread
     ///
     /// The spinner's message will be updated via the `reporter` events
@@ -122,7 +158,7 @@ impl SpinnerReporter {
                             // end with a newline
                             let _ = sh_println!();
                             let _ = ack.send(());
-                            break
+                            break;
                         }
                         Err(TryRecvError::Disconnected) => break,
                         Err(TryRecvError::Empty) => thread::sleep(Duration::from_millis(100)),
@@ -133,7 +169,6 @@ impl SpinnerReporter {
 
         Self { sender }
     }
-
     fn send_msg(&self, msg: impl Into<String>) {
         let _ = self.sender.send(SpinnerMsg::Msg(msg.into()));
     }

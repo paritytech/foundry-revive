@@ -123,7 +123,8 @@ fn load_abi_from_artifact(path_or_contract: &str) -> Result<Vec<(JsonAbi, String
     let contract = PathOrContractInfo::from_str(path_or_contract)?;
 
     let target_path = find_target_path(&project, &contract)?;
-    let output = compiler.files([target_path.clone()]).compile(&project)?;
+    let output =
+        compiler.files([target_path.clone()]).revive_config(&config.revive).compile(&project)?;
 
     let contracts_by_artifact = ContractsByArtifact::from(output);
 

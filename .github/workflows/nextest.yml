@@ -89,6 +89,14 @@ jobs:
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "<>"
           git config --global url."https://github.com/".insteadOf "git@github.com:"
+      - name: Install Revive Compiler
+        if: ${{ !contains(matrix.runner_label, 'windows') }}  
+        run: |
+          mkdir -p ~/.local/bin
+          curl -L https://github.com/paritytech/revive/releases/download/v0.1.0-dev.11/resolc-static-linux -o ~/.local/bin/resolc
+          chmod +x ~/.local/bin/resolc
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "REVIVE_PATH=$HOME/.local/bin/resolc" >> $GITHUB_ENV
       - name: Test
         env:
           SVM_TARGET_PLATFORM: ${{ matrix.svm_target_platform }}

@@ -34,11 +34,13 @@ use foundry_compilers::{
     },
     error::SolcError,
     multi::{MultiCompilerParsedSource, MultiCompilerRestrictions},
+    resolc::Resolc,
     solc::{CliSettings, SolcSettings},
     ArtifactOutput, ConfigurableArtifacts, Graph, Project, ProjectPathsConfig,
     RestrictionsWithVersion, VyperLanguage,
 };
 use regex::Regex;
+use revive::ReviveConfig;
 use revm_primitives::{map::AddressHashMap, FixedBytes, SpecId};
 use semver::Version;
 use serde::{Deserialize, Serialize, Serializer};
@@ -53,11 +55,10 @@ use std::{
 };
 
 mod macros;
-
 pub mod utils;
 pub use utils::*;
-
 mod endpoints;
+pub mod revive;
 pub use endpoints::{
     ResolvedRpcEndpoint, ResolvedRpcEndpoints, RpcEndpoint, RpcEndpointUrl, RpcEndpoints,
 };
@@ -534,6 +535,9 @@ pub struct Config {
     #[doc(hidden)]
     #[serde(skip)]
     pub _non_exhaustive: (),
+
+    /// Revive Config/Settings
+    pub revive: ReviveConfig,
 }
 
 /// Mapping of fallback standalone sections. See [`FallbackProfileProvider`].
@@ -589,6 +593,12 @@ impl Config {
 
     /// Docker image with eof-enabled solc binary
     pub const EOF_SOLC_IMAGE: &'static str = "ghcr.io/paradigmxyz/forge-eof@sha256:46f868ce5264e1190881a3a335d41d7f42d6f26ed20b0c823609c715e38d603f";
+
+    /// Revive cache file name
+    pub const REVIVE_FILES_CACHE_FILENAME: &str = "revive-files-cache.json";
+
+    /// Revive artifacts directory
+    pub const REVIVE_ARTIFACTS_DIR: &str = "revive-out";
 
     /// Loads the `Config` from the current directory.
     ///
@@ -1062,6 +1072,10 @@ impl Config {
     ) -> Result<(), SolcError> {
         project.cleanup()?;
 
+        // Remove revive related artifacts.
+        let _ = fs::remove_dir_all(&self.cache_path);
+        let _ = self.root.join(Self::REVIVE_ARTIFACTS_DIR);
+
         // Remove last test run failures file.
         let _ = fs::remove_file(&self.test_failures_file);
 
@@ -1194,12 +1208,26 @@ impl Config {
     /// # Ok::<_, eyre::Error>(())
     /// ```
     pub fn project_paths<L>(&self) -> ProjectPathsConfig<L> {
+        let (artifacts, cache) = if self.revive.revive_compile {
+            (
+                &self.root.join(Self::REVIVE_ARTIFACTS_DIR),
+                &self.cache_path.join(Self::REVIVE_FILES_CACHE_FILENAME),
+            )
+        } else {
+            (&self.out, &self.cache_path.join(SOLIDITY_FILES_CACHE_FILENAME))
+        };
+        trace!(
+            "project artifacts: {:?} project cache: {:?} revive_compile: {:?}",
+            &artifacts,
+            &cache,
+            &self.revive.revive_compile
+        );
         let mut builder = ProjectPathsConfig::builder()
-            .cache(self.cache_path.join(SOLIDITY_FILES_CACHE_FILENAME))
+            .cache(cache)
             .sources(&self.src)
             .tests(&self.test)
             .scripts(&self.script)
-            .artifacts(&self.out)
+            .artifacts(artifacts)
             .libs(self.libs.iter())
             .remappings(self.get_all_remappings())
             .allowed_path(&self.root)
@@ -1245,7 +1273,16 @@ impl Config {
 
     /// Returns configuration for a compiler to use when setting up a [Project].
     pub fn compiler(&self) -> Result<MultiCompiler, SolcError> {
-        Ok(MultiCompiler { solc: Some(self.solc_compiler()?), vyper: self.vyper_compiler()? })
+        let resolc = Resolc::new(
+            self.revive.revive_path.clone().unwrap_or_default(),
+            self.solc_compiler()?,
+        )?;
+        Ok(MultiCompiler {
+            solc: Some(self.solc_compiler()?),
+            vyper: self.vyper_compiler()?,
+            resolc: Some(resolc),
+            use_resolc: self.revive.revive_compile,
+        })
     }
 
     /// Returns configured [MultiCompilerSettings].
@@ -2428,6 +2465,7 @@ impl Default for Config {
             compilation_restrictions: Default::default(),
             eof: false,
             _non_exhaustive: (),
+            revive: Default::default(),
         }
     }
 }

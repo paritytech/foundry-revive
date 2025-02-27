@@ -48,12 +48,12 @@ static TEMPLATE_LOCK: LazyLock<PathBuf> =
 static NEXT_ID: AtomicUsize = AtomicUsize::new(0);
 
 /// The default Solc version used when compiling tests.
-pub const SOLC_VERSION: &str = "0.8.27";
+pub const SOLC_VERSION: &str = "0.8.28";
 
 /// Another Solc version used when compiling tests.
 ///
 /// Necessary to avoid downloading multiple versions.
-pub const OTHER_SOLC_VERSION: &str = "0.8.26";
+pub const OTHER_SOLC_VERSION: &str = "0.8.27";
 
 /// External test builder
 #[derive(Clone, Debug)]
@@ -441,6 +441,7 @@ impl TestProject {
     /// Create a new test project with the given name. The name
     /// does not need to be distinct for each invocation, but should correspond
     /// to a logical grouping of tests.
+    /// TODO: We need to ensure revive is installed such that we can run any tests against revive
     pub fn new(name: &str, style: PathStyle) -> Self {
         let id = NEXT_ID.fetch_add(1, Ordering::SeqCst);
         let project = pretty_err(name, TempProject::with_style(&format!("{name}-{id}"), style));

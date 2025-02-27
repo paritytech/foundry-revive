@@ -84,7 +84,6 @@ pub struct BuildOpts {
     #[arg(long, help_heading = "Compiler options")]
     #[serde(skip)]
     pub no_metadata: bool,
-
     /// The path to the contract artifacts folder.
     #[arg(
         long = "out",
@@ -191,8 +190,12 @@ impl<'a> From<&'a BuildOpts> for Figment {
             skip.extend(figment.extract_inner::<Vec<String>>("skip").unwrap_or_default());
             figment = figment.merge(("skip", skip));
         };
+        let revive = args
+            .compiler
+            .revive_opts
+            .apply_overrides(figment.extract_inner("revive").unwrap_or_default());
 
-        figment
+        figment.merge(("revive", revive))
     }
 }
 

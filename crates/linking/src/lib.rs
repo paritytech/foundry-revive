@@ -312,7 +312,12 @@ mod tests {
                 .paths(paths)
                 .ephemeral()
                 .no_artifacts()
-                .build(MultiCompiler { solc: Some(SolcCompiler::Specific(solc)), vyper: None })
+                .build(MultiCompiler {
+                    solc: Some(SolcCompiler::Specific(solc)),
+                    vyper: None,
+                    resolc: None,
+                    use_resolc: false,
+                })
                 .unwrap();
 
             let mut output = project.compile().unwrap();

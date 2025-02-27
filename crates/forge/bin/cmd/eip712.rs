@@ -31,7 +31,10 @@ impl Eip712Args {
             *selection = OutputSelection::ast_output_selection();
         });
 
-        let output = ProjectCompiler::new().files([target_path.clone()]).compile(&project)?;
+        let output = ProjectCompiler::new()
+            .files([target_path.clone()])
+            .revive_config(&config.revive)
+            .compile(&project)?;
 
         // Collect ASTs by getting them from sources and converting into strongly typed
         // `SourceUnit`s.
@@ -143,7 +146,7 @@ impl Resolver {
                 subtypes,
             )?
             else {
-                return Ok(None)
+                return Ok(None);
             };
 
             write!(result, "{ty} {name}", name = member.name)?;
@@ -156,19 +159,19 @@ impl Resolver {
         result.push(')');
 
         if !append_subtypes {
-            return Ok(Some(result))
+            return Ok(Some(result));
         }
 
         for (subtype_name, subtype_id) in
             subtypes.iter().map(|(name, id)| (name.clone(), *id)).collect::<Vec<_>>()
         {
             if subtype_id == id {
-                continue
+                continue;
             }
             let Some(encoded_subtype) =
                 self.resolve_eip712_inner(subtype_id, subtypes, false, Some(&subtype_name))?
             else {
-                return Ok(None)
+                return Ok(None);
             };
             result.push_str(&encoded_subtype);
         }
@@ -189,7 +192,7 @@ impl Resolver {
             TypeName::ElementaryTypeName(ty) => Ok(Some(ty.name.clone())),
             TypeName::ArrayTypeName(ty) => {
                 let Some(inner) = self.resolve_type(&ty.base_type, subtypes)? else {
-                    return Ok(None)
+                    return Ok(None);
                 };
                 let len = parse_array_length(&ty.type_descriptions)?;
 
@@ -228,9 +231,9 @@ impl Resolver {
                             name
                         };
 
-                    return Ok(Some(name))
+                    return Ok(Some(name));
                 } else {
-                    return Ok(None)
+                    return Ok(None);
                 }
             }
         }

@@ -73,9 +73,7 @@ impl BuildArgs {
             // need to re-configure here to also catch additional remappings
             config = self.load_config()?;
         }
-
         let project = config.project()?;
-
         // Collect sources to compile if build subdirectories specified.
         let mut files = vec![];
         if let Some(paths) = &self.paths {
@@ -95,9 +93,10 @@ impl BuildArgs {
             .print_names(self.names)
             .print_sizes(self.sizes)
             .ignore_eip_3860(self.ignore_eip_3860)
+            .revive_config(&config.revive)
             .bail(!format_json);
 
-        let output = compiler.compile(&project)?;
+        let output = compiler.revive_config(&config.revive).compile(&project)?;
 
         if format_json && !self.names && !self.sizes {
             sh_println!("{}", serde_json::to_string_pretty(&output.output())?)?;
@@ -105,7 +104,6 @@ impl BuildArgs {
 
         Ok(output)
     }
-
     /// Returns the `Project` for the current workspace
     ///
     /// This loads the `foundry_config::Config` for the current workspace (see

@@ -6,6 +6,7 @@ pub mod utils;
 
 mod bind_json;
 mod build;
+mod build_revive;
 mod cache;
 mod cmd;
 mod compiler;
@@ -16,6 +17,7 @@ mod create;
 mod debug;
 mod doc;
 mod eip712;
+mod ext_integration;
 mod failure_assertions;
 mod geiger;
 mod inline_config;
@@ -28,5 +30,3 @@ mod test_cmd;
 mod verify;
 mod verify_bytecode;
 mod version;
-
-mod ext_integration;
