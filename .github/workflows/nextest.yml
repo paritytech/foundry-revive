@@ -73,7 +73,14 @@ jobs:
           python-version: 3.11
       - name: Install Vyper
         run: pip --version && pip install vyper==0.4.0
-
+      - name: Install Revive
+        if: ${{ !contains(matrix.runner_label, 'windows') }}  
+        run: |
+          mkdir -p ~/.local/bin
+          curl -L https://github.com/paritytech/revive/releases/download/v0.1.0-dev.12/resolc-static-linux -o ~/.local/bin/resolc
+          chmod +x ~/.local/bin/resolc
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "REVIVE_PATH=$HOME/.local/bin/resolc" >> $GITHUB_ENV
       - name: Forge RPC cache
         uses: actions/cache@v3
         with:
