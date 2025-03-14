@@ -19,8 +19,6 @@ pub struct ReviveConfig {
     pub revive_path: Option<PathBuf>,
     /// solc path to use along the revive compiler
     pub solc_path: Option<PathBuf>,
-    /// Force evmla for revive
-    pub force_evmla: bool,
 }
 
 impl ReviveConfig {

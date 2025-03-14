@@ -31,16 +31,6 @@ pub struct ReviveOpts {
     )]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub solc_path: Option<PathBuf>,
-
-    /// A flag indicating whether to forcibly switch to the EVM legacy assembly pipeline.
-    #[clap(
-        help = "Forcibly switch to the EVM legacy assembly pipeline.",
-        long = "force-evmla",
-        value_name = "FORCE_EVMLA",
-        action = clap::ArgAction::SetTrue
-    )]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub force_evmla: Option<bool>,
 }
 
 impl ReviveOpts {
@@ -56,7 +46,6 @@ impl ReviveOpts {
         set_if_some!(self.revive_compile, revive.revive_compile);
         set_if_some!(self.revive_path.clone(), revive.revive_path);
         set_if_some!(self.solc_path.clone(), revive.solc_path);
-        set_if_some!(self.force_evmla, revive.force_evmla);
 
         revive
     }
