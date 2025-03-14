@@ -41,6 +41,9 @@ const CONTRACT_INITCODE_SIZE_LIMIT: usize = 49152;
 /// settings.
 #[must_use = "ProjectCompiler does nothing unless you call a `compile*` method"]
 pub struct ProjectCompiler {
+    /// The root of the project.
+    project_root: PathBuf,
+
     /// Whether we are going to verify the contracts after compilation.
     verify: Option<bool>,
 
@@ -81,6 +84,7 @@ impl ProjectCompiler {
     #[inline]
     pub fn new() -> Self {
         Self {
+            project_root: PathBuf::new(),
             verify: None,
             print_names: None,
             print_sizes: None,
@@ -156,6 +160,8 @@ impl ProjectCompiler {
         mut self,
         project: &Project<C>,
     ) -> Result<ProjectCompileOutput<C>> {
+        self.project_root = project.root().clone();
+
         // TODO: Avoid process::exit
         if !project.paths.has_input_files() && self.files.is_empty() {
             sh_println!("Nothing to compile")?;
@@ -275,32 +281,45 @@ impl ProjectCompiler {
                 self.initcode_size_limit.unwrap_or(CONTRACT_INITCODE_SIZE_LIMIT),
             );
 
-            let artifacts: BTreeMap<_, _> = output
-                .artifact_ids()
-                .filter(|(id, _)| {
-                    // filter out forge-std specific contracts
-                    !id.source.to_string_lossy().contains("/forge-std/src/")
-                })
-                .map(|(id, artifact)| (id.name, artifact))
-                .collect();
+            let mut artifacts: BTreeMap<String, Vec<_>> = BTreeMap::new();
+            for (id, artifact) in output.artifact_ids().filter(|(id, _)| {
+                // filter out forge-std specific contracts
+                !id.source.to_string_lossy().contains("/forge-std/src/")
+            }) {
+                artifacts.entry(id.name.clone()).or_default().push((id.source.clone(), artifact));
+            }
 
-            for (name, artifact) in artifacts {
-                let runtime_size = contract_size(artifact, false).unwrap_or_default();
-                let init_size = contract_size(artifact, true).unwrap_or_default();
+            for (name, artifact_list) in artifacts {
+                for (path, artifact) in &artifact_list {
+                    let runtime_size = contract_size(*artifact, false).unwrap_or_default();
+                    let init_size = contract_size(*artifact, true).unwrap_or_default();
 
-                let is_dev_contract = artifact
-                    .abi
-                    .as_ref()
-                    .map(|abi| {
-                        abi.functions().any(|f| {
-                            f.test_function_kind().is_known() ||
-                                matches!(f.name.as_str(), "IS_TEST" | "IS_SCRIPT")
+                    let is_dev_contract = artifact
+                        .abi
+                        .as_ref()
+                        .map(|abi| {
+                            abi.functions().any(|f| {
+                                f.test_function_kind().is_known() ||
+                                    matches!(f.name.as_str(), "IS_TEST" | "IS_SCRIPT")
+                            })
                         })
-                    })
-                    .unwrap_or(false);
-                size_report
-                    .contracts
-                    .insert(name, ContractInfo { runtime_size, init_size, is_dev_contract });
+                        .unwrap_or(false);
+
+                    let unique_name = if artifact_list.len() > 1 {
+                        format!(
+                            "{} ({})",
+                            name,
+                            path.strip_prefix(&self.project_root).unwrap_or(path).display()
+                        )
+                    } else {
+                        name.clone()
+                    };
+
+                    size_report.contracts.insert(
+                        unique_name,
+                        ContractInfo { runtime_size, init_size, is_dev_contract },
+                    );
+                }
             }
 
             let _ = sh_println!("{size_report}");
