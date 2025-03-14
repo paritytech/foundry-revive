@@ -10,6 +10,8 @@ pub const REVIVE_SOLIDITY_FILES_CACHE_FILENAME: &str = "revive-solidity-files-ca
 /// Directory for Revive artifacts
 pub const REVIVE_ARTIFACTS_DIR: &str = "revive-out";
 
+pub const CONTRACT_SIZE_LIMIT: usize = 250_000;
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Default)]
 /// Revive Config
 pub struct ReviveConfig {
