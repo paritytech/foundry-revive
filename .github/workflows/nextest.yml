@@ -77,7 +77,7 @@ jobs:
         if: ${{ !contains(matrix.runner_label, 'windows') }}  
         run: |
           mkdir -p ~/.local/bin
-          curl -L https://github.com/paritytech/revive/releases/download/v0.1.0-dev.12/resolc-static-linux -o ~/.local/bin/resolc
+          curl -L https://github.com/paritytech/revive/releases/download/v0.1.0-dev.11/resolc-static-linux -o ~/.local/bin/resolc
           chmod +x ~/.local/bin/resolc
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           echo "REVIVE_PATH=$HOME/.local/bin/resolc" >> $GITHUB_ENV
