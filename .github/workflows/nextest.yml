@@ -75,23 +75,33 @@ jobs:
       - name: Install Vyper
         run: pip --version && pip install vyper==0.4.0
       - name: Install Revive (Linux)
-        if: ${{ contains(matrix.runner_label, 'linux') }}  
+        if: contains(matrix.runner_label, 'linux')
         run: |
           ASSET_NAME="resolc-x86_64-unknown-linux-musl.tar.gz"
           DOWNLOAD_URL="https://github.com/paritytech/revive/releases/download/${{ env.REVIVE_RELEASE_VERSION }}/$ASSET_NAME"
           curl -L -o $ASSET_NAME $DOWNLOAD_URL
           tar -xzf $ASSET_NAME
-          chmod +x resolc
-          sudo mv resolc /usr/local/bin/
+          chmod +x resolc-x86_64-unknown-linux-musl
+          sudo mv resolc-x86_64-unknown-linux-musl /usr/local/bin/resolc
       - name: Install Revive (Windows)
-        if: ${{ contains(matrix.runner_label, 'windows') }}  
+        if: contains(matrix.runner_label, 'windows')
         shell: powershell
         run: |
           $AssetName="resolc-x86_64-pc-windows-msvc.zip"
           $DownloadUrl="https://github.com/paritytech/revive/releases/download/${{ env.REVIVE_RELEASE_VERSION }}/$AssetName"
           Invoke-WebRequest -Uri $DownloadUrl -OutFile $AssetName
           Expand-Archive -Path $AssetName -DestinationPath .
-          Move-Item -Path .\resolc.exe -Destination "C:\Program Files\resolc.exe"
+          Move-Item -Path .\resolc-x86_64-pc-windows-msvc.exe -Destination "C:\Program Files\resolc.exe"
+      - name: Install Revive (macOS)
+        if: contains(matrix.runner_label, 'macos')
+        run: |
+          ASSET_NAME="resolc-universal-apple-darwin.tar.gz"
+          DOWNLOAD_URL="https://github.com/paritytech/revive/releases/download/${{ env.REVIVE_RELEASE_VERSION }}/$ASSET_NAME"
+          curl -L -o $ASSET_NAME $DOWNLOAD_URL
+          tar -xzf $ASSET_NAME
+          chmod +x resolc-universal-apple-darwin
+          xattr -d com.apple.quarantine resolc-universal-apple-darwin || true
+          sudo mv resolc-universal-apple-darwin /usr/local/bin/resolc
       - name: Forge RPC cache
         uses: actions/cache@v3
         with:
