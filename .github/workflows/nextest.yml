@@ -75,7 +75,7 @@ jobs:
       - name: Install Vyper
         run: pip --version && pip install vyper==0.4.0
       - name: Install Revive (Linux)
-        if: contains(matrix.runner_label, 'linux')
+        if: contains(matrix.runner_label, 'ubuntu') 
         run: |
           ASSET_NAME="resolc-x86_64-unknown-linux-musl.tar.gz"
           DOWNLOAD_URL="https://github.com/paritytech/revive/releases/download/${{ env.REVIVE_RELEASE_VERSION }}/$ASSET_NAME"
