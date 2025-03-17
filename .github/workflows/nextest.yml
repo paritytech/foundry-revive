@@ -16,6 +16,7 @@ concurrency:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: full
+  REVIVE_RELEASE_VERSION: v0.1.0-dev.12
 
 jobs:
   matrices:
@@ -73,14 +74,24 @@ jobs:
           python-version: 3.11
       - name: Install Vyper
         run: pip --version && pip install vyper==0.4.0
-      - name: Install Revive
-        if: ${{ !contains(matrix.runner_label, 'windows') }}  
+      - name: Install Revive (Linux)
+        if: ${{ contains(matrix.runner_label, 'linux') }}  
         run: |
-          mkdir -p ~/.local/bin
-          curl -L https://github.com/paritytech/revive/releases/download/v0.1.0-dev.11/resolc-static-linux -o ~/.local/bin/resolc
-          chmod +x ~/.local/bin/resolc
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-          echo "REVIVE_PATH=$HOME/.local/bin/resolc" >> $GITHUB_ENV
+          ASSET_NAME="resolc-x86_64-unknown-linux-musl.tar.gz"
+          DOWNLOAD_URL="https://github.com/paritytech/revive/releases/download/${{ env.REVIVE_RELEASE_VERSION }}/$ASSET_NAME"
+          curl -L -o $ASSET_NAME $DOWNLOAD_URL
+          tar -xzf $ASSET_NAME
+          chmod +x resolc
+          sudo mv resolc /usr/local/bin/
+      - name: Install Revive (Windows)
+        if: ${{ contains(matrix.runner_label, 'windows') }}  
+        shell: powershell
+        run: |
+          $AssetName="resolc-x86_64-pc-windows-msvc.zip"
+          $DownloadUrl="https://github.com/paritytech/revive/releases/download/${{ env.REVIVE_RELEASE_VERSION }}/$AssetName"
+          Invoke-WebRequest -Uri $DownloadUrl -OutFile $AssetName
+          Expand-Archive -Path $AssetName -DestinationPath .
+          Move-Item -Path .\resolc.exe -Destination "C:\Program Files\resolc.exe"
       - name: Forge RPC cache
         uses: actions/cache@v3
         with:

@@ -1037,6 +1037,9 @@ path = "out"
 chains = "all"
 endpoints = "all"
 
+[profile.default.revive]
+revive_compile = false
+
 [fmt]
 line_length = 120
 tab_width = 4
