@@ -1287,7 +1287,12 @@ exclude = []
   "transaction_timeout": 120,
   "eof": false,
   "additional_compiler_profiles": [],
-  "compilation_restrictions": []
+  "compilation_restrictions": [],
+  "revive": {
+    "revive_compile": false,
+    "revive_path": null,
+    "solc_path": null
+  }
 }
 
 "#]]);
