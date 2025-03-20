@@ -176,7 +176,7 @@ fn archive_urls(is_ws: bool) -> &'static [String] {
         let mut urls = Vec::new();
         for &key in INFURA_KEYS.iter() {
             if is_ws {
-                urls.push(format!("wss://mainnet.infura.io/v3/{key}"));
+                urls.push(format!("wss://mainnet.infura.io/ws/v3/{key}"));
             } else {
                 urls.push(format!("https://mainnet.infura.io/v3/{key}"));
             }
