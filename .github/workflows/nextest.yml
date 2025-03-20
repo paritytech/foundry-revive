@@ -93,6 +93,7 @@ jobs:
           Invoke-WebRequest -Uri $DownloadUrl -OutFile $AssetName
           Expand-Archive -Path $AssetName -DestinationPath .
           Move-Item -Path .\resolc-x86_64-pc-windows-msvc.exe -Destination "C:\Program Files\resolc"
+          echo "C:\Program Files\resolc" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
       - name: Install Revive (macOS)
         if: contains(matrix.runner_label, 'macos')
         run: |
