@@ -92,8 +92,13 @@ jobs:
           $DownloadUrl="https://github.com/paritytech/revive/releases/download/${{ env.REVIVE_RELEASE_VERSION }}/$AssetName"
           Invoke-WebRequest -Uri $DownloadUrl -OutFile $AssetName
           Expand-Archive -Path $AssetName -DestinationPath .
-          Move-Item -Path .\resolc-x86_64-pc-windows-msvc.exe -Destination "C:\Program Files\resolc"
-          echo "C:\Program Files\resolc" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+          $InstallDir = "C:\Program Files\resolc"
+          if (!(Test-Path $InstallDir)) {
+              New-Item -ItemType Directory -Path $InstallDir | Out-Null
+          }
+
+          Move-Item -Path .\resolc-x86_64-pc-windows-msvc.exe -Destination "$InstallDir\resolc" -Force
+          echo "$InstallDir" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
       - name: Install Revive (macOS)
         if: contains(matrix.runner_label, 'macos')
         run: |
