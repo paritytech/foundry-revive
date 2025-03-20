@@ -1585,7 +1585,11 @@ impl Config {
             evm_version: Some(self.evm_version),
             metadata: Some(SettingsMetadata {
                 use_literal_content: Some(self.use_literal_content),
-                bytecode_hash: Some(self.bytecode_hash),
+                bytecode_hash: if self.revive.revive_compile {
+                    Some(BytecodeHash::None)
+                } else {
+                    Some(self.bytecode_hash)
+                },
                 cbor_metadata: Some(self.cbor_metadata),
             }),
             debug: self.revert_strings.map(|revert_strings| DebuggingSettings {
