@@ -105,9 +105,9 @@ jobs:
         shell: powershell
         run: |
           echo "check exe"
-          revive.exe --version
+          resolc.exe --version
           echo "check without exe"
-          revive --version
+          resolc --version
       - name: Install Revive (macOS)
         if: contains(matrix.runner_label, 'macos')
         run: |
