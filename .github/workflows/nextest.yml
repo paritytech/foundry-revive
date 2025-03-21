@@ -118,24 +118,25 @@ jobs:
           chmod +x resolc-universal-apple-darwin
           xattr -d com.apple.quarantine resolc-universal-apple-darwin || true
           sudo mv resolc-universal-apple-darwin /usr/local/bin/resolc
-      # - name: Forge RPC cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       ~/.foundry/cache
-      #       ~/.config/.foundry/cache
-      #     key: rpc-cache-${{ hashFiles('crates/forge/tests/rpc-cache-keyfile') }}
-      # - uses: Swatinem/rust-cache@v2
-      #   with:
-      #     cache-on-failure: true
-      # - name: Setup Git config
-      #   run: |
-      #     git config --global user.name "GitHub Actions Bot"
-      #     git config --global user.email "<>"
-      #     git config --global url."https://github.com/".insteadOf "git@github.com:"
-      # - name: Test
-      #   env:
-      #     SVM_TARGET_PLATFORM: ${{ matrix.svm_target_platform }}
-      #     HTTP_ARCHIVE_URLS: ${{ secrets.HTTP_ARCHIVE_URLS }}
-      #     WS_ARCHIVE_URLS: ${{ secrets.WS_ARCHIVE_URLS }}
-      #   run: cargo nextest run ${{ matrix.flags }}
+      - name: Forge RPC cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.foundry/cache
+            ~/.config/.foundry/cache
+          key: rpc-cache-${{ hashFiles('crates/forge/tests/rpc-cache-keyfile') }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+      - name: Setup Git config
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "<>"
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+      - name: Test
+        if: contains(matrix.runner_label, 'windows')
+        env:
+          SVM_TARGET_PLATFORM: ${{ matrix.svm_target_platform }}
+          HTTP_ARCHIVE_URLS: ${{ secrets.HTTP_ARCHIVE_URLS }}
+          WS_ARCHIVE_URLS: ${{ secrets.WS_ARCHIVE_URLS }}
+        run: cargo nextest run ${{ matrix.flags }}
