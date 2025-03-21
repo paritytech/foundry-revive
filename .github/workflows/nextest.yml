@@ -100,9 +100,6 @@ jobs:
           Move-Item -Path .\resolc-x86_64-pc-windows-msvc.exe -Destination "$InstallDir\resolc.exe" -Force
           Unblock-File -Path "$InstallDir\resolc.exe"
           echo "$InstallDir" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
-      - name: Check Revive Version
-        run: |
-          resolc --version
       - name: Install Revive (macOS)
         if: contains(matrix.runner_label, 'macos')
         run: |
@@ -113,6 +110,9 @@ jobs:
           chmod +x resolc-universal-apple-darwin
           xattr -d com.apple.quarantine resolc-universal-apple-darwin || true
           sudo mv resolc-universal-apple-darwin /usr/local/bin/resolc
+      - name: Check Revive Version
+        run: |
+          resolc --version
       - name: Forge RPC cache
         uses: actions/cache@v3
         with:
