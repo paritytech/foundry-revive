@@ -100,13 +100,8 @@ jobs:
           Move-Item -Path .\resolc-x86_64-pc-windows-msvc.exe -Destination "$InstallDir\resolc.exe" -Force
           Unblock-File -Path "$InstallDir\resolc.exe"
           echo "$InstallDir" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
-      - name: Test Revive (Windows)
-        if: contains(matrix.runner_label, 'windows')
-        shell: powershell
+      - name: Check Revive Version
         run: |
-          echo "check exe"
-          resolc.exe --version
-          echo "check without exe"
           resolc --version
       - name: Install Revive (macOS)
         if: contains(matrix.runner_label, 'macos')
@@ -134,7 +129,6 @@ jobs:
           git config --global user.email "<>"
           git config --global url."https://github.com/".insteadOf "git@github.com:"
       - name: Test
-        if: contains(matrix.runner_label, 'windows')
         env:
           SVM_TARGET_PLATFORM: ${{ matrix.svm_target_platform }}
           HTTP_ARCHIVE_URLS: ${{ secrets.HTTP_ARCHIVE_URLS }}
