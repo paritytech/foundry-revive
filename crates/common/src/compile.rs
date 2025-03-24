@@ -30,11 +30,6 @@ use std::{
     time::Instant,
 };
 
-// https://eips.ethereum.org/EIPS/eip-170
-const CONTRACT_RUNTIME_SIZE_LIMIT: usize = 24576;
-
-// https://eips.ethereum.org/EIPS/eip-3860
-const CONTRACT_INITCODE_SIZE_LIMIT: usize = 49152;
 /// Builder type to configure how to compile a project.
 ///
 /// This is merely a wrapper for [`Project::compile()`] which also prints to stdout depending on its
@@ -337,6 +332,12 @@ impl ProjectCompiler {
         }
     }
 }
+
+// https://eips.ethereum.org/EIPS/eip-170
+const CONTRACT_RUNTIME_SIZE_LIMIT: usize = 24576;
+
+// https://eips.ethereum.org/EIPS/eip-3860
+const CONTRACT_INITCODE_SIZE_LIMIT: usize = 49152;
 
 const CONTRACT_SIZE_LIMIT_MARGIN: f64 = 0.73;
 /// Contracts with info about their size
