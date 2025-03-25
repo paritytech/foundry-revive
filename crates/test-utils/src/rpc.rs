@@ -5,10 +5,10 @@ use foundry_config::{
     NamedChain::{Arbitrum, Base, Mainnet, Optimism, Polygon, Sepolia},
 };
 use rand::seq::SliceRandom;
-use std::sync::{
+use std::{env, sync::{
     atomic::{AtomicUsize, Ordering},
     LazyLock,
-};
+}};
 
 // List of public archive reth nodes to use
 static RETH_ARCHIVE_HOSTS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
@@ -25,10 +25,12 @@ static RETH_HOSTS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
 });
 
 // List of general purpose DRPC keys to rotate through
-static DRPC_KEYS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
-    let mut keys = vec![
-        "AgasqIYODEW_j_J0F91L8oETmhtHCXkR8JAVssvAG40d",
-    ];
+static DRPC_KEYS: LazyLock<Vec<String>> = LazyLock::new(|| {
+    let mut keys = vec!["AgasqIYODEW_j_J0F91L8oETmhtHCXkR8JAVssvAG40d".to_owned()];
+    // Fetch secret from GitHub Actions environment variable
+    if let Ok(secret) = env::var("DLRP_API_KEY") {
+        keys.push(secret);
+    }
 
     keys.shuffle(&mut rand::thread_rng());
 
@@ -170,7 +172,7 @@ fn next_url(is_ws: bool, chain: NamedChain) -> String {
     } else {
         // DRPC for other networks used in tests.
         let idx = next_idx() % DRPC_KEYS.len();
-        let key = DRPC_KEYS[idx];
+        let key = &DRPC_KEYS[idx];
 
         let network = match chain {
             Optimism => "optimism",
