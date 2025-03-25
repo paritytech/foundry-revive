@@ -5,10 +5,13 @@ use foundry_config::{
     NamedChain::{Arbitrum, Base, Mainnet, Optimism, Polygon, Sepolia},
 };
 use rand::seq::SliceRandom;
-use std::{env, sync::{
-    atomic::{AtomicUsize, Ordering},
-    LazyLock,
-}};
+use std::{
+    env,
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        LazyLock,
+    },
+};
 
 // List of public archive reth nodes to use
 static RETH_ARCHIVE_HOSTS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
