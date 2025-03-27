@@ -9,10 +9,10 @@ on:
   workflow_dispatch:
     inputs:
       is_nightly:
-        description: "Is this a nightly version or a release - Y or N"
-        type: string
+        description: "Is this a nightly release?"
+        type: boolean
         required: true
-        default: "Y"
+        default: true
       version:
         description: "stable version for the build"
         type: string
@@ -21,9 +21,10 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  IS_NIGHTLY: ${{ inputs.is_nightly == 'Y' }}
+  IS_NIGHTLY: ${{ inputs.is_nightly }}
   PROFILE: maxperf
   STABLE_VERSION: ${{ inputs.version }}
+  RUST_MUSL_CROSS_IMAGE:  messense/rust-musl-cross@sha256:5afc91a4f7da8a14a6c688ebf49fef9b9ec30f28fd827f2cf7e7c4d6c31bd10a
 
 jobs:
   prepare:
@@ -91,22 +92,24 @@ jobs:
           # `target`: Rust build target triple
           # `platform` and `arch`: Used in tarball names
           # `svm`: target platform to use for the Solc binary: https://github.com/roynalnaruto/svm-rs/blob/84cbe0ac705becabdc13168bae28a45ad2299749/svm-builds/build.rs#L4-L24
-          - runner: ubuntu-24.04
+          - runner: Linux-20.04
             target: x86_64-unknown-linux-musl
             svm_target_platform: linux-amd64
             platform: linux
             arch: amd64
-          - runner: macos-14
+          # This is pinned to `macos-13-large` to support old SDK versions.
+          # If the runner is deprecated it should be pinned to the oldest available version of the runner.
+          - runner: macos-13-large
             target: x86_64-apple-darwin
             svm_target_platform: macosx-amd64
             platform: darwin
             arch: amd64
-          - runner: macos-14
+          - runner: macos-latest-large
             target: aarch64-apple-darwin
             svm_target_platform: macosx-aarch64
             platform: darwin
             arch: arm64
-          - runner: windows-2022
+          - runner: Windows
             target: x86_64-pc-windows-msvc
             svm_target_platform: windows-amd64
             platform: win32
@@ -154,7 +157,7 @@ jobs:
           fi
 
           if [[ "$TARGET" == "x86_64-unknown-linux-musl" ]]; then
-            docker run -v $PWD:/opt/revive messense/rust-musl-cross:x86_64-musl /bin/bash -c "
+            docker run -v $PWD:/opt/revive $RUST_MUSL_CROSS_IMAGE /bin/bash -c "
             cd /opt/revive
             rustup target add x86_64-unknown-linux-musl
             cargo build $flags
