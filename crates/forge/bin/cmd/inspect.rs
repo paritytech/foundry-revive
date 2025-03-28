@@ -71,6 +71,9 @@ impl InspectArgs {
         let project = modified_build_args.project()?;
         let compiler = ProjectCompiler::new().quiet(true);
         let target_path = find_target_path(&project, &contract)?;
+        if modified_build_args.compiler.revive_opts.revive_compile.unwrap_or_default() {
+            check_revive_field(&field)?;
+        }
         let mut output = compiler.files([target_path.clone()]).compile(&project)?;
 
         // Find the artifact
@@ -590,6 +593,40 @@ fn print_eof(bytecode: Option<CompactBytecode>) -> Result<()> {
     sh_println!("{}", pretty_eof(&eof)?)?;
 
     Ok(())
+}
+
+fn check_revive_field(field: &ContractArtifactField) -> Result<bool> {
+    let fields_revive_specific_behavior =
+        [ContractArtifactField::Bytecode, ContractArtifactField::DeployedBytecode];
+
+    let fields_revive_unimplemented_warn = [
+        ContractArtifactField::GasEstimates,
+        ContractArtifactField::StorageLayout,
+        ContractArtifactField::Metadata,
+        ContractArtifactField::Eof,
+        ContractArtifactField::EofInit,
+    ];
+
+    let fields_revive_should_error = [
+        ContractArtifactField::Assembly,
+        ContractArtifactField::AssemblyOptimized,
+        ContractArtifactField::LegacyAssembly,
+        ContractArtifactField::Ir,
+        ContractArtifactField::IrOptimized,
+        ContractArtifactField::Ewasm,
+    ];
+
+    if fields_revive_should_error.contains(field) {
+        return Err(eyre::eyre!("Revive version of inspect does not support this field"));
+    }
+
+    if fields_revive_unimplemented_warn.contains(field) {
+        return Err(eyre::eyre!(
+            "This field has not been implemented for revive yet, so defaulting to solc implementation"
+        ));
+    }
+
+    Ok(fields_revive_specific_behavior.contains(field))
 }
 
 #[cfg(test)]
