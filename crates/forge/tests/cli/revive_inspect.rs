@@ -74,7 +74,7 @@ contract ContractOne {
     // Throw an error when trying to inspect the assembly field
     cmd.arg("inspect")
         .arg("ContractOne")
-        .arg("assembly")
+        .arg("legacyAssembly")
         .arg("--revive")
         .assert_failure()
         .stderr_eq("Error: Revive version of inspect does not support this field\n");
