@@ -595,38 +595,20 @@ fn print_eof(bytecode: Option<CompactBytecode>) -> Result<()> {
     Ok(())
 }
 
-fn check_revive_field(field: &ContractArtifactField) -> Result<bool> {
-    let fields_revive_specific_behavior =
-        [ContractArtifactField::Bytecode, ContractArtifactField::DeployedBytecode];
-
-    let fields_revive_unimplemented_warn = [
+fn check_revive_field(field: &ContractArtifactField) -> Result<()> {
+    let fields_revive_should_error = [
         ContractArtifactField::GasEstimates,
-        ContractArtifactField::StorageLayout,
-        ContractArtifactField::Metadata,
+        ContractArtifactField::LegacyAssembly,
+        ContractArtifactField::Ewasm,
         ContractArtifactField::Eof,
         ContractArtifactField::EofInit,
-    ];
-
-    let fields_revive_should_error = [
-        ContractArtifactField::Assembly,
-        ContractArtifactField::AssemblyOptimized,
-        ContractArtifactField::LegacyAssembly,
-        ContractArtifactField::Ir,
-        ContractArtifactField::IrOptimized,
-        ContractArtifactField::Ewasm,
     ];
 
     if fields_revive_should_error.contains(field) {
         return Err(eyre::eyre!("Revive version of inspect does not support this field"));
     }
 
-    if fields_revive_unimplemented_warn.contains(field) {
-        return Err(eyre::eyre!(
-            "This field has not been implemented for revive yet, so defaulting to solc implementation"
-        ));
-    }
-
-    Ok(fields_revive_specific_behavior.contains(field))
+    Ok(())
 }
 
 #[cfg(test)]
