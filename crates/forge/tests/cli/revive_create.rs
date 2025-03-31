@@ -1,9 +1,6 @@
 //! Contains various tests for checking the `forge create` subcommand
 
-use crate::{
-    constants::*,
-    utils::{self, network_private_key, network_rpc_key},
-};
+use crate::utils::{self, network_private_key, network_rpc_key};
 use alloy_primitives::Address;
 use foundry_compilers::artifacts::{remappings::Remapping, BytecodeHash};
 use foundry_test_utils::{
@@ -137,42 +134,6 @@ forgetest!(can_create_oracle_on_westend_assethub, |prj, cmd| {
     let _address = utils::parse_deployed_address(output.as_str())
         .unwrap_or_else(|| panic!("Failed to parse deployer {output}"));
 });
-
-// tests that we can deploy the template contract
-// forgetest_async!(can_create_using_unlocked_on_westend_assethub, |prj, cmd| {
-//     foundry_test_utils::util::initialize(prj.root());
-
-//     // explicitly byte code hash for consistent checks
-//     prj.update_config(|c| c.bytecode_hash = BytecodeHash::None);
-
-//     cmd.forge_fuse()
-//         .arg("create")
-//         .arg("--revive")
-//         .arg("--legacy")
-//         .arg("--broadcast")
-//         .arg("--unlocked")
-//         .arg("--from=f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac")
-//         .arg(format!("./src/{TEMPLATE_CONTRACT}.sol:{TEMPLATE_CONTRACT}").as_str())
-//         .args(westend_assethub_args());
-
-//     cmd.assert_success().stdout_eq(str![[r#"
-// [COMPILING_FILES] with [REVIVE_VERSION]
-// [REVIVE_VERSION] [ELAPSED]
-// Compiler run successful!
-// Deployer: [..]
-// Deployed to: [..]
-// [TX_HASH]
-
-// "#]]);
-
-//     cmd.assert_success().stdout_eq(str![[r#"
-// No files changed, compilation skipped
-// Deployer: [..]
-// Deployed to: [..]
-// [TX_HASH]
-
-// "#]]);
-// });
 
 // tests that we can deploy with constructor args
 forgetest_async!(can_create_with_constructor_args_on_westend_assethub, |prj, cmd| {
