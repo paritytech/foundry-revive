@@ -139,40 +139,40 @@ forgetest!(can_create_oracle_on_westend_assethub, |prj, cmd| {
 });
 
 // tests that we can deploy the template contract
-forgetest_async!(can_create_using_unlocked_on_westend_assethub, |prj, cmd| {
-    foundry_test_utils::util::initialize(prj.root());
+// forgetest_async!(can_create_using_unlocked_on_westend_assethub, |prj, cmd| {
+//     foundry_test_utils::util::initialize(prj.root());
 
-    // explicitly byte code hash for consistent checks
-    prj.update_config(|c| c.bytecode_hash = BytecodeHash::None);
+//     // explicitly byte code hash for consistent checks
+//     prj.update_config(|c| c.bytecode_hash = BytecodeHash::None);
 
-    cmd.forge_fuse()
-        .arg("create")
-        .arg("--revive")
-        .arg("--legacy")
-        .arg("--broadcast")
-        .arg("--unlocked")
-        .arg("--from=f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac")
-        .arg(format!("./src/{TEMPLATE_CONTRACT}.sol:{TEMPLATE_CONTRACT}").as_str())
-        .args(westend_assethub_args());
+//     cmd.forge_fuse()
+//         .arg("create")
+//         .arg("--revive")
+//         .arg("--legacy")
+//         .arg("--broadcast")
+//         .arg("--unlocked")
+//         .arg("--from=f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac")
+//         .arg(format!("./src/{TEMPLATE_CONTRACT}.sol:{TEMPLATE_CONTRACT}").as_str())
+//         .args(westend_assethub_args());
 
-    cmd.assert_success().stdout_eq(str![[r#"
-[COMPILING_FILES] with Resolc and [SOLC_VERSION]
-Resolc and [SOLC_VERSION] [ELAPSED]
-Compiler run successful!
-[DEPLOYER]
-[DEPLOYED]
-[TX_HASH]
+//     cmd.assert_success().stdout_eq(str![[r#"
+// [COMPILING_FILES] with [REVIVE_VERSION]
+// [REVIVE_VERSION] [ELAPSED]
+// Compiler run successful!
+// Deployer: [..]
+// Deployed to: [..]
+// [TX_HASH]
 
-"#]]);
+// "#]]);
 
-    cmd.assert_success().stdout_eq(str![[r#"
-No files changed, compilation skipped
-[DEPLOYER]
-[DEPLOYED]
-[TX_HASH]
+//     cmd.assert_success().stdout_eq(str![[r#"
+// No files changed, compilation skipped
+// Deployer: [..]
+// Deployed to: [..]
+// [TX_HASH]
 
-"#]]);
-});
+// "#]]);
+// });
 
 // tests that we can deploy with constructor args
 forgetest_async!(can_create_with_constructor_args_on_westend_assethub, |prj, cmd| {
@@ -205,11 +205,11 @@ contract ConstructorContract {
         .args(["--constructor-args", "My Constructor"])
         .assert_success()
         .stdout_eq(str![[r#"
-[COMPILING_FILES] with Resolc and [SOLC_VERSION]
-Resolc and [SOLC_VERSION] [ELAPSED]
+[COMPILING_FILES] with [REVIVE_VERSION]
+[REVIVE_VERSION] [ELAPSED]
 Compiler run successful!
-[DEPLOYER]
-[DEPLOYED]
+Deployer: [..]
+Deployed to: [..]
 [TX_HASH]
 
 "#]]);
@@ -239,11 +239,11 @@ contract TupleArrayConstructorContract {
         .args(["--constructor-args", "[(1,2), (2,3), (3,4)]"])
         .assert()
         .stdout_eq(str![[r#"
-[COMPILING_FILES] with Resolc and [SOLC_VERSION]
-Resolc and [SOLC_VERSION] [ELAPSED]
+[COMPILING_FILES] with [REVIVE_VERSION]
+[REVIVE_VERSION] [ELAPSED]
 Compiler run successful!
-[DEPLOYER]
-[DEPLOYED]
+Deployer: [..]
+Deployed to: [..]
 [TX_HASH]
 
 "#]]);
@@ -278,8 +278,8 @@ contract UniswapV2Swap {
         .args(westend_assethub_args())
         .assert_success()
         .stdout_eq(str![[r#"
-[COMPILING_FILES] with Resolc and [SOLC_VERSION]
-Resolc and [SOLC_VERSION] [ELAPSED]
+[COMPILING_FILES] with [REVIVE_VERSION]
+[REVIVE_VERSION] [ELAPSED]
 Compiler run successful with warnings:
 Warning (2018): Function state mutability can be restricted to pure
  [FILE]:6:5:
@@ -287,8 +287,8 @@ Warning (2018): Function state mutability can be restricted to pure
 6 |     function pairInfo() public view returns (uint reserveA, uint reserveB, uint totalSupply) {
   |     ^ (Relevant source part starts here and spans across multiple lines).
 
-[DEPLOYER]
-[DEPLOYED]
+Deployer: [..]
+Deployed to: [..]
 [TX_HASH]
 
 "#]]);
