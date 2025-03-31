@@ -88,63 +88,75 @@ library ChainlinkTWAP {
     "src/Contract.sol:Contract".to_string()
 }
 
-fn westend_assethub_args() -> Vec<String> {
-    [
-        "--rpc-url".to_string(),
-        network_rpc_key("westend_assethub")
-            .unwrap_or("https://westend-asset-hub-eth-rpc.polkadot.io".to_string()),
-        "--private-key".to_string(),
-        network_private_key("westend_assethub").unwrap_or(
-            "5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133".to_string(),
-        ),
-    ]
-    .to_vec()
+fn westend_assethub_args() -> Option<Vec<String>> {
+    Some(
+        [
+            "--rpc-url".to_string(),
+            network_rpc_key("westend_assethub")?,
+            "--private-key".to_string(),
+            network_private_key("westend_assethub")?,
+        ]
+        .to_vec(),
+    )
 }
 
+// These tests require setting the following environment variables:
+// - `WESTEND_ASSETHUB_RPC_URL`: The RPC endpoint for the Westend Asset Hub, e.g.,
+//  `https://westend-asset-hub-eth-rpc.polkadot.io`.
+// - `WESTEND_ASSETHUB_PRIVATE_KEY`: The private key of the account that will be used to send
+//   requests.
+//
+// Ensure these variables are set before running the tests to enable proper interaction with the
+// Westend AssetHub.
 // tests `forge` create on goerli if correct env vars are set
 forgetest!(can_create_simple_on_westend_assethub, |prj, cmd| {
-    let contract_path = setup_with_simple_remapping(&prj);
-    let output = cmd
-        .arg("create")
-        .arg("--revive")
-        .arg("--legacy")
-        .arg("--broadcast")
-        .args(westend_assethub_args())
-        .arg(contract_path)
-        .assert_success()
-        .get_output()
-        .stdout_lossy();
-    let _address = utils::parse_deployed_address(output.as_str())
-        .unwrap_or_else(|| panic!("Failed to parse deployer {output}"));
+    if let Some(network_args) = westend_assethub_args() {
+        let contract_path = setup_with_simple_remapping(&prj);
+        let output = cmd
+            .arg("create")
+            .arg("--revive")
+            .arg("--legacy")
+            .arg("--broadcast")
+            .args(network_args)
+            .arg(contract_path)
+            .assert_success()
+            .get_output()
+            .stdout_lossy();
+        let _address = utils::parse_deployed_address(output.as_str())
+            .unwrap_or_else(|| panic!("Failed to parse deployer {output}"));
+    }
 });
 
 // tests `forge` create on goerli if correct env vars are set
 forgetest!(can_create_oracle_on_westend_assethub, |prj, cmd| {
-    let contract_path = setup_oracle(&prj);
-    let output = cmd
-        .arg("create")
-        .arg("--revive")
-        .arg("--legacy")
-        .arg("--broadcast")
-        .args(westend_assethub_args())
-        .arg(contract_path)
-        .assert_success()
-        .get_output()
-        .stdout_lossy();
-    let _address = utils::parse_deployed_address(output.as_str())
-        .unwrap_or_else(|| panic!("Failed to parse deployer {output}"));
+    if let Some(network_args) = westend_assethub_args() {
+        let contract_path = setup_oracle(&prj);
+        let output = cmd
+            .arg("create")
+            .arg("--revive")
+            .arg("--legacy")
+            .arg("--broadcast")
+            .args(network_args)
+            .arg(contract_path)
+            .assert_success()
+            .get_output()
+            .stdout_lossy();
+        let _address = utils::parse_deployed_address(output.as_str())
+            .unwrap_or_else(|| panic!("Failed to parse deployer {output}"));
+    }
 });
 
 // tests that we can deploy with constructor args
 forgetest_async!(can_create_with_constructor_args_on_westend_assethub, |prj, cmd| {
-    foundry_test_utils::util::initialize(prj.root());
+    if let Some(network_args) = westend_assethub_args() {
+        foundry_test_utils::util::initialize(prj.root());
 
-    // explicitly byte code hash for consistent checks
-    prj.update_config(|c| c.bytecode_hash = BytecodeHash::None);
+        // explicitly byte code hash for consistent checks
+        prj.update_config(|c| c.bytecode_hash = BytecodeHash::None);
 
-    prj.add_source(
-        "ConstructorContract",
-        r#"
+        prj.add_source(
+            "ConstructorContract",
+            r#"
 contract ConstructorContract {
     string public name;
 
@@ -153,19 +165,19 @@ contract ConstructorContract {
     }
 }
 "#,
-    )
-    .unwrap();
+        )
+        .unwrap();
 
-    cmd.forge_fuse()
-        .arg("create")
-        .arg("--revive")
-        .arg("--legacy")
-        .arg("--broadcast")
-        .arg("./src/ConstructorContract.sol:ConstructorContract")
-        .args(westend_assethub_args())
-        .args(["--constructor-args", "My Constructor"])
-        .assert_success()
-        .stdout_eq(str![[r#"
+        cmd.forge_fuse()
+            .arg("create")
+            .arg("--revive")
+            .arg("--legacy")
+            .arg("--broadcast")
+            .arg("./src/ConstructorContract.sol:ConstructorContract")
+            .args(&network_args)
+            .args(["--constructor-args", "My Constructor"])
+            .assert_success()
+            .stdout_eq(str![[r#"
 [COMPILING_FILES] with [REVIVE_VERSION]
 [REVIVE_VERSION] [ELAPSED]
 Compiler run successful!
@@ -175,9 +187,9 @@ Deployed to: [..]
 
 "#]]);
 
-    prj.add_source(
-        "TupleArrayConstructorContract",
-        r#"
+        prj.add_source(
+            "TupleArrayConstructorContract",
+            r#"
 struct Point {
     uint256 x;
     uint256 y;
@@ -187,19 +199,19 @@ contract TupleArrayConstructorContract {
     constructor(Point[] memory _points) {}
 }
 "#,
-    )
-    .unwrap();
+        )
+        .unwrap();
 
-    cmd.forge_fuse()
-        .arg("create")
-        .arg("--revive")
-        .arg("--legacy")
-        .arg("--broadcast")
-        .arg("./src/TupleArrayConstructorContract.sol:TupleArrayConstructorContract")
-        .args(westend_assethub_args())
-        .args(["--constructor-args", "[(1,2), (2,3), (3,4)]"])
-        .assert()
-        .stdout_eq(str![[r#"
+        cmd.forge_fuse()
+            .arg("create")
+            .arg("--revive")
+            .arg("--legacy")
+            .arg("--broadcast")
+            .arg("./src/TupleArrayConstructorContract.sol:TupleArrayConstructorContract")
+            .args(network_args)
+            .args(["--constructor-args", "[(1,2), (2,3), (3,4)]"])
+            .assert()
+            .stdout_eq(str![[r#"
 [COMPILING_FILES] with [REVIVE_VERSION]
 [REVIVE_VERSION] [ELAPSED]
 Compiler run successful!
@@ -208,18 +220,20 @@ Deployed to: [..]
 [TX_HASH]
 
 "#]]);
+    }
 });
 
 // <https://github.com/foundry-rs/foundry/issues/6332>
 forgetest_async!(can_create_and_call_on_westend_assethub, |prj, cmd| {
-    foundry_test_utils::util::initialize(prj.root());
+    if let Some(network_args) = westend_assethub_args() {
+        foundry_test_utils::util::initialize(prj.root());
 
-    // explicitly byte code hash for consistent checks
-    prj.update_config(|c| c.bytecode_hash = BytecodeHash::None);
+        // explicitly byte code hash for consistent checks
+        prj.update_config(|c| c.bytecode_hash = BytecodeHash::None);
 
-    prj.add_source(
-        "UniswapV2Swap",
-        r#"
+        prj.add_source(
+            "UniswapV2Swap",
+            r#"
 contract UniswapV2Swap {
 
     function pairInfo() public view returns (uint reserveA, uint reserveB, uint totalSupply) {
@@ -228,17 +242,17 @@ contract UniswapV2Swap {
 
 }
 "#,
-    )
-    .unwrap();
-    cmd.forge_fuse()
-        .arg("create")
-        .arg("--revive")
-        .arg("--legacy")
-        .arg("--broadcast")
-        .arg("./src/UniswapV2Swap.sol:UniswapV2Swap")
-        .args(westend_assethub_args())
-        .assert_success()
-        .stdout_eq(str![[r#"
+        )
+        .unwrap();
+        cmd.forge_fuse()
+            .arg("create")
+            .arg("--revive")
+            .arg("--legacy")
+            .arg("--broadcast")
+            .arg("./src/UniswapV2Swap.sol:UniswapV2Swap")
+            .args(network_args)
+            .assert_success()
+            .stdout_eq(str![[r#"
 [COMPILING_FILES] with [REVIVE_VERSION]
 [REVIVE_VERSION] [ELAPSED]
 Compiler run successful with warnings:
@@ -253,4 +267,5 @@ Deployed to: [..]
 [TX_HASH]
 
 "#]]);
+    }
 });
