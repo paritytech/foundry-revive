@@ -1021,6 +1021,8 @@ fn test_redactions() -> snapbox::Redactions {
                 "[ESTIMATED_AMOUNT_REQUIRED]",
                 r"Estimated amount required:\s*(\d+(\.\d+)?)\s*[A-Z]{3}",
             ),
+            ("[DEPLOYER]", r"Deployer: 0x[0-9A-Fa-f]{40}"),
+            ("[DEPLOYED]", r"Deployed to: 0x[0-9A-Fa-f]{40}"),
         ];
         for (placeholder, re) in redactions {
             r.insert(placeholder, Regex::new(re).expect(re)).expect(re);
