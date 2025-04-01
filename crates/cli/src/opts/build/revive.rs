@@ -23,14 +23,6 @@ pub struct ReviveOpts {
     )]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub revive_path: Option<PathBuf>,
-
-    #[clap(
-        help = "Solc compiler path to use when compiling with revive",
-        long = "revive-solc-path",
-        value_name = "REVIVE_SOLC_PATH"
-    )]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub solc_path: Option<PathBuf>,
 }
 
 impl ReviveOpts {
@@ -44,9 +36,6 @@ impl ReviveOpts {
         }
 
         set_if_some!(self.revive_compile, revive.revive_compile);
-        set_if_some!(self.revive_path.clone(), revive.revive_path);
-        set_if_some!(self.solc_path.clone(), revive.solc_path);
-
         revive
     }
 }
