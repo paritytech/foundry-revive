@@ -110,6 +110,7 @@ jobs:
           chmod +x resolc-universal-apple-darwin
           xattr -d com.apple.quarantine resolc-universal-apple-darwin || true
           sudo mv resolc-universal-apple-darwin /usr/local/bin/resolc
+          brew unlink libusb
           curl -o libusb.rb https://raw.githubusercontent.com/Homebrew/homebrew-core/ba149fa20c9b94b39e6e2198d086d512997860fe/Formula/lib/libusb.rb
           brew install ./libusb.rb
       - name: Check Revive Version
