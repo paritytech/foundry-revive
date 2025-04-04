@@ -16,7 +16,8 @@ pub struct ReviveOpts {
 
     /// Specify the revive version, or a path to a local resolc, to build with.
     ///
-    /// Valid values are in the format `x.y.z`, `resolc:x.y.z` or `path/to/resolc`.
+    /// Valid values follow the SemVer format `x.y.z-dev.n`, `revive:x.y.z-dev.n` or
+    /// `path/to/resolc`.
     #[arg(
         long = "use-revive",
         help = "Use revive version",
