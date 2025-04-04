@@ -1,4 +1,4 @@
-//! Contains tests for checking configuration for zksync
+//! Contains tests for checking configuration for revive
 
 use foundry_test_utils::util::OTHER_SOLC_VERSION;
 
