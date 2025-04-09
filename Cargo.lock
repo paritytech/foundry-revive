@@ -3894,7 +3894,6 @@ dependencies = [
 [[package]]
 name = "foundry-compilers"
 version = "0.13.3"
-source = "git+https://github.com/paritytech/foundry-revive-compiler.git?branch=revive#9e9e210355815149c97db6b15be12b891a7489b2"
 dependencies = [
  "alloy-json-abi",
  "alloy-primitives",
@@ -3930,7 +3929,6 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-artifacts"
 version = "0.13.3"
-source = "git+https://github.com/paritytech/foundry-revive-compiler.git?branch=revive#9e9e210355815149c97db6b15be12b891a7489b2"
 dependencies = [
  "foundry-compilers-artifacts-resolc",
  "foundry-compilers-artifacts-solc",
@@ -3940,7 +3938,6 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-artifacts-resolc"
 version = "0.13.3"
-source = "git+https://github.com/paritytech/foundry-revive-compiler.git?branch=revive#9e9e210355815149c97db6b15be12b891a7489b2"
 dependencies = [
  "alloy-json-abi",
  "alloy-primitives",
@@ -3961,7 +3958,6 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-artifacts-solc"
 version = "0.13.3"
-source = "git+https://github.com/paritytech/foundry-revive-compiler.git?branch=revive#9e9e210355815149c97db6b15be12b891a7489b2"
 dependencies = [
  "alloy-json-abi",
  "alloy-primitives",
@@ -3984,7 +3980,6 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-artifacts-vyper"
 version = "0.13.3"
-source = "git+https://github.com/paritytech/foundry-revive-compiler.git?branch=revive#9e9e210355815149c97db6b15be12b891a7489b2"
 dependencies = [
  "alloy-json-abi",
  "alloy-primitives",
@@ -3998,7 +3993,6 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-core"
 version = "0.13.3"
-source = "git+https://github.com/paritytech/foundry-revive-compiler.git?branch=revive#9e9e210355815149c97db6b15be12b891a7489b2"
 dependencies = [
  "alloy-primitives",
  "cfg-if",
