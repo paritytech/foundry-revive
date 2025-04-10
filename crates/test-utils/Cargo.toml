@@ -20,7 +20,6 @@ foundry-compilers = { workspace = true, features = ["project-util"] }
 foundry-config.workspace = true
 
 alloy-rpc-client.workspace = true
-
 alloy-primitives.workspace = true
 alloy-provider.workspace = true
 

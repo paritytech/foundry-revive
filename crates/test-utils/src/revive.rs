@@ -125,6 +125,20 @@ impl RpcProxyProcess {
     }
 }
 
+/// `PolkadotHubNode` combines a `substrate-node` with an Ethereum RPC proxy to enable
+/// Ethereum-compatible transactions in CI tests.
+///
+/// Before using it, make sure both `substrate-node` and the Ethereum RPC proxy are installed:
+///
+/// ```bash
+/// git clone https://github.com/paritytech/polkadot-sdk
+/// cd polkadot-sdk
+/// cargo build --release --bin substrate-node
+///
+/// cargo install pallet-revive-eth-rpc
+/// ```
+///
+/// Ensure that both binaries are available in your system's PATH and are version-compatible.
 #[allow(dead_code)]
 pub struct PolkadotHubNode {
     node: ContractsNodeProcess,
