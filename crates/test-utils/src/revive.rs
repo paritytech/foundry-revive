@@ -2,6 +2,7 @@ use alloy_rpc_client::ClientBuilder;
 use eyre::Result;
 use std::{process, thread::sleep, time::Duration};
 use subxt::{OnlineClient, PolkadotConfig};
+use tempfile::TempDir;
 
 const NODE_BINARY: &str = "substrate-node";
 const RPC_PROXY_BINARY: &str = "eth-rpc";
@@ -29,7 +30,7 @@ impl Drop for ContractsNodeProcess {
 
 impl ContractsNodeProcess {
     async fn start() -> Result<Self> {
-        let tmp_dir = tempfile::Builder::new().prefix("cargo-contract.cli.test.node").tempdir()?;
+        let tmp_dir = TempDir::with_prefix("cargo-contract.cli.test.node")?;
 
         let mut node = process::Command::new(NODE_BINARY)
             .env("RUST_LOG", "error")
