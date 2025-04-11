@@ -33,7 +33,7 @@ use foundry_compilers::{
         Compiler,
     },
     error::SolcError,
-    multi::{MultiCompilerParsedSource, MultiCompilerRestrictions},
+    multi::{MultiCompilerParsedSource, MultiCompilerRestrictions, SoliditySettings},
     resolc::Resolc,
     solc::{CliSettings, SolcSettings},
     ArtifactOutput, ConfigurableArtifacts, Graph, Project, ProjectPathsConfig,
@@ -1286,7 +1286,7 @@ impl Config {
 
     /// Returns configured [MultiCompilerSettings].
     pub fn compiler_settings(&self) -> Result<MultiCompilerSettings, SolcError> {
-        Ok(MultiCompilerSettings { solc: self.solc_settings()?, vyper: self.vyper_settings()? })
+        Ok(MultiCompilerSettings { solc: SoliditySettings::Solc(self.solc_settings()?), vyper: self.vyper_settings()? })
     }
 
     /// Returns all configured remappings.

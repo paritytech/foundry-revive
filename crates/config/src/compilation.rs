@@ -1,7 +1,7 @@
 use crate::{filter::GlobMatcher, serde_helpers};
 use foundry_compilers::{
     artifacts::{BytecodeHash, EvmVersion},
-    multi::{MultiCompilerRestrictions, MultiCompilerSettings},
+    multi::{MultiCompilerRestrictions, MultiCompilerSettings, SoliditySettings},
     settings::VyperRestrictions,
     solc::{Restriction, SolcRestrictions},
     RestrictionsWithVersion,
@@ -26,32 +26,60 @@ impl SettingsOverrides {
     /// Applies the overrides to the given settings.
     pub fn apply(&self, settings: &mut MultiCompilerSettings) {
         if let Some(via_ir) = self.via_ir {
-            settings.solc.via_ir = Some(via_ir);
+            match &mut settings.solc {
+                SoliditySettings::Solc(solc) => solc.via_ir = Some(via_ir),
+                SoliditySettings::Resolc(resolc) => resolc.via_ir = Some(via_ir),
+            }
         }
 
         if let Some(evm_version) = self.evm_version {
-            settings.solc.evm_version = Some(evm_version);
+            match &mut settings.solc {
+                SoliditySettings::Solc(solc) => solc.evm_version = Some(evm_version),
+                SoliditySettings::Resolc(resolc) => resolc.evm_version = Some(evm_version),
+            }
             settings.vyper.evm_version = Some(evm_version);
         }
 
         if let Some(enabled) = self.optimizer {
-            settings.solc.optimizer.enabled = Some(enabled);
+            match &mut settings.solc {
+                SoliditySettings::Solc(solc) => solc.optimizer.enabled = Some(enabled),
+                SoliditySettings::Resolc(resolc) => resolc.optimizer.enabled = Some(enabled),
+            }
         }
 
         if let Some(optimizer_runs) = self.optimizer_runs {
-            settings.solc.optimizer.runs = Some(optimizer_runs);
-            // Enable optimizer in optimizer runs set to a higher value than 0.
-            if optimizer_runs > 0 && self.optimizer.is_none() {
-                settings.solc.optimizer.enabled = Some(true);
+            match &mut settings.solc {
+                SoliditySettings::Solc(solc) => { solc.optimizer.runs = Some(optimizer_runs);
+                // Enable optimizer in optimizer runs set to a higher value than 0.
+                if optimizer_runs > 0 && self.optimizer.is_none() {
+                    solc.optimizer.enabled = Some(true);
+                }},
+                SoliditySettings::Resolc(resolc) => { resolc.optimizer.runs = Some(optimizer_runs);
+                    // Enable optimizer in optimizer runs set to a higher value than 0.
+                    if optimizer_runs > 0 && self.optimizer.is_none() {
+                        resolc.optimizer.enabled = Some(true);
+                    }},
             }
+ 
         }
+        
 
         if let Some(bytecode_hash) = self.bytecode_hash {
-            if let Some(metadata) = settings.solc.metadata.as_mut() {
-                metadata.bytecode_hash = Some(bytecode_hash);
-            } else {
-                settings.solc.metadata = Some(bytecode_hash.into());
+            match &mut settings.solc {
+                SoliditySettings::Solc(solc) => {if let Some(metadata) = solc.metadata.as_mut() {
+                    metadata.bytecode_hash = Some(bytecode_hash);
+                } else {
+                    solc.metadata = Some(bytecode_hash.into());
+                }},
+                SoliditySettings::Resolc(resolc) => {if let Some(metadata) = resolc.metadata.as_mut() {
+                    metadata.bytecode_hash = Some(bytecode_hash);
+                } else {
+                    resolc.metadata = Some(bytecode_hash.into());
+                }}
             }
+
+
+            
         }
     }
 }
