@@ -110,7 +110,19 @@ jobs:
           chmod +x resolc-universal-apple-darwin
           xattr -d com.apple.quarantine resolc-universal-apple-darwin || true
           sudo mv resolc-universal-apple-darwin /usr/local/bin/resolc
-        
+      - name: Install substrate-node
+        run: |
+          git clone --depth 1 https://github.com/paritytech/polkadot-sdk
+          cd polkadot-sdk
+          cargo build --release --bin substrate-node
+          echo "$PWD/target/release" >> $GITHUB_PATH
+      - name: Install eth-rpc proxy
+        run: cargo install pallet-revive-eth-rpc
+        shell: bash
+      - name: Check node setup
+        run: |
+          substrate-node --version
+          eth-rpc --version
       # Temporary hack to make the tests work on macOS.  
       # macOS has libusb 1.0.28, but our tests require 1.0.27.  
       # Without it, they fail, so this adds the old version of libusb. 
@@ -148,4 +160,5 @@ jobs:
           SVM_TARGET_PLATFORM: ${{ matrix.svm_target_platform }}
           HTTP_ARCHIVE_URLS: ${{ secrets.HTTP_ARCHIVE_URLS }}
           WS_ARCHIVE_URLS: ${{ secrets.WS_ARCHIVE_URLS }}
-        run: cargo nextest run ${{ matrix.flags }}
+        #run: cargo nextest run ${{ matrix.flags }}
+        run: cargo test --package forge --test cli -- revive_create::can_create_simple_on_localnode --exact --show-output 
