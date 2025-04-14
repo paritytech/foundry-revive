@@ -124,7 +124,9 @@ jobs:
           brew install protobuf
 
       - name: Install wasm32 target
-        run: rustup target add wasm32-unknown-unknown
+        run: |
+          rustup component add rust-src
+          rustup target add wasm32-unknown-unknown
       - name: Install substrate-node
         run: |
           git clone --depth 1 https://github.com/paritytech/polkadot-sdk
