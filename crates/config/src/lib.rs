@@ -1286,7 +1286,14 @@ impl Config {
 
     /// Returns configured [MultiCompilerSettings].
     pub fn compiler_settings(&self) -> Result<MultiCompilerSettings, SolcError> {
-        Ok(MultiCompilerSettings { solc: SoliditySettings::Solc(self.solc_settings()?), vyper: self.vyper_settings()? })
+        if self.revive.revive_compile {
+            Ok(MultiCompilerSettings { solc: SoliditySettings::Solc(self.solc_settings()?), vyper: self.vyper_settings()? })
+
+//            Ok(MultiCompilerSettings { solc: SoliditySettings::Resolc(self.solc_settings()?), vyper: self.vyper_settings()? })
+        }
+        else {
+            Ok(MultiCompilerSettings { solc: SoliditySettings::Solc(self.solc_settings()?), vyper: self.vyper_settings()? })
+        }
     }
 
     /// Returns all configured remappings.
