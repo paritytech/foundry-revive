@@ -18,9 +18,7 @@ use foundry_common::compile::ProjectCompiler;
 use foundry_compilers::{
     artifacts::{
         sourcemap::SourceMap, CompactBytecode, CompactDeployedBytecode, SolcLanguage, Source,
-    },
-    compilers::multi::MultiCompiler,
-    Artifact, ArtifactId, Project, ProjectCompileOutput, ProjectPathsConfig,
+    }, compilers::multi::MultiCompiler, multi::SoliditySettings, Artifact, ArtifactId, Project, ProjectCompileOutput, ProjectPathsConfig
 };
 use foundry_config::Config;
 use rayon::prelude::*;
@@ -149,28 +147,35 @@ impl CoverageArgs {
                  See more: https://github.com/foundry-rs/foundry/issues/3357"
             )?;
 
+            let settings = match &mut project.settings.solc {
+                SoliditySettings::Solc(solc) => solc,
+                SoliditySettings::Resolc(resolc) => resolc,
+            };
             // Enable viaIR with minimum optimization: https://github.com/ethereum/solidity/issues/12533#issuecomment-1013073350
             // And also in new releases of Solidity: https://github.com/ethereum/solidity/issues/13972#issuecomment-1628632202
-            project.settings.solc.settings =
-                project.settings.solc.settings.with_via_ir_minimum_optimization();
+            settings.settings =
+                settings.settings.clone().with_via_ir_minimum_optimization();
 
             // Sanitize settings for solc 0.8.4 if version cannot be detected: https://github.com/foundry-rs/foundry/issues/9322
             // But keep the EVM version: https://github.com/ethereum/solidity/issues/15775
-            let evm_version = project.settings.solc.evm_version;
+            let evm_version = settings.evm_version;
             let version = config.solc_version().unwrap_or_else(|| Version::new(0, 8, 4));
-            project.settings.solc.settings.sanitize(&version, SolcLanguage::Solidity);
-            project.settings.solc.evm_version = evm_version;
+            settings.settings.sanitize(&version, SolcLanguage::Solidity);
+            settings.evm_version = evm_version;
         } else {
             sh_warn!(
                 "optimizer settings and `viaIR` have been disabled for accurate coverage reports.\n\
                  If you encounter \"stack too deep\" errors, consider using `--ir-minimum` which \
                  enables `viaIR` with minimum optimization resolving most of the errors"
             )?;
-
-            project.settings.solc.optimizer.disable();
-            project.settings.solc.optimizer.runs = None;
-            project.settings.solc.optimizer.details = None;
-            project.settings.solc.via_ir = None;
+            let settings = match &mut project.settings.solc {
+                SoliditySettings::Solc(solc) => solc,
+                SoliditySettings::Resolc(resolc) => resolc,
+            };
+            settings.settings.optimizer.disable();
+            settings.settings.optimizer.runs = None;
+            settings.settings.optimizer.details = None;
+            settings.settings.via_ir = None;
         }
 
         let output = ProjectCompiler::default()

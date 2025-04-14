@@ -3,14 +3,10 @@ use crate::provider::VerificationContext;
 use eyre::{Context, Result};
 use foundry_block_explorers::verify::CodeFormat;
 use foundry_compilers::{
-    artifacts::{BytecodeHash, Source, Sources},
-    buildinfo::RawBuildInfo,
-    compilers::{
+    artifacts::{BytecodeHash, Source, Sources}, buildinfo::RawBuildInfo, compilers::{
         solc::{SolcCompiler, SolcLanguage, SolcVersionedInput},
         Compiler, CompilerInput,
-    },
-    solc::Solc,
-    AggregatedCompilerOutput,
+    }, multi::SoliditySettings, solc::Solc, AggregatedCompilerOutput
 };
 use semver::{BuildMetadata, Version};
 use std::path::Path;
@@ -23,7 +19,10 @@ impl EtherscanSourceProvider for EtherscanFlattenedSource {
         args: &VerifyArgs,
         context: &VerificationContext,
     ) -> Result<(String, String, CodeFormat)> {
-        let metadata = context.project.settings.solc.metadata.as_ref();
+        let metadata = match &context.project.settings.solc{
+            SoliditySettings::Solc(solc) => solc.metadata.as_ref(),
+            SoliditySettings::Resolc(resolc) => resolc.metadata.as_ref(),
+        };
         let bch = metadata.and_then(|m| m.bytecode_hash).unwrap_or_default();
 
         eyre::ensure!(
