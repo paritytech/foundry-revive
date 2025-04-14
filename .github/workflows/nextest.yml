@@ -55,8 +55,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
-          components: 
-          target: ${{ matrix.target }}
+          target: ${{ matrix.target }}, wasm32-unknown-unknown
+          components: rust-src
       - uses: taiki-e/install-action@nextest
 
       # External tests dependencies
