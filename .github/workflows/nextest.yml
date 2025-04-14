@@ -18,6 +18,8 @@ env:
   RUST_BACKTRACE: full
   REVIVE_RELEASE_VERSION: v0.1.0-dev.12
   DLRP_API_KEY: ${{ secrets.DLRP_API_KEY }}
+  ETH_RPC_VERSION: 0.4.0
+  SUBSTRATE_NODE_COMMIT_SHA: 6ce6110199a 
 
 jobs:
   matrices:
@@ -111,13 +113,13 @@ jobs:
           chmod +x resolc-universal-apple-darwin
           xattr -d com.apple.quarantine resolc-universal-apple-darwin || true
           sudo mv resolc-universal-apple-darwin /usr/local/bin/resolc
-      - name: Install system deps (Linux only)
+      - name: Install system deps (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y protobuf-compiler
 
-      - name: Install system deps (macOS only)
+      - name: Install system deps (macOS)
         if: runner.os == 'macOS'
         run: |
           brew update
@@ -127,15 +129,37 @@ jobs:
       #   run: |
       #     rustup component add rust-src
       #     rustup target add wasm32-unknown-unknown
-      - name: Install substrate-node
+      
+      - name: Cache substrate-node binary
+        id: cache-substrate
+        uses: actions/cache@v3
+        with:
+          path: polkadot-sdk/target/release/substrate-node
+          key: substrate-node-${{ runner.os }}-${{ env.SUBSTRATE_NODE_COMMIT_SHA }}
+
+      - name: Build substrate-node (if not cached)
+        if: steps.cache-substrate.outputs.cache-hit != 'true'
         run: |
           git clone --depth 1 https://github.com/paritytech/polkadot-sdk
           cd polkadot-sdk
+          git checkout ${{ env.SUBSTRATE_NODE_COMMIT_SHA }}
           cargo build --release --bin substrate-node
-          echo "$PWD/target/release" >> $GITHUB_PATH
-      - name: Install eth-rpc proxy
-        run: cargo install pallet-revive-eth-rpc
+
+      - name: Add substrate-node to $PATH
+        run: echo "${{github.workspace}}/polkadot-sdk/target/release" >> $GITHUB_PATH
+
+      - name: Cache eth-rpc binary
+        id: cache-ethrpc
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/eth-rpc
+          key: eth-rpc-${{ runner.os }}-${{ env.ETH_RPC_VERSION }}
+
+      - name: Install eth-rpc proxy (if not cached)
+        if: steps.cache-ethrpc.outputs.cache-hit != 'true'
+        run: cargo install pallet-revive-eth-rpc --version ${{env.ETH_RPC_VERSION}}
         shell: bash
+
       - name: Check node setup
         run: |
           substrate-node --version
