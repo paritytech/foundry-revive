@@ -110,6 +110,20 @@ jobs:
           chmod +x resolc-universal-apple-darwin
           xattr -d com.apple.quarantine resolc-universal-apple-darwin || true
           sudo mv resolc-universal-apple-darwin /usr/local/bin/resolc
+      - name: Install system deps (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+
+      - name: Install system deps (macOS only)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install protobuf
+
+      - name: Install wasm32 target
+        run: rustup target add wasm32-unknown-unknown
       - name: Install substrate-node
         run: |
           git clone --depth 1 https://github.com/paritytech/polkadot-sdk
