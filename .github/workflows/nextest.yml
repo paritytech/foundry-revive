@@ -19,7 +19,7 @@ env:
   REVIVE_RELEASE_VERSION: v0.1.0-dev.12
   DLRP_API_KEY: ${{ secrets.DLRP_API_KEY }}
   ETH_RPC_VERSION: 0.4.0
-  SUBSTRATE_NODE_COMMIT_SHA: 6ce6110199a 
+  SUBSTRATE_NODE_COMMIT_SHA: 6ce6110199a
 
 jobs:
   matrices:
@@ -159,9 +159,9 @@ jobs:
         run: |
           substrate-node --version
           eth-rpc --version
-      # Temporary hack to make the tests work on macOS.  
-      # macOS has libusb 1.0.28, but our tests require 1.0.27.  
-      # Without it, they fail, so this adds the old version of libusb. 
+      # Temporary hack to make the tests work on macOS.
+      # macOS has libusb 1.0.28, but our tests require 1.0.27.
+      # Without it, they fail, so this adds the old version of libusb.
       - name: Install libusb 1.0.27 (macOS)
         if: contains(matrix.runner_label, 'macos')
         run: |
@@ -196,5 +196,4 @@ jobs:
           SVM_TARGET_PLATFORM: ${{ matrix.svm_target_platform }}
           HTTP_ARCHIVE_URLS: ${{ secrets.HTTP_ARCHIVE_URLS }}
           WS_ARCHIVE_URLS: ${{ secrets.WS_ARCHIVE_URLS }}
-        #run: cargo nextest run ${{ matrix.flags }}
-        run: cargo test --package forge --test cli -- revive_create::can_create_simple_on_localnode --exact --show-output 
+        run: cargo nextest run ${{ matrix.flags }}
