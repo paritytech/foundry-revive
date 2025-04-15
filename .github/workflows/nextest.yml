@@ -125,11 +125,6 @@ jobs:
           brew update
           brew install protobuf
 
-      # - name: Install wasm32 target
-      #   run: |
-      #     rustup component add rust-src
-      #     rustup target add wasm32-unknown-unknown
-      
       - name: Cache substrate-node binary
         id: cache-substrate
         uses: actions/cache@v3
