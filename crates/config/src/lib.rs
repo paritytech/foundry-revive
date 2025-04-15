@@ -126,7 +126,7 @@ mod compilation;
 pub use compilation::{CompilationRestrictions, SettingsOverrides};
 
 pub mod revive;
-use revive::ReviveConfig;
+use revive::{ReviveConfig, ReviveReq};
 
 /// Foundry configuration
 ///
@@ -1184,9 +1184,9 @@ impl Config {
 
     /// Whether caching should be enabled for the given chain id
     pub fn enable_caching(&self, endpoint: &str, chain_id: impl Into<u64>) -> bool {
-        !self.no_storage_caching &&
-            self.rpc_storage_caching.enable_for_chain_id(chain_id.into()) &&
-            self.rpc_storage_caching.enable_for_endpoint(endpoint)
+        !self.no_storage_caching
+            && self.rpc_storage_caching.enable_for_chain_id(chain_id.into())
+            && self.rpc_storage_caching.enable_for_endpoint(endpoint)
     }
 
     /// Returns the `ProjectPathsConfig` sub set of the config.
@@ -1255,20 +1255,37 @@ impl Config {
 
     /// Returns the Revive [Resolc] compiler.
     pub fn revive_compiler(&self) -> Result<Resolc, SolcError> {
+        let solc_compiler = self.solc_compiler()?;
         match &self.revive.revive {
-            Some(SolcReq::Local(path)) => {
+            Some(ReviveReq::Local(path)) => {
                 if !path.is_file() {
                     return Err(SolcError::msg(format!(
                         "`revive` {} does not exist",
                         path.display()
                     )));
                 }
-                Resolc::new(path, self.solc_compiler()?)
+                Resolc::new(path, solc_compiler)
             }
-            Some(_) => {
-                Err(SolcError::msg("`revive` selecting by versions is not supported".to_string()))
+
+            Some(ReviveReq::Version(v)) => {
+                if let resolc @ Ok(_) = Resolc::find_installed(v, solc_compiler.clone()) {
+                    resolc
+                } else {
+                    if self.offline {
+                        return Err(SolcError::msg(format!(
+                            "can't install missing resolc with version requirement {v} in offline mode"
+                        )));
+                    }
+                    Resolc::install_version(v, solc_compiler)
+                }
             }
-            None => Resolc::new("resolc", self.solc_compiler()?),
+            None => {
+                if self.offline {
+                    Resolc::new("resolc", solc_compiler)
+                } else {
+                    Resolc::find_or_install(solc_compiler)
+                }
+            }
         }
     }
 
@@ -2087,8 +2104,8 @@ impl Config {
             let file_name = block.file_name();
             let filepath = if file_type.is_dir() {
                 block.path().join("storage.json")
-            } else if file_type.is_file() &&
-                file_name.to_string_lossy().chars().all(char::is_numeric)
+            } else if file_type.is_file()
+                && file_name.to_string_lossy().chars().all(char::is_numeric)
             {
                 block.path()
             } else {
