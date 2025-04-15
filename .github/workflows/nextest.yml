@@ -135,9 +135,11 @@ jobs:
       - name: Build substrate-node (if not cached)
         if: steps.cache-substrate.outputs.cache-hit != 'true' && !contains(matrix.runner_label, 'windows')
         run: |
-          git clone --depth 1 https://github.com/paritytech/polkadot-sdk
+          git init polkadot-sdk
           cd polkadot-sdk
-          git checkout ${{ env.SUBSTRATE_NODE_COMMIT_SHA }}
+          git remote add origin https://github.com/paritytech/polkadot-sdk
+          git fetch --depth 1 origin ${{ env.SUBSTRATE_NODE_COMMIT_SHA }}
+          git checkout FETCH_HEAD
           cargo build --release --bin substrate-node
 
       - name: Add substrate-node to $PATH
