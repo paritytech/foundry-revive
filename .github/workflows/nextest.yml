@@ -129,13 +129,15 @@ jobs:
           key: eth-rpc-${{ matrix.runner_label }}-${{ env.ETH_RPC_VERSION }}
 
       - name: Install system deps (Linux)
-        if: (steps.cache-substrate.outputs.cache-hit != 'true' || steps.cache-ethrpc.outputs.cache-hit != 'true') && contains(matrix.runner_label, 'ubuntu')
+        if: (steps.cache-substrate.outputs.cache-hit != 'true' || steps.cache-ethrpc.outputs.cache-hit != 'true')
+              && contains(matrix.runner_label, 'ubuntu')
         run: |
           sudo apt-get update
           sudo apt-get install -y protobuf-compiler
 
       - name: Install system deps (macOS)
-        if: (steps.cache-substrate.outputs.cache-hit != 'true' || steps.cache-ethrpc.outputs.cache-hit != 'true') && contains(matrix.runner_label, 'macos')
+        if: (steps.cache-substrate.outputs.cache-hit != 'true' || steps.cache-ethrpc.outputs.cache-hit != 'true')
+              && contains(matrix.runner_label, 'macos')
         run: |
           brew update
           brew install protobuf
