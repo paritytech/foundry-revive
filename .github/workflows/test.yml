@@ -126,6 +126,7 @@ jobs:
       - rustfmt
       - forge-fmt
       - crate-checks
+      - deny
     timeout-minutes: 60
     steps:
       - name: Decide whether the needed jobs succeeded or failed
