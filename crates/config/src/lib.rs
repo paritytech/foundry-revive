@@ -126,7 +126,7 @@ mod compilation;
 pub use compilation::{CompilationRestrictions, SettingsOverrides};
 
 pub mod revive;
-use revive::ReviveConfig;
+use revive::{ReviveConfig, ReviveReq};
 
 /// Foundry configuration
 ///
@@ -1255,20 +1255,37 @@ impl Config {
 
     /// Returns the Revive [Resolc] compiler.
     pub fn revive_compiler(&self) -> Result<Resolc, SolcError> {
+        let solc_compiler = self.solc_compiler()?;
         match &self.revive.revive {
-            Some(SolcReq::Local(path)) => {
+            Some(ReviveReq::Local(path)) => {
                 if !path.is_file() {
                     return Err(SolcError::msg(format!(
                         "`revive` {} does not exist",
                         path.display()
                     )));
                 }
-                Resolc::new(path, self.solc_compiler()?)
+                Resolc::new(path, solc_compiler)
             }
-            Some(_) => {
-                Err(SolcError::msg("`revive` selecting by versions is not supported".to_string()))
+
+            Some(ReviveReq::Version(v)) => {
+                if let resolc @ Ok(_) = Resolc::find_installed(v, solc_compiler.clone()) {
+                    resolc
+                } else {
+                    if self.offline {
+                        return Err(SolcError::msg(format!(
+                            "can't install missing resolc with version requirement {v} in offline mode"
+                        )));
+                    }
+                    Resolc::install_version(v, solc_compiler)
+                }
             }
-            None => Resolc::new("resolc", self.solc_compiler()?),
+            None => {
+                if self.offline {
+                    Resolc::new("resolc", solc_compiler)
+                } else {
+                    Resolc::find_or_install(solc_compiler)
+                }
+            }
         }
     }
 

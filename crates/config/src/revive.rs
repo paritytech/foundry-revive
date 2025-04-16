@@ -1,7 +1,10 @@
+use std::path::PathBuf;
+
 use foundry_compilers::{multi::MultiCompilerLanguage, ProjectPathsConfig};
+use semver::VersionReq;
 use serde::{Deserialize, Serialize};
 
-use crate::{Config, SolcReq};
+use crate::Config;
 
 /// Filename for Revive cache
 pub const REVIVE_SOLIDITY_FILES_CACHE_FILENAME: &str = "revive-solidity-files-cache.json";
@@ -11,6 +14,28 @@ pub const REVIVE_ARTIFACTS_DIR: &str = "revive-out";
 
 pub const CONTRACT_SIZE_LIMIT: usize = 250_000;
 
+/// Variants for selecting the [`Revive`] instance
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ReviveReq {
+    /// Requires a specific revive version, that's either already installed (via `rvm`) or will be
+    /// auto installed (via `rvm`)
+    Version(VersionReq),
+    /// Path to an existing local solc installation
+    Local(PathBuf),
+}
+
+impl<T: AsRef<str>> From<T> for ReviveReq {
+    fn from(s: T) -> Self {
+        let s = s.as_ref();
+        if let Ok(v) = VersionReq::parse(s) {
+            Self::Version(v)
+        } else {
+            Self::Local(s.into())
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Default)]
 /// Revive Config
 pub struct ReviveConfig {
@@ -18,7 +43,7 @@ pub struct ReviveConfig {
     pub revive_compile: bool,
 
     /// The revive compiler
-    pub revive: Option<SolcReq>,
+    pub revive: Option<ReviveReq>,
 }
 
 impl ReviveConfig {
