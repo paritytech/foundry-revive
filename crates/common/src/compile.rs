@@ -64,6 +64,12 @@ pub struct ProjectCompiler {
 
     /// Whether to compile with dynamic linking tests and scripts.
     dynamic_test_linking: bool,
+
+    /// Contracts runtime size limit
+    runtime_size_limit: Option<usize>,
+
+    /// Contracts initcode size limit
+    initcode_size_limit: Option<usize>,
 }
 
 impl Default for ProjectCompiler {
@@ -87,6 +93,8 @@ impl ProjectCompiler {
             ignore_eip_3860: false,
             files: Vec::new(),
             dynamic_test_linking: false,
+            runtime_size_limit: None,
+            initcode_size_limit: None,
         }
     }
 
@@ -144,6 +152,13 @@ impl ProjectCompiler {
     #[inline]
     pub fn dynamic_test_linking(mut self, preprocess: bool) -> Self {
         self.dynamic_test_linking = preprocess;
+    }
+
+    /// Sets contracts size limit.
+    #[inline]
+    pub fn size_limits(mut self, runtime_size_limit: usize, initcode_size_limit: usize) -> Self {
+        self.runtime_size_limit = Some(runtime_size_limit);
+        self.initcode_size_limit = Some(initcode_size_limit);
         self
     }
 
@@ -273,8 +288,12 @@ impl ProjectCompiler {
                 let _ = sh_println!();
             }
 
-            let mut size_report =
-                SizeReport { report_kind: report_kind(), contracts: BTreeMap::new() };
+            let mut size_report = SizeReport::new(
+                report_kind(),
+                BTreeMap::new(),
+                self.runtime_size_limit.unwrap_or(CONTRACT_RUNTIME_SIZE_LIMIT),
+                self.initcode_size_limit.unwrap_or(CONTRACT_INITCODE_SIZE_LIMIT),
+            );
 
             let mut artifacts: BTreeMap<String, Vec<_>> = BTreeMap::new();
             for (id, artifact) in output.artifact_ids().filter(|(id, _)| {
@@ -294,8 +313,8 @@ impl ProjectCompiler {
                         .as_ref()
                         .map(|abi| {
                             abi.functions().any(|f| {
-                                f.test_function_kind().is_known() ||
-                                    matches!(f.name.as_str(), "IS_TEST" | "IS_SCRIPT")
+                                f.test_function_kind().is_known()
+                                    || matches!(f.name.as_str(), "IS_TEST" | "IS_SCRIPT")
                             })
                         })
                         .unwrap_or(false);
@@ -339,15 +358,28 @@ const CONTRACT_RUNTIME_SIZE_LIMIT: usize = 24576;
 // https://eips.ethereum.org/EIPS/eip-3860
 const CONTRACT_INITCODE_SIZE_LIMIT: usize = 49152;
 
+const CONTRACT_SIZE_LIMIT_MARGIN: f64 = 0.73;
 /// Contracts with info about their size
 pub struct SizeReport {
     /// What kind of report to generate.
     report_kind: ReportKind,
     /// `contract name -> info`
     pub contracts: BTreeMap<String, ContractInfo>,
+    /// Runtime size limit
+    runtime_size_limit: usize,
+    /// Initcode size limit
+    initcode_size_limit: usize,
 }
 
 impl SizeReport {
+    pub fn new(
+        report_kind: ReportKind,
+        contracts: BTreeMap<String, ContractInfo>,
+        runtime_size_limit: usize,
+        initcode_size_limit: usize,
+    ) -> Self {
+        Self { report_kind, contracts, runtime_size_limit, initcode_size_limit }
+    }
     /// Returns the maximum runtime code size, excluding dev contracts.
     pub fn max_runtime_size(&self) -> usize {
         self.contracts
@@ -370,12 +402,12 @@ impl SizeReport {
 
     /// Returns true if any contract exceeds the runtime size limit, excluding dev contracts.
     pub fn exceeds_runtime_size_limit(&self) -> bool {
-        self.max_runtime_size() > CONTRACT_RUNTIME_SIZE_LIMIT
+        self.max_runtime_size() > self.runtime_size_limit
     }
 
     /// Returns true if any contract exceeds the initcode size limit, excluding dev contracts.
     pub fn exceeds_initcode_size_limit(&self) -> bool {
-        self.max_init_size() > CONTRACT_INITCODE_SIZE_LIMIT
+        self.max_init_size() > self.initcode_size_limit
     }
 }
 
@@ -406,8 +438,8 @@ impl SizeReport {
                     serde_json::json!({
                         "runtime_size": contract.runtime_size,
                         "init_size": contract.init_size,
-                        "runtime_margin": CONTRACT_RUNTIME_SIZE_LIMIT as isize - contract.runtime_size as isize,
-                        "init_margin": CONTRACT_INITCODE_SIZE_LIMIT as isize - contract.init_size as isize,
+                        "runtime_margin": self.runtime_size_limit as isize - contract.runtime_size as isize,
+                        "init_margin": self.initcode_size_limit as isize - contract.init_size as isize,
                     }),
                 )
             })
@@ -434,20 +466,28 @@ impl SizeReport {
             .iter()
             .filter(|(_, c)| !c.is_dev_contract && (c.runtime_size > 0 || c.init_size > 0));
         for (name, contract) in contracts {
-            let runtime_margin =
-                CONTRACT_RUNTIME_SIZE_LIMIT as isize - contract.runtime_size as isize;
-            let init_margin = CONTRACT_INITCODE_SIZE_LIMIT as isize - contract.init_size as isize;
+            let runtime_margin = self.runtime_size_limit as isize - contract.runtime_size as isize;
+            let init_margin = self.initcode_size_limit as isize - contract.init_size as isize;
 
-            let runtime_color = match contract.runtime_size {
-                ..18_000 => Color::Reset,
-                18_000..=CONTRACT_RUNTIME_SIZE_LIMIT => Color::Yellow,
-                _ => Color::Red,
+            let runtime_size_warning =
+                (CONTRACT_SIZE_LIMIT_MARGIN * self.runtime_size_limit as f64) as usize;
+            let initcode_size_warning =
+                (CONTRACT_SIZE_LIMIT_MARGIN * self.initcode_size_limit as f64) as usize;
+
+            let runtime_color = if contract.runtime_size < runtime_size_warning {
+                Color::Reset
+            } else if contract.runtime_size <= self.runtime_size_limit {
+                Color::Yellow
+            } else {
+                Color::Red
             };
 
-            let init_color = match contract.init_size {
-                ..36_000 => Color::Reset,
-                36_000..=CONTRACT_INITCODE_SIZE_LIMIT => Color::Yellow,
-                _ => Color::Red,
+            let init_color = if contract.init_size < initcode_size_warning {
+                Color::Reset
+            } else if contract.init_size <= self.initcode_size_limit {
+                Color::Yellow
+            } else {
+                Color::Red
             };
 
             let locale = &Locale::en;
