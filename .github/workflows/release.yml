@@ -5,6 +5,7 @@ on:
     tags:
       - "stable"
       - "rc"
+      - "rc-*"
       - "v*.*.*"
   workflow_dispatch:
     inputs:
@@ -24,7 +25,7 @@ env:
   IS_NIGHTLY: ${{ inputs.is_nightly }}
   PROFILE: maxperf
   STABLE_VERSION: ${{ inputs.version }}
-  RUST_MUSL_CROSS_IMAGE:  messense/rust-musl-cross@sha256:5afc91a4f7da8a14a6c688ebf49fef9b9ec30f28fd827f2cf7e7c4d6c31bd10a
+  RUST_MUSL_CROSS_IMAGE: messense/rust-musl-cross@sha256:5afc91a4f7da8a14a6c688ebf49fef9b9ec30f28fd827f2cf7e7c4d6c31bd10a
 
 jobs:
   prepare:
@@ -95,7 +96,7 @@ jobs:
           - runner: ubuntu-24.04
             target: x86_64-unknown-linux-musl
             svm_target_platform: linux-amd64
-            platform: linux
+            platform: alpine
             arch: amd64
           # This is pinned to `macos-13-large` to support old SDK versions.
           # If the runner is deprecated it should be pinned to the oldest available version of the runner.
@@ -280,7 +281,7 @@ jobs:
   issue:
     name: Open an issue
     runs-on: ubuntu-latest
-    needs: [ prepare, release, cleanup ]
+    needs: [prepare, release, cleanup]
     if: failure()
     steps:
       - uses: actions/checkout@v4
