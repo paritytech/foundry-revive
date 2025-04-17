@@ -2,7 +2,7 @@
 
 use foundry_config::{
     NamedChain,
-    NamedChain::{Arbitrum, Base, Mainnet, Optimism, Polygon, Sepolia},
+    NamedChain::{Arbitrum, Base, BinanceSmartChainTestnet, Mainnet, Optimism, Polygon, Sepolia},
 };
 use rand::seq::SliceRandom;
 use std::sync::{
@@ -28,7 +28,7 @@ static RETH_HOSTS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
 static DRPC_KEYS: LazyLock<Vec<String>> = LazyLock::new(|| {
     let mut keys = vec!["AgasqIYODEW_j_J0F91L8oETmhtHCXkR8JAVssvAG40d".to_owned()];
     // Fetch secret from GitHub Actions environment variable
-    if let Ok(secret) = env::var("DLRP_API_KEY") {
+    if let Ok(secret) = std::env::var("DLRP_API_KEY") {
         keys.clear();
         keys.push(secret);
     }
@@ -159,6 +159,10 @@ pub fn next_etherscan_api_key(chain: NamedChain) -> String {
 fn next_url(is_ws: bool, chain: NamedChain) -> String {
     if matches!(chain, Base) {
         return "https://mainnet.base.org".to_string();
+    }
+
+    if matches!(chain, BinanceSmartChainTestnet) {
+        return "https://bsc-testnet-rpc.publicnode.com".to_string();
     }
 
     let domain = if matches!(chain, Mainnet) {

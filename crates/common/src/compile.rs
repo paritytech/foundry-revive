@@ -152,6 +152,7 @@ impl ProjectCompiler {
     #[inline]
     pub fn dynamic_test_linking(mut self, preprocess: bool) -> Self {
         self.dynamic_test_linking = preprocess;
+        self
     }
 
     /// Sets contracts size limit.
