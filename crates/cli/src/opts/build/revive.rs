@@ -1,5 +1,5 @@
 use clap::Parser;
-use foundry_config::revive::{ReviveConfig, ReviveReq};
+use foundry_config::{revive::ReviveConfig, SolcReq};
 use serde::Serialize;
 #[derive(Clone, Debug, Default, Serialize, Parser)]
 #[clap(next_help_heading = "Revive configuration")]
@@ -40,7 +40,7 @@ impl ReviveOpts {
         }
 
         set_if_some!(
-            self.use_revive.as_ref().map(|v| ReviveReq::from(v.trim_start_matches("revive:"))),
+            self.use_revive.as_ref().map(|v| SolcReq::from(v.trim_start_matches("revive:"))),
             revive.revive
         );
 
