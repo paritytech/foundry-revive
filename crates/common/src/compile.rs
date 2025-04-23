@@ -1,6 +1,7 @@
 //! Support for compiling [foundry_compilers::Project]
 
 use crate::{
+    preprocessor::TestOptimizerPreprocessor,
     reports::{report_kind, ReportKind},
     shell,
     term::SpinnerReporter,
@@ -16,6 +17,7 @@ use foundry_compilers::{
         Compiler,
     },
     info::ContractInfo as CompilerContractInfo,
+    project::Preprocessor,
     report::{BasicStdoutReporter, NoReporter, Report},
     solc::SolcSettings,
     Artifact, Project, ProjectBuilder, ProjectCompileOutput, ProjectPathsConfig, SolcConfig,
@@ -60,6 +62,9 @@ pub struct ProjectCompiler {
     /// Extra files to include, that are not necessarily in the project's source dir.
     files: Vec<PathBuf>,
 
+    /// Whether to compile with dynamic linking tests and scripts.
+    dynamic_test_linking: bool,
+
     /// Contracts runtime size limit
     runtime_size_limit: Option<usize>,
 
@@ -87,6 +92,7 @@ impl ProjectCompiler {
             bail: None,
             ignore_eip_3860: false,
             files: Vec::new(),
+            dynamic_test_linking: false,
             runtime_size_limit: None,
             initcode_size_limit: None,
         }
@@ -142,6 +148,13 @@ impl ProjectCompiler {
         self
     }
 
+    /// Sets if tests should be dynamically linked.
+    #[inline]
+    pub fn dynamic_test_linking(mut self, preprocess: bool) -> Self {
+        self.dynamic_test_linking = preprocess;
+        self
+    }
+
     /// Sets contracts size limit.
     #[inline]
     pub fn size_limits(mut self, runtime_size_limit: usize, initcode_size_limit: usize) -> Self {
@@ -154,8 +167,11 @@ impl ProjectCompiler {
     pub fn compile<C: Compiler<CompilerContract = Contract>>(
         mut self,
         project: &Project<C>,
-    ) -> Result<ProjectCompileOutput<C>> {
-        self.project_root = project.root().clone();
+    ) -> Result<ProjectCompileOutput<C>>
+    where
+        TestOptimizerPreprocessor: Preprocessor<C>,
+    {
+        self.project_root = project.root().to_path_buf();
 
         // TODO: Avoid process::exit
         if !project.paths.has_input_files() && self.files.is_empty() {
@@ -166,6 +182,7 @@ impl ProjectCompiler {
 
         // Taking is fine since we don't need these in `compile_with`.
         let files = std::mem::take(&mut self.files);
+        let preprocess = self.dynamic_test_linking;
         self.compile_with(|| {
             let sources = if !files.is_empty() {
                 Source::read_all(files)?
@@ -173,9 +190,12 @@ impl ProjectCompiler {
                 project.paths.read_input_files()?
             };
 
-            foundry_compilers::project::ProjectCompiler::with_sources(project, sources)?
-                .compile()
-                .map_err(Into::into)
+            let mut compiler =
+                foundry_compilers::project::ProjectCompiler::with_sources(project, sources)?;
+            if preprocess {
+                compiler = compiler.with_preprocessor(TestOptimizerPreprocessor);
+            }
+            compiler.compile().map_err(Into::into)
         })
     }
 
@@ -532,7 +552,10 @@ pub fn compile_target<C: Compiler<CompilerContract = Contract>>(
     target_path: &Path,
     project: &Project<C>,
     quiet: bool,
-) -> Result<ProjectCompileOutput<C>> {
+) -> Result<ProjectCompileOutput<C>>
+where
+    TestOptimizerPreprocessor: Preprocessor<C>,
+{
     ProjectCompiler::new().quiet(quiet).files([target_path.into()]).compile(project)
 }
 
@@ -548,7 +571,7 @@ pub fn etherscan_project(
     let mut settings = metadata.settings()?;
 
     // make remappings absolute with our root
-    for remapping in settings.remappings.iter_mut() {
+    for remapping in &mut settings.remappings {
         let new_path = sources_path.join(remapping.path.trim_start_matches('/'));
         remapping.path = new_path.display().to_string();
     }
@@ -589,7 +612,7 @@ pub fn etherscan_project(
 
 /// Configures the reporter and runs the given closure.
 pub fn with_compilation_reporter<O>(quiet: bool, f: impl FnOnce() -> O) -> O {
-    #[allow(clippy::collapsible_else_if)]
+    #[expect(clippy::collapsible_else_if)]
     let reporter = if quiet || shell::is_json() {
         Report::new(NoReporter::default())
     } else {

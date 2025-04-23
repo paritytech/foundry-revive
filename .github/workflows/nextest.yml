@@ -19,7 +19,7 @@ env:
   REVIVE_RELEASE_VERSION: v0.1.0-dev.12
   DLRP_API_KEY: ${{ secrets.DLRP_API_KEY }}
   ETH_RPC_VERSION: 0.4.0
-  SUBSTRATE_NODE_COMMIT_SHA: 6ce6110199a
+  SUBSTRATE_NODE_COMMIT_SHA: 6ce6110199a429ce449841fe7222a5ba96eafb5c
 
 jobs:
   matrices:
@@ -79,7 +79,7 @@ jobs:
       - name: Install Vyper
         run: pip --version && pip install vyper==0.4.0
       - name: Install Revive (Linux)
-        if: contains(matrix.runner_label, 'ubuntu') 
+        if: contains(matrix.runner_label, 'ubuntu')
         run: |
           ASSET_NAME="resolc-x86_64-unknown-linux-musl.tar.gz"
           DOWNLOAD_URL="https://github.com/paritytech/revive/releases/download/${{ env.REVIVE_RELEASE_VERSION }}/$ASSET_NAME"
@@ -113,17 +113,6 @@ jobs:
           chmod +x resolc-universal-apple-darwin
           xattr -d com.apple.quarantine resolc-universal-apple-darwin || true
           sudo mv resolc-universal-apple-darwin /usr/local/bin/resolc
-      - name: Install system deps (Linux)
-        if: contains(matrix.runner_label, 'ubuntu')
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y protobuf-compiler
-
-      - name: Install system deps (macOS)
-        if: contains(matrix.runner_label, 'macos')
-        run: |
-          brew update
-          brew install protobuf
 
       - name: Cache substrate-node binary
         id: cache-substrate
@@ -132,23 +121,41 @@ jobs:
           path: polkadot-sdk/target/release/substrate-node
           key: substrate-node-${{ matrix.runner_label }}-${{ env.SUBSTRATE_NODE_COMMIT_SHA }}
 
-      - name: Build substrate-node (if not cached)
-        if: steps.cache-substrate.outputs.cache-hit != 'true' && !contains(matrix.runner_label, 'windows')
-        run: |
-          git clone --depth 1 https://github.com/paritytech/polkadot-sdk
-          cd polkadot-sdk
-          git checkout ${{ env.SUBSTRATE_NODE_COMMIT_SHA }}
-          cargo build --release --bin substrate-node
-
-      - name: Add substrate-node to $PATH
-        run: echo "${{github.workspace}}/polkadot-sdk/target/release" >> $GITHUB_PATH
-
       - name: Cache eth-rpc binary
         id: cache-ethrpc
         uses: actions/cache@v3
         with:
           path: ~/.cargo/bin/eth-rpc
           key: eth-rpc-${{ matrix.runner_label }}-${{ env.ETH_RPC_VERSION }}
+
+      - name: Install system deps (Linux)
+        if:
+          (steps.cache-substrate.outputs.cache-hit != 'true' || steps.cache-ethrpc.outputs.cache-hit != 'true')
+          && contains(matrix.runner_label, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+
+      - name: Install system deps (macOS)
+        if:
+          (steps.cache-substrate.outputs.cache-hit != 'true' || steps.cache-ethrpc.outputs.cache-hit != 'true')
+          && contains(matrix.runner_label, 'macos')
+        run: |
+          brew update
+          brew install protobuf
+
+      - name: Build substrate-node (if not cached)
+        if: steps.cache-substrate.outputs.cache-hit != 'true' && !contains(matrix.runner_label, 'windows')
+        run: |
+          git init polkadot-sdk
+          cd polkadot-sdk
+          git remote add origin https://github.com/paritytech/polkadot-sdk
+          git fetch --depth 1 origin ${{ env.SUBSTRATE_NODE_COMMIT_SHA }}
+          git checkout FETCH_HEAD
+          cargo build --release --bin substrate-node
+
+      - name: Add substrate-node to $PATH
+        run: echo "${{github.workspace}}/polkadot-sdk/target/release" >> $GITHUB_PATH
 
       - name: Install eth-rpc proxy (if not cached)
         if: steps.cache-ethrpc.outputs.cache-hit != 'true' && !contains(matrix.runner_label, 'windows')

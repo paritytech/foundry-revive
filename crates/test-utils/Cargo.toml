@@ -38,7 +38,3 @@ subxt = "0.38.1"
 [dev-dependencies]
 tokio.workspace = true
 foundry-block-explorers.workspace = true
-
-[features]
-# feature for integration tests that test external projects
-external-integration-tests = []

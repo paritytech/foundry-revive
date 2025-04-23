@@ -2,15 +2,12 @@
 
 use foundry_config::{
     NamedChain,
-    NamedChain::{Arbitrum, Base, Mainnet, Optimism, Polygon, Sepolia},
+    NamedChain::{Arbitrum, Base, BinanceSmartChainTestnet, Mainnet, Optimism, Polygon, Sepolia},
 };
 use rand::seq::SliceRandom;
-use std::{
-    env,
-    sync::{
-        atomic::{AtomicUsize, Ordering},
-        LazyLock,
-    },
+use std::sync::{
+    atomic::{AtomicUsize, Ordering},
+    LazyLock,
 };
 
 // List of public archive reth nodes to use
@@ -31,7 +28,7 @@ static RETH_HOSTS: LazyLock<Vec<&'static str>> = LazyLock::new(|| {
 static DRPC_KEYS: LazyLock<Vec<String>> = LazyLock::new(|| {
     let mut keys = vec!["AgasqIYODEW_j_J0F91L8oETmhtHCXkR8JAVssvAG40d".to_owned()];
     // Fetch secret from GitHub Actions environment variable
-    if let Ok(secret) = env::var("DLRP_API_KEY") {
+    if let Ok(secret) = std::env::var("DLRP_API_KEY") {
         keys.clear();
         keys.push(secret);
     }
@@ -164,6 +161,10 @@ fn next_url(is_ws: bool, chain: NamedChain) -> String {
         return "https://mainnet.base.org".to_string();
     }
 
+    if matches!(chain, BinanceSmartChainTestnet) {
+        return "https://bsc-testnet-rpc.publicnode.com".to_string();
+    }
+
     let domain = if matches!(chain, Mainnet) {
         // For Mainnet pick one of Reth nodes.
         let idx = next_idx() % RETH_HOSTS.len();
@@ -195,7 +196,7 @@ fn next_url(is_ws: bool, chain: NamedChain) -> String {
 }
 
 #[cfg(test)]
-#[allow(clippy::disallowed_macros)]
+#[expect(clippy::disallowed_macros)]
 mod tests {
     use super::*;
     use alloy_primitives::address;
@@ -204,7 +205,7 @@ mod tests {
     #[tokio::test]
     #[ignore = "run manually"]
     async fn test_etherscan_keys() {
-        let address = address!("dAC17F958D2ee523a2206206994597C13D831ec7");
+        let address = address!("0xdAC17F958D2ee523a2206206994597C13D831ec7");
         let mut first_abi = None;
         let mut failed = Vec::new();
         for (i, &key) in ETHERSCAN_MAINNET_KEYS.iter().enumerate() {
