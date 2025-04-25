@@ -2,7 +2,7 @@
 
 use foundry_test_utils::util::OTHER_SOLC_VERSION;
 
-pub const OTHER_RESOLC_VERSION: &str = "resolc:0.1.0-dev.12";
+pub const OTHER_RESOLC_VERSION: &str = "resolc:0.1.0-dev.13";
 
 // tests that `--use-resolc <resolc>` works
 forgetest!(can_use_resolc, |prj, cmd| {
@@ -31,8 +31,11 @@ Compiler run successful!
         "--use-resolc",
         &format!("resolc:{OTHER_RESOLC_VERSION}"),
     ]);
-    cmd.assert_failure().stderr_eq(str![[r#"
-Error: `resolc` selecting by versions is not supported
+
+    cmd.assert_success().stdout_eq(str![[r#"
+[COMPILING_FILES] with [RESOLC_VERSION]
+[RESOLC_VERSION] [ELAPSED]
+Compiler run successful!
 
 "#]]);
 

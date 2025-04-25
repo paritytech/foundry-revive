@@ -1,6 +1,7 @@
 use foundry_test_utils::snapbox::IntoData;
 
 use crate::utils::generate_large_init_contract;
+pub const OTHER_RESOLC_VERSION: &str = "resolc:0.1.0-dev.13";
 
 forgetest_init!(can_build_with_resolc, |prj, cmd| {
     cmd.args(["build", "--resolc-compile"]).assert_success();
@@ -12,7 +13,15 @@ forgetest_init!(force_buid_with_resolc, |prj, cmd| {
 
 forgetest!(code_size_exceeds_limit_with_resolc, |prj, cmd| {
     prj.add_source("LargeContract.sol", generate_large_init_contract(50_000).as_str()).unwrap();
-    cmd.args(["build", "--resolc-compile", "--sizes"]).assert_failure().stdout_eq(str![[r#"
+    cmd.args([
+        "build",
+        "--resolc-compile",
+        "--sizes",
+        "--use-resolc",
+        &format!("resolc:{OTHER_RESOLC_VERSION}"),
+    ])
+    .assert_failure()
+    .stdout_eq(str![[r#"
 [COMPILING_FILES] with [RESOLC_VERSION]
 [RESOLC_VERSION] [ELAPSED]
 Compiler run successful!
@@ -27,7 +36,14 @@ Compiler run successful!
 "#]]);
 
     cmd.forge_fuse()
-        .args(["build", "--resolc-compile", "--sizes", "--json"])
+        .args([
+            "build",
+            "--resolc-compile",
+            "--use-resolc",
+            &format!("resolc:{OTHER_RESOLC_VERSION}"),
+            "--sizes",
+            "--json",
+        ])
         .assert_failure()
         .stdout_eq(
             str![[r#"
