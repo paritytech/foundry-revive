@@ -33,7 +33,7 @@ Compiler run successful!
     let artifact = prj.root().join("resolc-out/");
     assert!(artifact.exists());
 
-        // compile with resolc to the same output dir (resolc has hardcoded output dir)
+    // compile with resolc to the same output dir (resolc has hardcoded output dir)
     cmd.forge_fuse().args(["build", "--resolc"]).assert_success().stdout_eq(str![[r#"
 [COMPILING_FILES] with [RESOLC_VERSION]
 [RESOLC_VERSION] [ELAPSED]
