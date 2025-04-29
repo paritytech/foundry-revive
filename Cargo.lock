@@ -538,7 +538,7 @@ dependencies = [
  "alloy-rlp",
  "alloy-serde",
  "alloy-sol-types",
- "itertools 0.14.0",
+ "itertools 0.13.0",
  "serde",
  "serde_json",
  "thiserror 2.0.12",
@@ -2018,7 +2018,7 @@ dependencies = [
  "bitflags 2.9.0",
  "cexpr",
  "clang-sys",
- "itertools 0.11.0",
+ "itertools 0.10.5",
  "lazy_static",
  "lazycell",
  "log",
@@ -3934,7 +3934,7 @@ dependencies = [
  "rayon",
  "regex",
  "reqwest",
- "rvm-rs",
+ "rvm-rs 0.0.1",
  "semver 1.0.26",
  "serde",
  "serde_json",
@@ -4310,7 +4310,7 @@ dependencies = [
 [[package]]
 name = "foundry-compilers"
 version = "0.14.0"
-source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#a12c814b4b876abb1aeb2d5733e8e9edbe937b45"
+source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#7bc357bc263d5030cd32381b59f6cf9acbddd461"
 dependencies = [
  "alloy-json-abi",
  "alloy-primitives",
@@ -4323,12 +4323,12 @@ dependencies = [
  "fs_extra",
  "futures-util",
  "home",
- "itertools 0.14.0",
+ "itertools 0.13.0",
  "md-5",
  "path-slash",
  "rand 0.8.5",
  "rayon",
- "rvm-rs",
+ "rvm-rs 0.0.2",
  "semver 1.0.26",
  "serde",
  "serde_json",
@@ -4348,7 +4348,7 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-artifacts"
 version = "0.14.0"
-source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#a12c814b4b876abb1aeb2d5733e8e9edbe937b45"
+source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#7bc357bc263d5030cd32381b59f6cf9acbddd461"
 dependencies = [
  "foundry-compilers-artifacts-resolc",
  "foundry-compilers-artifacts-solc",
@@ -4358,7 +4358,7 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-artifacts-resolc"
 version = "0.14.0"
-source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#a12c814b4b876abb1aeb2d5733e8e9edbe937b45"
+source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#7bc357bc263d5030cd32381b59f6cf9acbddd461"
 dependencies = [
  "alloy-json-abi",
  "alloy-primitives",
@@ -4379,7 +4379,7 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-artifacts-solc"
 version = "0.14.0"
-source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#a12c814b4b876abb1aeb2d5733e8e9edbe937b45"
+source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#7bc357bc263d5030cd32381b59f6cf9acbddd461"
 dependencies = [
  "alloy-json-abi",
  "alloy-primitives",
@@ -4402,7 +4402,7 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-artifacts-vyper"
 version = "0.14.0"
-source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#a12c814b4b876abb1aeb2d5733e8e9edbe937b45"
+source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#7bc357bc263d5030cd32381b59f6cf9acbddd461"
 dependencies = [
  "alloy-json-abi",
  "alloy-primitives",
@@ -4416,7 +4416,7 @@ dependencies = [
 [[package]]
 name = "foundry-compilers-core"
 version = "0.14.0"
-source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#a12c814b4b876abb1aeb2d5733e8e9edbe937b45"
+source = "git+https://github.com/paritytech/foundry-compilers-polkadot.git?branch=main#7bc357bc263d5030cd32381b59f6cf9acbddd461"
 dependencies = [
  "alloy-primitives",
  "cfg-if",
@@ -7926,7 +7926,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a56d757972c98b346a9b766e3f02746cde6dd1cd1d1d563472929fdd74bec4d"
 dependencies = [
  "anyhow",
- "itertools 0.14.0",
+ "itertools 0.13.0",
  "proc-macro2",
  "quote",
  "syn 2.0.100",
@@ -8776,6 +8776,24 @@ dependencies = [
  "dirs",
  "fs4",
  "indicatif",
+ "reqwest",
+ "semver 1.0.26",
+ "serde",
+ "serde_json",
+ "sha2 0.10.8",
+ "thiserror 2.0.12",
+ "url",
+]
+
+[[package]]
+name = "rvm-rs"
+version = "0.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fddc18d5d859095757aead7729951c38cbaf0acd8a53fdfbbc98fa2d05eae56a"
+dependencies = [
+ "const-hex",
+ "dirs",
+ "fs4",
  "reqwest",
  "semver 1.0.26",
  "serde",
@@ -9784,7 +9802,7 @@ dependencies = [
  "derive_builder",
  "derive_more 2.0.1",
  "dunce",
- "itertools 0.14.0",
+ "itertools 0.13.0",
  "itoa",
  "lasso",
  "match_cfg",
@@ -9820,7 +9838,7 @@ dependencies = [
  "alloy-primitives",
  "bitflags 2.9.0",
  "bumpalo",
- "itertools 0.14.0",
+ "itertools 0.13.0",
  "memchr",
  "num-bigint",
  "num-rational",
