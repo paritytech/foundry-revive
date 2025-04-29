@@ -87,6 +87,7 @@ tikv-jemallocator = { workspace = true, optional = true }
 [dev-dependencies]
 anvil.workspace = true
 foundry-test-utils.workspace = true
+serial_test = "2.0"
 
 [features]
 default = ["jemalloc"]
