@@ -77,7 +77,7 @@ Next, run `foundryup`.
 It will automatically install the latest version of the precompiled binaries: [`forge`](#forge), [`cast`](#cast).
 
 ```
-foundryup --nightly
+foundryup
 ```
 
 **Done!**
