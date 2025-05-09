@@ -169,6 +169,7 @@ forgetest!(can_extract_config_values, |prj, cmd| {
         additional_compiler_profiles: Default::default(),
         compilation_restrictions: Default::default(),
         eof: false,
+        script_execution_protection: true,
         _non_exhaustive: (),
         resolc: Default::default(),
     };
@@ -1042,14 +1043,15 @@ transaction_timeout = 120
 eof = false
 additional_compiler_profiles = []
 compilation_restrictions = []
-
-[[profile.default.fs_permissions]]
-access = "read"
-path = "out"
+script_execution_protection = true
 
 [profile.default.rpc_storage_caching]
 chains = "all"
 endpoints = "all"
+
+[[profile.default.fs_permissions]]
+access = "read"
+path = "out"
 
 [profile.default.resolc]
 resolc_compile = false
@@ -1303,6 +1305,7 @@ exclude = []
   "eof": false,
   "additional_compiler_profiles": [],
   "compilation_restrictions": [],
+  "script_execution_protection": true,
   "resolc": {
     "resolc_compile": false,
     "resolc": null
