@@ -1268,7 +1268,14 @@ impl Config {
 
     /// Returns configured [MultiCompilerSettings].
     pub fn compiler_settings(&self) -> Result<MultiCompilerSettings, SolcError> {
-        Ok(MultiCompilerSettings { solc: self.solc_settings()?, vyper: self.vyper_settings()? })
+        Ok(MultiCompilerSettings {
+            solc: if self.resolc.resolc_compile {
+                ResolcConfig::resolc_settings(self)?
+            } else {
+                self.solc_settings()?
+            },
+            vyper: self.vyper_settings()?,
+        })
     }
 
     /// Returns all configured remappings.
