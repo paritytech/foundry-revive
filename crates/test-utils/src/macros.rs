@@ -139,3 +139,10 @@ macro_rules! forgesoldeer {
         }
     };
 }
+
+#[macro_export]
+macro_rules! casttest_serial{
+    ($test:ident, $($async:ident)? |$prj:ident, $cmd:ident| $e:expr) => {
+        casttest!(#[serial_test::serial] $test, $($async)? |$prj, $cmd| $e);
+    };
+}

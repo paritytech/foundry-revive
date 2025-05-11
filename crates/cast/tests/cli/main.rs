@@ -23,8 +23,6 @@ mod selectors;
 
 mod revive_chain;
 
-mod revive_transactions;
-
 mod revive_block;
 
 mod revive_accounts;

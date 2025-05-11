@@ -41,3 +41,4 @@ idna_adapter.workspace = true
 [dev-dependencies]
 tokio.workspace = true
 foundry-block-explorers.workspace = true
+serial_test.workspace = true

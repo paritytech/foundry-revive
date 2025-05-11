@@ -1,10 +1,8 @@
-use foundry_test_utils::{casttest, util::OutputExt};
-use serial_test::serial;
+use foundry_test_utils::{casttest_serial, util::OutputExt};
 use std::{fs, path::Path};
 use tempfile::TempDir;
 
-casttest!(
-    #[serial]
+casttest_serial!(
     test_cast_wallet_new,
     async |_prj, cmd| {
         let tmp = TempDir::new().expect("tmpdir");
@@ -26,8 +24,7 @@ casttest!(
     }
 );
 
-casttest!(
-    #[serial]
+casttest_serial!(
     test_cast_wallet_address,
     async |_prj, cmd| {
 
@@ -56,8 +53,7 @@ casttest!(
     }
 );
 
-casttest!(
-    #[serial]
+casttest_serial!(
     test_cast_wallet_list,
     async |_prj, cmd| {
 
@@ -85,8 +81,7 @@ casttest!(
     }
 );
 
-casttest!(
-    #[serial]
+casttest_serial!(
     test_cast_wallet_import,
     async |_prj, cmd| {
 
@@ -123,8 +118,7 @@ casttest!(
     }
 );
 
-casttest!(
-    #[serial]
+casttest_serial!(
     test_cast_wallet_sign_verify,
     async |_prj, cmd| {
         let pk = "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

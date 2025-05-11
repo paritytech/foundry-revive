@@ -1,11 +1,10 @@
 use foundry_test_utils::{
-    casttest,
+    casttest_serial,
     revive::PolkadotNode,
     util::OutputExt,
 };
-use serial_test::serial;
 
-casttest!(#[serial] test_cast_balance, async |_prj, cmd| {
+casttest_serial!(test_cast_balance, async |_prj, cmd| {
     let _node = PolkadotNode::start().await.unwrap();
     let url   = PolkadotNode::http_endpoint();
 
@@ -31,7 +30,7 @@ casttest!(#[serial] test_cast_balance, async |_prj, cmd| {
     );
 });
 
-casttest!(#[serial] test_cast_nonce, async |_prj, cmd| {
+casttest_serial!(test_cast_nonce, async |_prj, cmd| {
     let _node = PolkadotNode::start().await.unwrap();
     let url   = PolkadotNode::http_endpoint();
     let (account, _) = PolkadotNode::dev_accounts().next().unwrap();
@@ -53,7 +52,7 @@ casttest!(#[serial] test_cast_nonce, async |_prj, cmd| {
     );
 });
 
-casttest!(#[serial] test_cast_code, async |_prj, cmd| {
+casttest_serial!(test_cast_code, async |_prj, cmd| {
     let _node = PolkadotNode::start().await.unwrap();
     let url   = PolkadotNode::http_endpoint();
     let (account, _) = PolkadotNode::dev_accounts().next().unwrap();
@@ -76,7 +75,7 @@ casttest!(#[serial] test_cast_code, async |_prj, cmd| {
     );
 });
 
-casttest!(#[serial] test_cast_codesize, async |_prj, cmd| {
+casttest_serial!(test_cast_codesize, async |_prj, cmd| {
     let _node = PolkadotNode::start().await.unwrap();
     let url   = PolkadotNode::http_endpoint();
     let (account, _) = PolkadotNode::dev_accounts().next().unwrap();
@@ -98,7 +97,7 @@ casttest!(#[serial] test_cast_codesize, async |_prj, cmd| {
     );
 });
 
-casttest!(#[serial] test_cast_storage, async |_prj, cmd| {
+casttest_serial!(test_cast_storage, async |_prj, cmd| {
     let _node = PolkadotNode::start().await.unwrap();
     let url   = PolkadotNode::http_endpoint();
     let (account, _) = PolkadotNode::dev_accounts().next().unwrap();
