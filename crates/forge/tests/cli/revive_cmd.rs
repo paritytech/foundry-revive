@@ -580,7 +580,7 @@ forgetest!(can_build_sizes_repeatedly_for_resolc, |prj, cmd| {
 ╭----------+------------------+-------------------+--------------------+---------------------╮
 | Contract | Runtime Size (B) | Initcode Size (B) | Runtime Margin (B) | Initcode Margin (B) |
 +============================================================================================+
-| Foo      | 725              | 725               | 249,275            | 249,275             |
+| Foo      | 1,288            | 1,288             | 248,712            | 248,712             |
 ╰----------+------------------+-------------------+--------------------+---------------------╯
 
 
@@ -590,10 +590,10 @@ forgetest!(can_build_sizes_repeatedly_for_resolc, |prj, cmd| {
         str![[r#"
 {
   "Foo": {
-    "runtime_size": 725,
-    "init_size": 725,
-    "runtime_margin": 249275,
-    "init_margin": 249275
+    "runtime_size": 1288,
+    "init_size": 1288,
+    "runtime_margin": 248712,
+    "init_margin": 248712
   }
 }
 "#]]
