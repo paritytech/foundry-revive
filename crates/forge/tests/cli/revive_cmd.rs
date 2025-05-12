@@ -93,6 +93,7 @@ library FooLib {
 [COMPILING_FILES] with [RESOLC_VERSION]
 [RESOLC_VERSION] [ELAPSED]
 Compiler run successful!
+
 "#]]);
 });
 
@@ -135,5 +136,6 @@ forgetest!(can_use_absolute_imports_for_resolc, |prj, cmd| {
 [COMPILING_FILES] with [RESOLC_VERSION]
 [RESOLC_VERSION] [ELAPSED]
 Compiler run successful!
+
 "#]]);
 });
