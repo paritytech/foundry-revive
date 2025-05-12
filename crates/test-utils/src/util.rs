@@ -25,6 +25,7 @@ use std::{
         Arc, LazyLock,
     },
 };
+use std::sync::OnceLock;
 
 static CURRENT_DIR_LOCK: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
 
@@ -1050,4 +1051,16 @@ impl OutputExt for Output {
 
 pub fn lossy_string(bytes: &[u8]) -> String {
     String::from_utf8_lossy(bytes).replace("\r\n", "\n")
+}
+
+// Create a global runtime that can be reused
+static RUNTIME: OnceLock<tokio::runtime::Runtime> = OnceLock::new();
+
+pub fn get_runtime() -> &'static tokio::runtime::Runtime {
+    RUNTIME.get_or_init(|| tokio::runtime::Runtime::new().unwrap())
+}
+
+// Helper function to run async tasks
+pub fn block_on<F: std::future::Future>(future: F) -> F::Output {
+    get_runtime().block_on(future)
 }

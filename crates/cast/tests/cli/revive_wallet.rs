@@ -1,10 +1,10 @@
-use foundry_test_utils::{casttest_serial, util::OutputExt};
+use foundry_test_utils::{casttest, util::OutputExt};
 use std::{fs, path::Path};
 use tempfile::TempDir;
 
-casttest_serial!(
+casttest!(
     test_cast_wallet_new,
-    async |_prj, cmd| {
+    |_prj, cmd| {
         let tmp = TempDir::new().expect("tmpdir");
         let dir = tmp.path().to_str().unwrap();
 
@@ -24,9 +24,9 @@ casttest_serial!(
     }
 );
 
-casttest_serial!(
+casttest!(
     test_cast_wallet_address,
-    async |_prj, cmd| {
+    |_prj, cmd| {
 
         let pk = "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
@@ -53,14 +53,14 @@ casttest_serial!(
     }
 );
 
-casttest_serial!(
+casttest!(
     test_cast_wallet_list,
-    async |_prj, cmd| {
+    |_prj, cmd| {
 
         let tmp = TempDir::new().expect("tmpdir");
         let home = tmp.path();
 
-        fs::create_dir_all(home.join("keystore")).expect("couldn’t create keystore dir");
+        fs::create_dir_all(home.join("keystore")).expect("couldn't create keystore dir");
         cmd.env("FOUNDRY_HOME", home.to_str().unwrap());
 
 
@@ -81,9 +81,9 @@ casttest_serial!(
     }
 );
 
-casttest_serial!(
+casttest!(
     test_cast_wallet_import,
-    async |_prj, cmd| {
+    |_prj, cmd| {
 
         let tmp = TempDir::new().unwrap();
         let keystore_dir = tmp.path().join("keystore");
@@ -118,9 +118,9 @@ casttest_serial!(
     }
 );
 
-casttest_serial!(
+casttest!(
     test_cast_wallet_sign_verify,
-    async |_prj, cmd| {
+    |_prj, cmd| {
         let pk = "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
         let address = cmd
             .cast_fuse()
