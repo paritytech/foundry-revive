@@ -613,7 +613,9 @@ Error: No source files found in specified build paths.
 forgetest!(can_build_sizes_repeatedly_for_resolc, |prj, cmd| {
     init_prj(&prj);
 
-    cmd.args(["build", "--resolc", "--sizes"]).assert_success().stdout_eq(str![[r#"
+    cmd.args(["build", "--resolc", "--sizes", "--use-resolc", "resolc:0.1.0-dev.16"])
+        .assert_success()
+        .stdout_eq(str![[r#"
 ...
 ╭----------+------------------+-------------------+--------------------+---------------------╮
 | Contract | Runtime Size (B) | Initcode Size (B) | Runtime Margin (B) | Initcode Margin (B) |
@@ -624,8 +626,11 @@ forgetest!(can_build_sizes_repeatedly_for_resolc, |prj, cmd| {
 
 "#]]);
 
-    cmd.forge_fuse().args(["build", "--resolc", "--sizes", "--json"]).assert_success().stdout_eq(
-        str![[r#"
+    cmd.forge_fuse()
+        .args(["build", "--resolc", "--sizes", "--json", "--use-resolc", "resolc:0.1.0-dev.16"])
+        .assert_success()
+        .stdout_eq(
+            str![[r#"
 {
   "Foo": {
     "runtime_size": 1288,
@@ -635,8 +640,8 @@ forgetest!(can_build_sizes_repeatedly_for_resolc, |prj, cmd| {
   }
 }
 "#]]
-        .is_json(),
-    );
+            .is_json(),
+        );
 });
 
 // checks that build --names includes all contracts even if unchanged
