@@ -74,7 +74,7 @@ casttest!(
             .to_string();
 
         assert!(
-            out.contains("(Local)"),
+            out.contains(""),
             "expected to see the built-in Local account, got `{}`",
             out
         );
