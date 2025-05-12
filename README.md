@@ -354,14 +354,12 @@ shall be dual licensed as above, without any additional terms or conditions.
 [solady]: https://github.com/Vectorized/solady
 [openzeppelin]: https://github.com/OpenZeppelin/openzeppelin-contracts/tree/release-v5.1
 [morpho-blue]: https://github.com/morpho-org/morpho-blue
-[foundry-compilers]: https://github.com/foundry-rs/compilers
+[foundry-compilers]: https://github.com/paritytech/foundry-compilers-polkadot
 [solmate]: https://github.com/transmissions11/solmate/
 [geb]: https://github.com/reflexer-labs/geb
 [benchmark-post]: https://www.paradigm.xyz/2022/03/foundry-02#blazing-fast-compilation--testing
 [convex]: https://github.com/mds1/convex-shutdown-simulation
 [vscode-setup]: https://paritytech.github.io/foundry-book-polkadot/config/vscode.html
 [shell-setup]: https://paritytech.github.io/foundry-book-polkadot/config/shell-autocompletion.html
-[foundry-0.2]: https://github.com/foundry-rs/foundry/releases/tag/nightly-5b7e4cb3c882b28f3c32ba580de27ce7381f415a
-[foundry-1.0]: https://github.com/foundry-rs/foundry/releases/tag/nightly-59f354c179f4e7f6d7292acb3d068815c79286d1
 [dapptools]: https://github.com/dapphub/dapptools
 [alloy]: https://github.com/alloy-rs/alloy
