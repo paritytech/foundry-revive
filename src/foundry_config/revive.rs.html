@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/config/src/revive.rs`."><title>revive.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-0ce1a80b.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="foundry_config" data-themes="" data-resource-suffix="" data-rustdoc-version="1.89.0-nightly (8405332bd 2025-05-12)" data-channel="nightly" data-search-js="search-f7877310.js" data-settings-js="settings-5514c975.js" ><script src="../../static.files/storage-4e99c027.js"></script><script defer src="../../static.files/src-script-63605ae7.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-7ef8a74a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-32bb7600.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">foundry_config/</div>revive.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-2"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span>foundry_compilers::{multi::MultiCompilerLanguage, ProjectPathsConfig};
+<a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span>serde::{<a href="https://docs.rs/serde_derive/1.0.219/serde_derive/derive.Deserialize.html">Deserialize</a>, <a href="https://docs.rs/serde_derive/1.0.219/serde_derive/derive.Serialize.html">Serialize</a>};
+<a href=#3 id=3 data-nosnippet>3</a>
+<a href=#4 id=4 data-nosnippet>4</a><span class="kw">use crate</span>::{<a href="lib.rs.html#161-546">Config</a>, <a href="lib.rs.html#2521-2527">SolcReq</a>};
+<a href=#5 id=5 data-nosnippet>5</a>
+<a href=#6 id=6 data-nosnippet>6</a><span class="doccomment">/// Filename for resolc cache
+<a href=#7 id=7 data-nosnippet>7</a></span><span class="kw">pub const </span><a href="../../foundry_config/revive/constant.RESOLC_SOLIDITY_FILES_CACHE_FILENAME.html">RESOLC_SOLIDITY_FILES_CACHE_FILENAME</a>: <span class="kw-2">&amp;</span><a href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a> = <span class="string">"resolc-solidity-files-cache.json"</span>;
+<a href=#8 id=8 data-nosnippet>8</a>
+<a href=#9 id=9 data-nosnippet>9</a><span class="doccomment">/// Directory for resolc artifacts
+<a href=#10 id=10 data-nosnippet>10</a></span><span class="kw">pub const </span><a href="../../foundry_config/revive/constant.RESOLC_ARTIFACTS_DIR.html">RESOLC_ARTIFACTS_DIR</a>: <span class="kw-2">&amp;</span><a href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a> = <span class="string">"resolc-out"</span>;
+<a href=#11 id=11 data-nosnippet>11</a>
+<a href=#12 id=12 data-nosnippet>12</a><span class="kw">pub const </span><a href="../../foundry_config/revive/constant.CONTRACT_SIZE_LIMIT.html">CONTRACT_SIZE_LIMIT</a>: <a href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a> = <span class="number">250_000</span>;
+<a href=#13 id=13 data-nosnippet>13</a>
+<a href=#14 id=14 data-nosnippet>14</a><span class="attr">#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Default)]
+<a href=#15 id=15 data-nosnippet>15</a></span><span class="doccomment">/// Resolc Config
+<a href=#16 id=16 data-nosnippet>16</a></span><span class="kw">pub struct </span><a href="../../foundry_config/revive/struct.ResolcConfig.html">ResolcConfig</a> {
+<a href=#17 id=17 data-nosnippet>17</a>    <span class="doccomment">/// Enable compilation using resolc
+<a href=#18 id=18 data-nosnippet>18</a>    </span><span class="kw">pub </span>resolc_compile: <a href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>,
+<a href=#19 id=19 data-nosnippet>19</a>
+<a href=#20 id=20 data-nosnippet>20</a>    <span class="doccomment">/// The resolc compiler
+<a href=#21 id=21 data-nosnippet>21</a>    </span><span class="kw">pub </span>resolc: <a class="prelude-ty" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html">Option</a>&lt;<a href="lib.rs.html#2521-2527">SolcReq</a>&gt;,
+<a href=#22 id=22 data-nosnippet>22</a>}
+<a href=#23 id=23 data-nosnippet>23</a>
+<a href=#24 id=24 data-nosnippet>24</a><span class="kw">impl </span><a href="#16-22">ResolcConfig</a> {
+<a href=#25 id=25 data-nosnippet>25</a>    <span class="doccomment">/// Returns the `ProjectPathsConfig` sub set of the config.
+<a href=#26 id=26 data-nosnippet>26</a>    </span><span class="kw">pub fn </span>project_paths(config: <span class="kw-2">&amp;</span><a href="lib.rs.html#161-546">Config</a>) -&gt; ProjectPathsConfig&lt;MultiCompilerLanguage&gt; {
+<a href=#27 id=27 data-nosnippet>27</a>        <span class="kw">let </span>builder = ProjectPathsConfig::builder()
+<a href=#28 id=28 data-nosnippet>28</a>            .cache(<a href="#26">config</a>.cache_path.<a href="https://doc.rust-lang.org/nightly/std/path/struct.Path.html#method.join">join</a>(<a href="#7">RESOLC_SOLIDITY_FILES_CACHE_FILENAME</a>))
+<a href=#29 id=29 data-nosnippet>29</a>            .sources(<span class="kw-2">&amp;</span><a href="#26">config</a>.src)
+<a href=#30 id=30 data-nosnippet>30</a>            .tests(<span class="kw-2">&amp;</span><a href="#26">config</a>.test)
+<a href=#31 id=31 data-nosnippet>31</a>            .scripts(<span class="kw-2">&amp;</span><a href="#26">config</a>.script)
+<a href=#32 id=32 data-nosnippet>32</a>            .artifacts(<a href="#26">config</a>.root.<a href="https://doc.rust-lang.org/nightly/std/path/struct.Path.html#method.join">join</a>(<a href="#10">RESOLC_ARTIFACTS_DIR</a>))
+<a href=#33 id=33 data-nosnippet>33</a>            .libs(<a href="#26">config</a>.libs.<a href="https://doc.rust-lang.org/nightly/core/foreigntype.slice.html#method.iter">iter</a>())
+<a href=#34 id=34 data-nosnippet>34</a>            .remappings(<a href="#26">config</a>.<a href="lib.rs.html#1275-1277">get_all_remappings</a>())
+<a href=#35 id=35 data-nosnippet>35</a>            .allowed_path(<span class="kw-2">&amp;</span><a href="#26">config</a>.root)
+<a href=#36 id=36 data-nosnippet>36</a>            .allowed_paths(<span class="kw-2">&amp;</span><a href="#26">config</a>.libs)
+<a href=#37 id=37 data-nosnippet>37</a>            .allowed_paths(<span class="kw-2">&amp;</span><a href="#26">config</a>.allow_paths)
+<a href=#38 id=38 data-nosnippet>38</a>            .include_paths(<span class="kw-2">&amp;</span><a href="#26">config</a>.include_paths);
+<a href=#39 id=39 data-nosnippet>39</a>
+<a href=#40 id=40 data-nosnippet>40</a>        <a href="#27">builder</a>.build_with_root(<span class="kw-2">&amp;</span><a href="#26">config</a>.root)
+<a href=#41 id=41 data-nosnippet>41</a>    }
+<a href=#42 id=42 data-nosnippet>42</a>}</code></pre></div></section></main></body></html>
