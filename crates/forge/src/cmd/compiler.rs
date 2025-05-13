@@ -118,7 +118,7 @@ impl ResolveArgs {
 
                     let dep = {
                         if compiler_version != *version {
-                            let names = compiler_name.clone();
+                            let names = compiler_name;
                             let mut names = names.split_whitespace();
                             compiler_name =
                                 names.next().expect("Malformed compiler name").to_owned();
@@ -168,9 +168,9 @@ impl ResolveArgs {
             for resolved_compiler in compilers {
                 let version = &resolved_compiler.version;
                 let extras = if let Some((name, version)) = &resolved_compiler.dep {
-                    format!(" and {} v{}", name, version)
+                    format!(" and {name} v{version}")
                 } else {
-                    format!("")
+                    String::new()
                 };
                 match shell::verbosity() {
                     0 => sh_println!("- {} v{version}{}", resolved_compiler.name, extras)?,
