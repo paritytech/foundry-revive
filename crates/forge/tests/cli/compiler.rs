@@ -70,7 +70,7 @@ forgetest!(can_resolve_path, |prj, cmd| {
         .assert_success()
         .stdout_eq(str![[r#"
 Solidity:
-- 0.8.4
+- Solc v0.8.4
 
 
 "#]]);
@@ -81,7 +81,7 @@ forgetest!(can_list_resolved_compiler_versions, |prj, cmd| {
 
     cmd.args(["compiler", "resolve"]).assert_success().stdout_eq(str![[r#"
 Solidity:
-- 0.8.4
+- Solc v0.8.4
 
 
 "#]]);
@@ -93,11 +93,12 @@ forgetest!(can_list_resolved_compiler_versions_json, |prj, cmd| {
     cmd.args(["compiler", "resolve", "--json"]).assert_success().stdout_eq(
         str![[r#"
 {
-   "Solidity":[
-      {
-         "version":"0.8.4"
-      }
-   ]
+  "Solidity": [
+    {
+      "name": "Solc",
+      "version": "0.8.4"
+    }
+  ]
 }
 "#]]
         .is_json(),
@@ -111,7 +112,7 @@ forgetest!(can_list_resolved_compiler_versions_verbose, |prj, cmd| {
     cmd.args(["compiler", "resolve", "-v"]).assert_success().stdout_eq(str![[r#"
 Solidity:
 
-0.8.27:
+Solc v0.8.27:
 ├── src/ContractC.sol
 └── src/ContractD.sol
 
@@ -128,6 +129,7 @@ forgetest!(can_list_resolved_compiler_versions_verbose_json, |prj, cmd| {
 {
   "Solidity": [
     {
+      "name": "Solc",
       "version": "0.8.27",
       "paths": [
         "src/ContractC.sol",
@@ -151,12 +153,12 @@ forgetest!(can_list_resolved_multiple_compiler_versions, |prj, cmd| {
 
     cmd.args(["compiler", "resolve"]).assert_success().stdout_eq(str![[r#"
 Solidity:
-- 0.8.4
-- 0.8.11
-- 0.8.27
+- Solc v0.8.4
+- Solc v0.8.11
+- Solc v0.8.27
 
 Vyper:
-- 0.4.0
+- Vyper v0.4.0
 
 
 "#]]);
@@ -170,17 +172,15 @@ forgetest!(can_list_resolved_multiple_compiler_versions_skipped, |prj, cmd| {
     prj.add_raw_source("ICounter.vyi", VYPER_INTERFACE).unwrap();
     prj.add_raw_source("Counter.vy", VYPER_CONTRACT).unwrap();
 
-    cmd.args(["compiler", "resolve", "--skip", ".sol", "-v"]).assert_success().stdout_eq(str![[
-        r#"
+    cmd.args(["compiler", "resolve", "--skip", ".sol", "-v"]).assert_success().stdout_eq(str![[r#"
 Vyper:
 
-0.4.0:
+Vyper v0.4.0:
 ├── src/Counter.vy
 └── src/ICounter.vyi
 
 
-"#
-    ]]);
+"#]]);
 });
 
 forgetest!(can_list_resolved_multiple_compiler_versions_skipped_json, |prj, cmd| {
@@ -198,6 +198,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_skipped_json, |prj, cmd|
 {
   "Solidity": [
     {
+      "name": "Solc",
       "version": "0.8.27",
       "paths": [
         "src/ContractD.sol"
@@ -206,6 +207,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_skipped_json, |prj, cmd|
   ],
   "Vyper": [
     {
+      "name": "Vyper",
       "version": "0.4.0",
       "paths": [
         "src/Counter.vy",
@@ -230,19 +232,19 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose, |prj, cmd| {
     cmd.args(["compiler", "resolve", "-vv"]).assert_success().stdout_eq(str![[r#"
 Solidity:
 
-0.8.4 (<= istanbul):
+Solc v0.8.4 (<= istanbul):
 └── src/ContractA.sol
 
-0.8.11 (<= london):
+Solc v0.8.11 (<= london):
 └── src/ContractB.sol
 
-0.8.27 (<= [..]):
+Solc v0.8.27 (<= cancun):
 ├── src/ContractC.sol
 └── src/ContractD.sol
 
 Vyper:
 
-0.4.0 (<= cancun):
+Vyper v0.4.0 (<= cancun):
 ├── src/Counter.vy
 └── src/ICounter.vyi
 
@@ -263,6 +265,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
 {
   "Solidity": [
     {
+      "name": "Solc",
       "version": "0.8.4",
       "evm_version": "Istanbul",
       "paths": [
@@ -270,6 +273,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
       ]
     },
     {
+      "name": "Solc",
       "version": "0.8.11",
       "evm_version": "London",
       "paths": [
@@ -277,6 +281,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
       ]
     },
     {
+      "name": "Solc",
       "version": "0.8.27",
       "evm_version": "[..]",
       "paths": [
@@ -287,6 +292,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
   ],
   "Vyper": [
     {
+      "name": "Vyper",
       "version": "0.4.0",
       "evm_version": "[..]",
       "paths": [
