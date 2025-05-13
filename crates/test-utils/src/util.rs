@@ -13,6 +13,7 @@ use foundry_config::Config;
 use parking_lot::Mutex;
 use regex::Regex;
 use snapbox::{assert_data_eq, cmd::OutputAssert, Data, IntoData};
+use std::sync::OnceLock;
 use std::{
     env,
     ffi::OsStr,
@@ -25,7 +26,6 @@ use std::{
         Arc, LazyLock,
     },
 };
-use std::sync::OnceLock;
 
 static CURRENT_DIR_LOCK: LazyLock<Mutex<()>> = LazyLock::new(|| Mutex::new(()));
 
