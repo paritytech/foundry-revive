@@ -13,7 +13,6 @@ use foundry_config::Config;
 use parking_lot::Mutex;
 use regex::Regex;
 use snapbox::{assert_data_eq, cmd::OutputAssert, Data, IntoData};
-use std::sync::OnceLock;
 use std::{
     env,
     ffi::OsStr,
@@ -23,7 +22,7 @@ use std::{
     process::{ChildStdin, Command, Output, Stdio},
     sync::{
         atomic::{AtomicUsize, Ordering},
-        Arc, LazyLock,
+        Arc, LazyLock, OnceLock,
     },
 };
 
