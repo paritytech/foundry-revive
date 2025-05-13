@@ -19,7 +19,7 @@ casttest_serial!(test_cast_chain_id, |_prj, cmd| {
         assert!(id.parse::<u64>().is_ok(), "chain-id wasn't a number: {id}");
     }
 });
- 
+
 casttest_serial!(test_cast_chain, |_prj, cmd| {
     if let Ok(_node) = block_on(PolkadotNode::start()) {
         let rpc_url = PolkadotNode::http_endpoint();

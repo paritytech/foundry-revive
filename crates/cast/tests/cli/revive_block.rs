@@ -16,7 +16,7 @@ casttest_serial!(test_cast_block_number, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(bn.parse::<u64>().is_ok(), "block-number output not a valid integer: `{}`", bn);
+        assert!(bn.parse::<u64>().is_ok(), "block-number output not a valid integer: `{bn}`");
     }
 });
 
@@ -33,7 +33,7 @@ casttest_serial!(test_cast_gas_price, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(gp.parse::<u128>().is_ok(), "gas-price output not a valid integer: `{}`", gp);
+        assert!(gp.parse::<u128>().is_ok(), "gas-price output not a valid integer: `{gp}`");
     }
 });
 
@@ -50,7 +50,7 @@ casttest_serial!(test_cast_basefee, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(bf.parse::<u128>().is_ok(), "basefee output not a valid integer: `{}`", bf);
+        assert!(bf.parse::<u128>().is_ok(), "basefee output not a valid integer: `{bf}`");
     }
 });
 
@@ -68,8 +68,7 @@ casttest_serial!(test_cast_block, |_prj, cmd| {
 
         assert!(
             info.contains("number") && info.contains("hash"),
-            "block info missing fields: `{}`",
-            info
+            "block info missing fields: `{info}`"
         );
     }
 });
@@ -87,7 +86,7 @@ casttest_serial!(test_cast_age, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(age.ends_with("UTC"), "age output not a human timestamp ending in UTC: `{}`", age);
+        assert!(age.ends_with("UTC"), "age output not a human timestamp ending in UTC: `{age}`");
     }
 });
 
@@ -126,12 +125,6 @@ casttest_serial!(test_cast_find_block, |_prj, cmd| {
             .parse::<u64>()
             .unwrap();
 
-        assert!(
-            fb <= bn,
-            "find-block({}) returned {}, which is > latest block-number ({})",
-            ts,
-            fb,
-            bn
-        );
+        assert!(fb <= bn, "find-block({ts}) returned {fb}, which is > latest block-number ({bn})");
     }
 });

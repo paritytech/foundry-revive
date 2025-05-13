@@ -1,4 +1,8 @@
-use foundry_test_utils::{casttest_serial, revive::PolkadotNode, util::{block_on, OutputExt}};
+use foundry_test_utils::{
+    casttest_serial,
+    revive::PolkadotNode,
+    util::{block_on, OutputExt},
+};
 
 casttest_serial!(test_cast_balance, |_prj, cmd| {
     if let Ok(_node) = block_on(PolkadotNode::start()) {
@@ -35,7 +39,7 @@ casttest_serial!(test_cast_nonce, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(nonce.parse::<u64>().is_ok(), "nonce wasn't a valid integer: `{}`", nonce);
+        assert!(nonce.parse::<u64>().is_ok(), "nonce wasn't a valid integer: `{nonce}`");
     }
 });
 
@@ -54,7 +58,7 @@ casttest_serial!(test_cast_code, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(code == "0x" || code.starts_with("0x"), "code should be hex, got `{}`", code);
+        assert!(code == "0x" || code.starts_with("0x"), "code should be hex, got `{code}`");
     }
 });
 
@@ -73,7 +77,7 @@ casttest_serial!(test_cast_codesize, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(size.parse::<u64>().is_ok(), "codesize wasn't a valid integer: `{}`", size);
+        assert!(size.parse::<u64>().is_ok(), "codesize wasn't a valid integer: `{size}`");
     }
 });
 
@@ -92,6 +96,6 @@ casttest_serial!(test_cast_storage, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(val.starts_with("0x"), "storage didn't return hex: `{}`", val);
+        assert!(val.starts_with("0x"), "storage didn't return hex: `{val}`");
     }
 });
