@@ -102,7 +102,7 @@ casttest!(test_cast_upload_signature, |_prj, cmd| {
         .get_output()
         .stdout_lossy();
 
-    assert!(out.contains("spam(uint256,address)"), "missing signature name: {}", out);
+    assert!(out.contains("spam(uint256,address)"), "missing signature name: {out}");
     assert!(
         out.contains("Selectors successfully uploaded") || out.contains("Duplicated"),
         "unexpected upload result: {out}"

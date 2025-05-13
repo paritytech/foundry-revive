@@ -20,7 +20,7 @@ casttest_serial!(test_cast_balance, |_prj, cmd| {
             .to_string();
 
         // wei equivalent
-        assert!(bal.parse::<u128>().is_ok(), "balance wasn't a valid integer: `{}`", bal);
+        assert!(bal.parse::<u128>().is_ok(), "balance wasn't a valid integer: `{bal}`");
     }
 });
 
