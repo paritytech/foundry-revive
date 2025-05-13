@@ -172,7 +172,8 @@ forgetest!(can_list_resolved_multiple_compiler_versions_skipped, |prj, cmd| {
     prj.add_raw_source("ICounter.vyi", VYPER_INTERFACE).unwrap();
     prj.add_raw_source("Counter.vy", VYPER_CONTRACT).unwrap();
 
-    cmd.args(["compiler", "resolve", "--skip", ".sol", "-v"]).assert_success().stdout_eq(str![[r#"
+    cmd.args(["compiler", "resolve", "--skip", ".sol", "-v"]).assert_success().stdout_eq(str![[
+        r#"
 Vyper:
 
 Vyper v0.4.0:
@@ -180,7 +181,8 @@ Vyper v0.4.0:
 └── src/ICounter.vyi
 
 
-"#]]);
+"#
+    ]]);
 });
 
 forgetest!(can_list_resolved_multiple_compiler_versions_skipped_json, |prj, cmd| {
