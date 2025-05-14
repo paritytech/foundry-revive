@@ -1,7 +1,9 @@
 use clap::{Parser, Subcommand, ValueHint};
 use eyre::Result;
 use foundry_common::shell;
-use foundry_compilers::{artifacts::EvmVersion, Graph};
+use foundry_compilers::{
+    artifacts::EvmVersion, multi::MultiCompilerInput, Compiler, CompilerInput, Graph,
+};
 use foundry_config::Config;
 use semver::Version;
 use serde::Serialize;
@@ -32,6 +34,8 @@ pub enum CompilerSubcommands {
 /// Resolved compiler within the project.
 #[derive(Serialize)]
 struct ResolvedCompiler {
+    /// Compiler name
+    name: String,
     /// Compiler version.
     version: Version,
     /// Max supported EVM version of compiler.
@@ -40,6 +44,9 @@ struct ResolvedCompiler {
     /// Source paths.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     paths: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    /// dependency of the compiler
+    dep: Option<(String, Version)>,
 }
 
 /// CLI arguments for `forge compiler resolve`.
@@ -59,18 +66,17 @@ impl ResolveArgs {
         let Self { root, skip } = self;
 
         let root = root.unwrap_or_else(|| PathBuf::from("."));
-        let config = Config::load_with_root(&root)?;
+        let config = Config::load_with_root(&root)?.canonic_at(root);
         let project = config.project()?;
 
         let graph = Graph::resolve(&project.paths)?;
         let sources = graph.into_sources_by_version(&project)?.sources;
-
         let mut output: BTreeMap<String, Vec<ResolvedCompiler>> = BTreeMap::new();
 
         for (language, sources) in sources {
             let mut versions_with_paths: Vec<ResolvedCompiler> = sources
                 .iter()
-                .map(|(version, sources, _)| {
+                .map(|(version, sources, (_, settings))| {
                     let paths: Vec<String> = sources
                         .iter()
                         .filter_map(|(path_file, _)| {
@@ -101,14 +107,46 @@ impl ResolveArgs {
                     } else {
                         None
                     };
+                    let input = MultiCompilerInput::build(
+                        sources.clone(),
+                        settings.to_owned().clone(),
+                        language,
+                        version.clone(),
+                    );
+                    let compiler_version = project.compiler.compiler_version(&input);
+                    let mut compiler_name = project.compiler.compiler_name(&input).into_owned();
 
-                    ResolvedCompiler { version: version.clone(), evm_version, paths }
+                    let dep = {
+                        if compiler_version != *version {
+                            let names = compiler_name;
+                            let mut names = names.split_whitespace();
+                            compiler_name =
+                                names.next().expect("Malformed compiler name").to_owned();
+                            names.last().map(|item| item.to_owned()).zip(Some(version.clone()))
+                        } else {
+                            None
+                        }
+                    };
+
+                    ResolvedCompiler {
+                        name: compiler_name,
+                        version: compiler_version,
+                        evm_version,
+                        paths,
+                        dep,
+                    }
                 })
                 .filter(|version| !version.paths.is_empty())
                 .collect();
 
             // Sort by SemVer version.
-            versions_with_paths.sort_by(|v1, v2| Version::cmp(&v1.version, &v2.version));
+            versions_with_paths.sort_by(|v1, v2| {
+                if let Some(((_, dep1), (_, dep2))) = v1.dep.as_ref().zip(v2.dep.as_ref()) {
+                    (&v1.version, &dep1).cmp(&(&v2.version, &dep2))
+                } else {
+                    Version::cmp(&v1.version, &v2.version)
+                }
+            });
 
             // Skip language if no paths are found after filtering.
             if !versions_with_paths.is_empty() {
@@ -135,13 +173,22 @@ impl ResolveArgs {
 
             for resolved_compiler in compilers {
                 let version = &resolved_compiler.version;
+                let extras = if let Some((name, version)) = &resolved_compiler.dep {
+                    format!(" and {name} v{version}")
+                } else {
+                    String::new()
+                };
                 match shell::verbosity() {
-                    0 => sh_println!("- {version}")?,
+                    0 => sh_println!("- {} v{version}{}", resolved_compiler.name, extras)?,
                     _ => {
                         if let Some(evm) = &resolved_compiler.evm_version {
-                            sh_println!("{version} (<= {evm}):")?
+                            sh_println!(
+                                "{} v{version}{} (<= {evm}):",
+                                resolved_compiler.name,
+                                extras
+                            )?
                         } else {
-                            sh_println!("{version}:")?
+                            sh_println!("{} v{version}{}:", resolved_compiler.name, extras)?
                         }
                     }
                 }
