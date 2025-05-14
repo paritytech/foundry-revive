@@ -31,6 +31,8 @@ mod revive_wallet;
 
 mod revive_abi_commands;
 
+mod revive_transactions;
+
 casttest!(print_short_version, |_prj, cmd| {
     cmd.arg("-V").assert_success().stdout_eq(str![[r#"
 cast [..]-[..] ([..] [..])
