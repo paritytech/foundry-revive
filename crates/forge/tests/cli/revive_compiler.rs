@@ -223,15 +223,15 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose, |prj, cmd| {
     cmd.args(["compiler", "resolve", "-vv"]).assert_success().stdout_eq(str![[r#"
 Solidity:
 
-Resolc v0.1.0-dev.13 and Solc v0.8.27 (<= cancun):
-├── src/ContractC.sol
-└── src/ContractD.sol
+Resolc v0.1.0-dev.13 and Solc v0.8.4 (<= istanbul):
+└── src/ContractA.sol
 
 Resolc v0.1.0-dev.13 and Solc v0.8.11 (<= london):
 └── src/ContractB.sol
 
-Resolc v0.1.0-dev.13 and Solc v0.8.4 (<= istanbul):
-└── src/ContractA.sol
+Resolc v0.1.0-dev.13 and Solc v0.8.27 (<= cancun):
+├── src/ContractC.sol
+└── src/ContractD.sol
 
 
 "#]]);
@@ -256,6 +256,18 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
     {
       "name": "Resolc",
       "version": "0.1.0-dev.13",
+      "evm_version": "Istanbul",
+      "paths": [
+        "src/ContractA.sol"
+      ],
+      "dep": [
+        "Solc",
+        "0.8.4"
+      ]
+    },
+    {
+      "name": "Resolc",
+      "version": "0.1.0-dev.13",
       "evm_version": "London",
       "paths": [
         "src/ContractB.sol"
@@ -276,18 +288,6 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
       "dep": [
         "Solc",
         "0.8.27"
-      ]
-    },
-    {
-      "name": "Resolc",
-      "version": "0.1.0-dev.13",
-      "evm_version": "Istanbul",
-      "paths": [
-        "src/ContractA.sol"
-      ],
-      "dep": [
-        "Solc",
-        "0.8.4"
       ]
     }
   ]

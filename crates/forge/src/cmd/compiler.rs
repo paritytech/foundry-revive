@@ -140,7 +140,13 @@ impl ResolveArgs {
                 .collect();
 
             // Sort by SemVer version.
-            versions_with_paths.sort_by(|v1, v2| Version::cmp(&v1.version, &v2.version));
+            versions_with_paths.sort_by(|v1, v2| {
+                if let Some(((_, dep1), (_, dep2))) = v1.dep.as_ref().zip(v2.dep.as_ref()) {
+                    (&v1.version, &dep1).cmp(&(&v2.version, &dep2))
+                } else {
+                    Version::cmp(&v1.version, &v2.version)
+                }
+            });
 
             // Skip language if no paths are found after filtering.
             if !versions_with_paths.is_empty() {
