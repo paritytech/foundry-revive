@@ -110,9 +110,6 @@ casttest_serial!(storage_layout_simple_json, |_prj, cmd| {
             url,
             "--block",
             "21034138",
-            "--etherscan-api-key",
-            next_mainnet_etherscan_api_key().as_str(),
-            "0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2",
             "--json",
         ])
         .assert_success()
@@ -128,10 +125,7 @@ casttest_serial!(cast_storage_layout_complex, |_prj, cmd| {
         "--rpc-url",
         url,
         "--block",
-        "21034138",
-        "--etherscan-api-key",
-        next_mainnet_etherscan_api_key().as_str(),
-        "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+        "21034138"
     ])
     .assert_success()
     .stdout_eq(str![[r#"

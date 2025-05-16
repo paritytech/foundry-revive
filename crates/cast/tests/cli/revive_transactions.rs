@@ -44,7 +44,7 @@ casttest_serial!(test_cast_tx_create, |_prj, cmd| {
         // Check if we got a valid transaction hash
         assert!(
             deployment_tx.starts_with("0x") && deployment_tx.len() == 66,
-            "Invalid transaction hash: {deployment_tx}"  
+            "Invalid transaction hash: {deployment_tx}"
         );
 
         // Wait for transaction to be mined
@@ -523,5 +523,29 @@ casttest_serial!(test_cast_logs, |_prj, cmd| {
 
         // Should be a non-empty result
         assert!(!logs.is_empty(), "empty logs result");
+    }
+});
+
+casttest_serial!(test_cast_run_trace, |_prj, cmd| {
+    if let Ok(_node) = block_on(PolkadotNode::start()) {
+        let url = PolkadotNode::http_endpoint();
+        cmd.args([
+        "run",
+        "0xa003e419e2d7502269eb5eda56947b580120e00abfd5b5460d08f8af44a0c24f",
+        "--rpc-url",
+        url
+    ])
+    .assert_success()
+    .stdout_eq(str![[r#"
+Executing previous transactions from the block.
+Traces:
+  [33841] FiatTokenProxy::fallback(0x111111125421cA6dc452d289314280a0f8842A65, 164054805 [1.64e8])
+    ├─ [26673] FiatTokenV2_2::approve(0x111111125421cA6dc452d289314280a0f8842A65, 164054805 [1.64e8]) [delegatecall]
+    │   ├─ emit Approval(owner: 0x9a95Af47C51562acfb2107F44d7967DF253197df, spender: 0x111111125421cA6dc452d289314280a0f8842A65, value: 164054805 [1.64e8])
+    │   └─ ← [Return] true
+    └─ ← [Return] true
+...
+
+"#]]);
     }
 });
