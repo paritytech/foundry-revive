@@ -44,8 +44,7 @@ casttest_serial!(test_cast_tx_create, |_prj, cmd| {
         // Check if we got a valid transaction hash
         assert!(
             deployment_tx.starts_with("0x") && deployment_tx.len() == 66,
-            "Invalid transaction hash: {}",
-            deployment_tx
+            "Invalid transaction hash: {deployment_tx}"  
         );
 
         // Wait for transaction to be mined
@@ -62,8 +61,7 @@ casttest_serial!(test_cast_tx_create, |_prj, cmd| {
         // Verify contract creation was successful
         assert!(
             receipt.contains("\"status\": \"0x1\"") || receipt.contains("contractAddress"),
-            "Contract deployment failed: {}",
-            receipt
+            "Contract deployment failed: {receipt}"
         );
     }
 });
@@ -205,8 +203,7 @@ casttest_serial!(test_cast_send, |_prj, cmd| {
 
         assert!(
             tx_hash.starts_with("0x") && tx_hash.len() >= 66,
-            "cast send returned invalid tx hash: {}",
-            tx_hash
+            "cast send returned invalid tx hash: {tx_hash}"
         );
     }
 });
@@ -243,7 +240,7 @@ casttest_serial!(test_cast_send_and_receipt, |_prj, cmd| {
             .stdout_lossy()
             .trim()
             .to_string();
-        assert!(deploy_tx.starts_with("0x"), "expected tx hash, got `{}`", deploy_tx);
+        assert!(deploy_tx.starts_with("0x"), "expected tx hash, got `{deploy_tx}`");
     }
 });
 
