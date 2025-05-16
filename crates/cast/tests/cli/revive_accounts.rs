@@ -1,7 +1,6 @@
 use foundry_test_utils::{
     casttest_serial,
     revive::PolkadotNode,
-    rpc::next_mainnet_etherscan_api_key,
     util::{block_on, OutputExt},
 };
 
@@ -104,16 +103,10 @@ casttest_serial!(test_cast_storage, |_prj, cmd| {
 casttest_serial!(storage_layout_simple_json, |_prj, cmd| {
     if let Ok(_node) = block_on(PolkadotNode::start()) {
         let url = PolkadotNode::http_endpoint();
-        cmd.cast_fuse().args([
-            "storage",
-            "--rpc-url",
-            url,
-            "--block",
-            "21034138",
-            "--json",
-        ])
-        .assert_success()
-        .stdout_eq(file!["../fixtures/storage_layout_simple.json": Json]);
+        cmd.cast_fuse()
+            .args(["storage", "--rpc-url", url, "--block", "21034138", "--json"])
+            .assert_success()
+            .stdout_eq(file!["../fixtures/storage_layout_simple.json": Json]);
     }
 });
 
