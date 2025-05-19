@@ -123,7 +123,9 @@ impl BindArgs {
         }
 
         let config = self.load_config()?;
-        let artifacts = config.out;
+        let project = config.project()?;
+
+        let artifacts = { project.artifacts_path() };
         let bindings_root = self.bindings.clone().unwrap_or_else(|| artifacts.join("bindings"));
 
         if bindings_root.exists() {
