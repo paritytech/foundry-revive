@@ -893,7 +893,7 @@ forgetest!(can_bind_for_resolc, |prj, cmd| {
     init_prj(&prj);
 
     //TODO: bind command is looking for artifacts in wrong directory
-    cmd.args(["bind", "--resolc", "--out", "resolc-out"]).assert_success().stdout_eq(str![[r#"
+    cmd.args(["bind", "--resolc"]).assert_success().stdout_eq(str![[r#"
 [COMPILING_FILES] with [RESOLC_VERSION]
 [RESOLC_VERSION] [ELAPSED]
 Compiler run successful!
