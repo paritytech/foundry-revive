@@ -892,7 +892,6 @@ forgetest!(inspect_custom_counter_method_identifiers_for_resolc, |prj, cmd| {
 forgetest!(can_bind_for_resolc, |prj, cmd| {
     init_prj(&prj);
 
-    //TODO: bind command is looking for artifacts in wrong directory
     cmd.args(["bind", "--resolc"]).assert_success().stdout_eq(str![[r#"
 [COMPILING_FILES] with [RESOLC_VERSION]
 [RESOLC_VERSION] [ELAPSED]
