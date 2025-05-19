@@ -40,13 +40,9 @@ pub struct ResolcOpts {
     pub optimizer_mode: Option<String>,
 
     // The emulated EVM linear heap memory static buffer size in bytes.
-    #[clap(
-        long = "heap-size",
-        help = "Set the contracts heap size in bytes",
-        value_name = "SIZE"
-    )]
+    #[clap(long = "heap-size", help = "Set the contracts heap size in bytes", value_name = "SIZE")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub heap_size: Option<u64>,
+    pub heap_size: Option<u32>,
 
     // The contracts total stack size in bytes.
     #[clap(
@@ -55,7 +51,7 @@ pub struct ResolcOpts {
         value_name = "SIZE"
     )]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub stack_size: Option<u64>,
+    pub stack_size: Option<u32>,
 }
 
 impl ResolcOpts {
@@ -74,7 +70,10 @@ impl ResolcOpts {
         );
 
         set_if_some!(self.resolc_compile, resolc.resolc_compile);
-        set_if_some!(self.optimizer_mode.as_ref().and_then(|mode| mode.parse::<char>().ok()), resolc.optimizer_mode);
+        set_if_some!(
+            self.optimizer_mode.as_ref().and_then(|mode| mode.parse::<char>().ok()),
+            resolc.optimizer_mode
+        );
         set_if_some!(self.heap_size, resolc.heap_size);
         set_if_some!(self.stack_size, resolc.stack_size);
 

@@ -1607,7 +1607,7 @@ impl Config {
         let cli_settings =
             CliSettings { extra_args: self.extra_args.clone(), ..Default::default() };
 
-        Ok(SolcSettings { settings, cli_settings })
+        Ok(SolcSettings { settings, cli_settings, ..Default::default() })
     }
 
     /// Returns the configured [VyperSettings] that includes:
