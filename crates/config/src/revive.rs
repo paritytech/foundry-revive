@@ -26,10 +26,10 @@ pub struct ResolcConfig {
     /// The optimization mode string for resolc
     pub optimizer_mode: Option<char>,
 
-    // The emulated EVM linear heap memory static buffer size in bytes
+    /// The emulated EVM linear heap memory static buffer size in bytes
     pub heap_size: Option<u32>,
 
-    // The contracts total stack size in bytes
+    /// The contracts total stack size in bytes
     pub stack_size: Option<u32>,
 }
 

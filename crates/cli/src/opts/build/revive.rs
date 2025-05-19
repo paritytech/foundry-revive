@@ -39,12 +39,12 @@ pub struct ResolcOpts {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub optimizer_mode: Option<String>,
 
-    // The emulated EVM linear heap memory static buffer size in bytes.
+    /// The emulated EVM linear heap memory static buffer size in bytes.
     #[clap(long = "heap-size", help = "Set the contracts heap size in bytes", value_name = "SIZE")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub heap_size: Option<u32>,
 
-    // The contracts total stack size in bytes.
+    /// The contracts total stack size in bytes.
     #[clap(
         long = "stack-size",
         help = "Set the contracts total stack size in bytes",
