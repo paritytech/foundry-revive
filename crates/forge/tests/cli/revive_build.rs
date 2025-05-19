@@ -59,3 +59,56 @@ Compiler run successful!
             .is_json(),
         );
 });
+
+forgetest_init!(build_contracts_with_optimization, |prj, cmd| {
+    cmd.args([
+        "build",
+        "--resolc",
+        "--resolc-optimization",
+        "0",
+        "--sizes",
+        "--json",
+        "--use-resolc",
+        &format!("resolc:{OTHER_RESOLC_VERSION}"),
+    ])
+    .assert_success()
+    .stdout_eq(
+        str![[r#"
+{
+   "Counter" :{
+      "runtime_size":11335,
+      "init_size":11335,
+      "runtime_margin":238665,
+      "init_margin":238665
+   }
+}
+"#]]
+        .is_json(),
+    );
+
+    cmd.forge_fuse()
+        .args([
+            "build",
+            "--resolc",
+            "--resolc-optimization",
+            "z",
+            "--sizes",
+            "--json",
+            "--use-resolc",
+            &format!("resolc:{OTHER_RESOLC_VERSION}"),
+        ])
+        .assert_success()
+        .stdout_eq(
+            str![[r#"
+{
+   "Counter" :{
+      "runtime_size":4524,
+      "init_size":4524,
+      "runtime_margin":245476,
+      "init_margin":245476
+   }
+}
+"#]]
+            .is_json(),
+        );
+});
