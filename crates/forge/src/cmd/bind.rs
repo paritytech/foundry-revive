@@ -4,10 +4,12 @@ use eyre::Result;
 use forge_sol_macro_gen::{MultiSolMacroGen, SolMacroGen};
 use foundry_cli::{opts::BuildOpts, utils::LoadConfig};
 use foundry_common::{compile::ProjectCompiler, fs::json_files};
+use foundry_compilers::{error::SolcError, multi::MultiCompilerLanguage};
 use foundry_config::impl_figment_convert;
 use regex::Regex;
 use std::{
     fs,
+    io::ErrorKind,
     path::{Path, PathBuf},
 };
 
@@ -112,13 +114,21 @@ pub struct BindArgs {
 }
 
 impl BindArgs {
-    pub fn run(self) -> Result<()> {
+    pub fn run(mut self) -> Result<()> {
         if self.ethers {
             eyre::bail!("`--ethers` bindings have been removed. Use `--alloy` (default) instead.");
         }
-
         if !self.skip_build {
             let project = self.build.project()?;
+
+            let cache = project.read_cache_file()?;
+            if let Err(SolcError::Io(solc_io)) =
+                cache.read_builds::<MultiCompilerLanguage>(&project.paths.build_infos)
+            {
+                if solc_io.source().kind() == ErrorKind::NotFound {
+                    self.overwrite = true;
+                }
+            };
             let _ = ProjectCompiler::new().compile(&project)?;
         }
 
