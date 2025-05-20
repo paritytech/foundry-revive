@@ -4,12 +4,11 @@ use eyre::Result;
 use forge_sol_macro_gen::{MultiSolMacroGen, SolMacroGen};
 use foundry_cli::{opts::BuildOpts, utils::LoadConfig};
 use foundry_common::{compile::ProjectCompiler, fs::json_files};
-use foundry_compilers::{error::SolcError, multi::MultiCompilerLanguage};
 use foundry_config::impl_figment_convert;
 use regex::Regex;
 use std::{
+    collections::BTreeSet,
     fs,
-    io::ErrorKind,
     path::{Path, PathBuf},
 };
 
@@ -120,16 +119,33 @@ impl BindArgs {
         }
         if !self.skip_build {
             let project = self.build.project()?;
-
-            let cache = project.read_cache_file()?;
-            if let Err(SolcError::Io(solc_io)) =
-                cache.read_builds::<MultiCompilerLanguage>(&project.paths.build_infos)
-            {
-                if solc_io.source().kind() == ErrorKind::NotFound {
-                    self.overwrite = true;
+            let old_builds: BTreeSet<String> = {
+                if let Some(entries) = std::fs::read_dir(&project.paths.build_infos).ok() {
+                    entries
+                        .filter_map(|x| x.ok())
+                        .filter_map(|f| {
+                            let path = f.path();
+                            if path.is_file() {
+                                path.file_stem().map(|x| x.to_string_lossy().into_owned())
+                            } else {
+                                None
+                            }
+                        })
+                        .collect()
+                } else {
+                    BTreeSet::new()
                 }
             };
-            let _ = ProjectCompiler::new().compile(&project)?;
+            let output = ProjectCompiler::new().compile(&project)?;
+
+            let new_builds: BTreeSet<String> =
+                output.builds().map(|(key, _)| key).cloned().collect();
+
+            // if build_infos got overwritten => different compiler was used.
+            // in case of other possible errors(e.g. modified file we go as usual)
+            if old_builds.is_disjoint(&new_builds) {
+                self.overwrite = true;
+            }
         }
 
         let config = self.load_config()?;
