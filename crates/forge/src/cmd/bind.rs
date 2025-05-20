@@ -125,20 +125,20 @@ impl BindArgs {
         let config = self.load_config()?;
         let project = config.project()?;
 
-        let artifacts = { project.artifacts_path() };
+        let artifacts = project.artifacts_path();
         let bindings_root = self.bindings.clone().unwrap_or_else(|| artifacts.join("bindings"));
 
         if bindings_root.exists() {
             if !self.overwrite {
                 sh_println!("Bindings found. Checking for consistency.")?;
-                return self.check_existing_bindings(&artifacts, &bindings_root);
+                return self.check_existing_bindings(artifacts, &bindings_root);
             }
 
             trace!(?artifacts, "Removing existing bindings");
             fs::remove_dir_all(&bindings_root)?;
         }
 
-        self.generate_bindings(&artifacts, &bindings_root)?;
+        self.generate_bindings(artifacts, &bindings_root)?;
 
         sh_println!("Bindings have been generated to {}", bindings_root.display())?;
         Ok(())
