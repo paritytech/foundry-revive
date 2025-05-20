@@ -53,7 +53,7 @@ struct ResolvedCompiler {
     paths: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     /// dependency of the compiler
-    dep: Option<Dependency>,
+    dependency: Option<Dependency>,
 }
 
 /// CLI arguments for `forge compiler resolve`.
@@ -123,7 +123,7 @@ impl ResolveArgs {
                     let compiler_version = project.compiler.compiler_version(&input);
                     let mut compiler_name = project.compiler.compiler_name(&input).into_owned();
 
-                    let dep = {
+                    let dependency = {
                         // `Input.version` will always differ from `compiler_version`
                         if config.resolc.resolc_compile {
                             let names = compiler_name;
@@ -145,7 +145,7 @@ impl ResolveArgs {
                         version: compiler_version,
                         evm_version,
                         paths,
-                        dep,
+                        dependency,
                     }
                 })
                 .filter(|version| !version.paths.is_empty())
@@ -153,13 +153,8 @@ impl ResolveArgs {
 
             // Sort by SemVer version.
             versions_with_paths.sort_by(|v1, v2| {
-                if let Some((Dependency { version: dep1, .. }, Dependency { version: dep2, .. })) =
-                    v1.dep.as_ref().zip(v2.dep.as_ref())
-                {
-                    (&v1.version, &dep1).cmp(&(&v2.version, &dep2))
-                } else {
-                    Version::cmp(&v1.version, &v2.version)
-                }
+                (&v1.version, &v1.dependency.as_ref().map(|x| &x.version))
+                    .cmp(&(&v2.version, &v2.dependency.as_ref().map(|x| &x.version)))
             });
 
             // Skip language if no paths are found after filtering.
@@ -187,11 +182,12 @@ impl ResolveArgs {
 
             for resolved_compiler in compilers {
                 let version = &resolved_compiler.version;
-                let extras = if let Some(Dependency { name, version }) = &resolved_compiler.dep {
-                    format!(", {name} v{version}")
-                } else {
-                    String::new()
-                };
+                let extras =
+                    if let Some(Dependency { name, version }) = &resolved_compiler.dependency {
+                        format!(", {name} v{version}")
+                    } else {
+                        String::new()
+                    };
                 match shell::verbosity() {
                     0 => sh_println!("- {} v{version}{}", resolved_compiler.name, extras)?,
                     _ => {

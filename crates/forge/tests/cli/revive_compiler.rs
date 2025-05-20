@@ -84,7 +84,7 @@ forgetest!(can_list_resolved_compiler_versions_json, |prj, cmd| {
     {
       "name": "Resolc",
       "version": "0.1.0-dev.13",
-      "dep": {
+      "dependency": {
         "name": "Solc",
         "version": "0.8.4"
       }
@@ -138,7 +138,7 @@ forgetest!(can_list_resolved_compiler_versions_verbose_json, |prj, cmd| {
         "src/ContractC.sol",
         "src/ContractD.sol"
       ],
-      "dep": {
+      "dependency": {
         "name": "Solc",
         "version": "0.8.27"
       }
@@ -196,7 +196,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_skipped_json, |prj, cmd|
       "paths": [
         "src/ContractD.sol"
       ],
-      "dep": {
+      "dependency": {
         "name": "Solc",
         "version": "0.8.27"
       }
@@ -260,7 +260,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
       "paths": [
         "src/ContractA.sol"
       ],
-      "dep": {
+      "dependency": {
         "name": "Solc",
         "version": "0.8.4"
       }
@@ -272,7 +272,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
       "paths": [
         "src/ContractB.sol"
       ],
-      "dep": {
+      "dependency": {
         "name": "Solc",
         "version": "0.8.11"
       }
@@ -285,7 +285,7 @@ forgetest!(can_list_resolved_multiple_compiler_versions_verbose_json, |prj, cmd|
         "src/ContractC.sol",
         "src/ContractD.sol"
       ],
-      "dep": {
+      "dependency": {
         "name": "Solc",
         "version": "0.8.27"
       }
