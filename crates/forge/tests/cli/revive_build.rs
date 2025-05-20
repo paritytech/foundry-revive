@@ -2,6 +2,7 @@ use foundry_test_utils::snapbox::IntoData;
 
 use crate::utils::generate_large_init_contract;
 pub const OTHER_RESOLC_VERSION: &str = "0.1.0-dev.13";
+pub const NEWEST_RESOLC_VERSION: &str = "0.1.0-dev.16";
 
 forgetest_init!(can_build_with_resolc, |prj, cmd| {
     cmd.args(["build", "--resolc-compile"]).assert_success();
@@ -69,17 +70,17 @@ forgetest_init!(build_contracts_with_optimization, |prj, cmd| {
         "--sizes",
         "--json",
         "--use-resolc",
-        &format!("resolc:{OTHER_RESOLC_VERSION}"),
+        &format!("resolc:{NEWEST_RESOLC_VERSION}"),
     ])
     .assert_success()
     .stdout_eq(
         str![[r#"
 {
    "Counter" :{
-      "runtime_size":11335,
-      "init_size":11335,
-      "runtime_margin":238665,
-      "init_margin":238665
+      "runtime_size":11175,
+      "init_size":11175,
+      "runtime_margin":238825,
+      "init_margin":238825
    }
 }
 "#]]
@@ -95,17 +96,17 @@ forgetest_init!(build_contracts_with_optimization, |prj, cmd| {
             "--sizes",
             "--json",
             "--use-resolc",
-            &format!("resolc:{OTHER_RESOLC_VERSION}"),
+            &format!("resolc:{NEWEST_RESOLC_VERSION}"),
         ])
         .assert_success()
         .stdout_eq(
             str![[r#"
 {
    "Counter" :{
-      "runtime_size":4524,
-      "init_size":4524,
-      "runtime_margin":245476,
-      "init_margin":245476
+      "runtime_size":4994,
+      "init_size":4994,
+      "runtime_margin":245006,
+      "init_margin":245006
    }
 }
 "#]]
