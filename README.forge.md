@@ -43,22 +43,37 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```
   </details>
 
-### Compilation and Testing
-
-#### <span style="color: green;">build</span>
-- **Command**: `forge build`
+#### <span style="color: green;">inspect</span>
+- **Command**: `forge inspect`
+- **Additional Flags**:
+  - `--resolc`: Use the Resolc compiler.
 - **Example**:
   <details>
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > forge build
+  > forge inspect Counter storage --resolc
+  ```
+  </details>
+
+### Compilation and Testing
+
+#### <span style="color: green;">build</span>
+- **Command**: `forge build`
+- **Additional Flags**:
+  - `--resolc`: Use the Resolc compiler.
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge build --resolc
   [⠊] Compiling...
   No files changed, compilation skipped
   ```
   </details>
 
-#### <span style="color: green;">test</span>
+#### <span style="color: red;">test</span>
 - **Command**: `forge test`
 - **Example**:
   <details>
@@ -67,14 +82,43 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```bash
   > forge test
   [⠊] Compiling...
-  No files changed, compilation skipped
+  Compiler run successful with warnings:
+  Warning: Warning: Your code or one of its dependencies uses the 'extcodesize' instruction, which is
+  usually needed in the following cases:
+    1. To detect whether an address belongs to a smart contract.
+    2. To detect whether the deploy code execution has finished.
+  Polkadot comes with native account abstraction support (so smart contracts are just accounts
+  coverned by code), and you should avoid differentiating between contracts and non-contract
+  addresses.
+  --> lib/forge-std/src/StdCheats.sol
+  Warning: Warning: Your code or one of its dependencies uses the 'extcodesize' instruction, which is
+  usually needed in the following cases:
+    1. To detect whether an address belongs to a smart contract.
+    2. To detect whether the deploy code execution has finished.
+  Polkadot comes with native account abstraction support (so smart contracts are just accounts
+  coverned by code), and you should avoid differentiating between contracts and non-contract
+  addresses.
+  --> lib/forge-std/src/StdCheats.sol
+  Warning: Warning: Your code or one of its dependencies uses the 'extcodesize' instruction, which is
+  usually needed in the following cases:
+    1. To detect whether an address belongs to a smart contract.
+    2. To detect whether the deploy code execution has finished.
+  Polkadot comes with native account abstraction support (so smart contracts are just accounts
+  coverned by code), and you should avoid differentiating between contracts and non-contract
+  addresses.
+  --> lib/forge-std/src/StdUtils.sol
 
-  Ran 2 tests for test/Counter.t.sol:CounterTest
-  [PASS] testFuzz_SetNumber(uint256) (runs: 256, μ: 32198, ~: 32354)
-  [PASS] test_Increment() (gas: 31851)
-  Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 8.31ms (8.00ms CPU time)
+  Ran 1 test for test/Counter.t.sol:CounterTest
+  [FAIL: EvmError: StackUnderflow] constructor() (gas: 0)
+  Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 4.52ms (0.00ns CPU time)
 
-  Ran 1 test suite in 13.37ms (8.31ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
+  Ran 1 test suite in 118.49ms (4.52ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+  Failing tests:
+  Encountered 1 failing test in test/Counter.t.sol:CounterTest
+  [FAIL: EvmError: StackUnderflow] constructor() (gas: 0)
+
+  Encountered a total of 1 failing tests, 0 tests succeeded
   ```
   </details>
 
@@ -100,12 +144,14 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
 #### <span style="color: green;">bind</span>
 - **Command**: `forge bind`
+- **Additional Flags**:
+  - `--resolc`: Use the Resolc compiler.
 - **Example**:
   <details>
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > forge bind
+  > forge bind --resolc
   [⠒] Compiling...
   Compiler run successful!
   Generating bindings for 2 contracts
@@ -132,18 +178,22 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
 ### Contract Deployment
 
-#### <span style="color: red;">create</span>
+#### <span style="color: green;">create</span>
 - **Command**: `forge create [OPTIONS] <CONTRACT>`
+- **Additional Flags**:
+  - `--resolc`: Use the Resolc compiler.
 - **Required Parameters**: `CONTRACT`
 - **Example**:
   <details>
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > forge create src/Counter.sol:Counter --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133
+  > forge create Counter --resolc --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 --broadcast -vvvvv --constructor-args 5
   [⠊] Compiling...
   No files changed, compilation skipped
-  Error: server returned an error response: error code -32000: Failed to instantiate contract: Module(ModuleError { index: 60, error: [27, 0, 0, 0], message: Some("CodeRejected") })
+  Deployer: 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
+  Deployed to: 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b
+  Transaction hash: 0xe4c0218c5d934faf4c64e110f5a491aaac92440bc64426a973f78cc06ca22426
   ```
   </details>
 

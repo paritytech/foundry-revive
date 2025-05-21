@@ -62,14 +62,14 @@ This section outlines the key differences between the original Foundry toolkit (
 
 **Subcommands**: The fork Foundry currently supports a wide range of subcommands under `forge` ([Forge Commands](./README.forge.md)) and `cast` ([Cast Commands](./README.cast.md)).
 
-**Potential Differences**: Commands relying on compilation (e.g., `build`, `test`, `script`) in the fork can use Resolc, altering their output compared to the original Foundry.
+**Potential Differences**: Commands relying on compilation (e.g., `create`, `bind`, `build`, `inspect`) in the fork can use Resolc, altering their output compared to the original Foundry.
 
 ### 3. Unsupported (yet) or Modified Features
 
-**Potential Unsupported Features**: Some Ethereum-specific features, such as EVM version targeting (e.g., `--evm-version`) or some Ethereum network interactions via Anvil and Chisel, may not be currently fully supported or relevant in the Polkadot context.
+**Potential Unsupported Features**: Some Ethereum-specific features, such as some Ethereum network interactions via Anvil and Chisel, may not be currently fully supported or relevant in the Polkadot context.
 
 **Modified Features**:
-- Compilation output: When using Resolc, the bytecode and ABI may differ from Solc's output, reflecting PolkaVM's requirements.
+- Compilation output: When using Resolc, the bytecode may differ from Solc's output, reflecting PolkaVM's requirements.
 - Project paths: The fork adjusts project paths when `resolc_compile = true`, potentially affecting how source files, libraries, or artifacts are organized.
 
 ### 4. Additional (Contextual) Repositories

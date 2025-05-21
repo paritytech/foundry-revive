@@ -373,7 +373,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```
   </details>
 
-#### <span style="color: red;">estimate</span>
+#### <span style="color: green;">estimate</span>
 - **Command**: `cast estimate [OPTIONS] [TO] [SIG] [ARGS]... [COMMAND]`
 - **Required Parameters**: `TO`
 - **Example**:
@@ -381,8 +381,8 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast estimate 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --value 0.1ether 'getCount()' --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
-  [Fails due to eth_feeHistory not being supported]
+  > cast estimate --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b "incrementCounter()"
+  9693273291600
   ```
   </details>
 
@@ -399,7 +399,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```
   </details>
 
-#### <span style="color: red;">mktx</span>
+#### <span style="color: green;">mktx</span>
 - **Command**: `cast mktx [OPTIONS] [TO] [SIG] [ARGS]... [COMMAND]`
 - **Required Parameters**: `TO`
 - **Example**:
@@ -407,8 +407,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast mktx [ADDRESS] [FUNCTION_NAME] [DATA] --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
-  [Fails due to eth_feeHistory not being supported]
+  > cast mktx 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b "incrementCounter()" --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --chain-id 420420421 --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 --format-json 0x02f87284190f1b45820584018207d18608cc3c04b35094c88d454a33610f4c73acc367ccaaf98e7ee78a1b80845b34b966c001a09a64c754b676a1c010d80ec82790c632f16f8fed5e7af8bd0aadaeccf6b2ea10a0232e21cf2b7aa007e4af2140e0aaaca8e33fd4a9d8009fe9be338e58ed3f04f0
   ```
   </details>
 
