@@ -10,7 +10,8 @@ pub struct ResolcOpts {
         help = "Enable compiling with resolc",
         long = "resolc-compile",
         visible_alias = "resolc",
-        action = clap::ArgAction::SetTrue,
+        num_args = 0..=1,
+        default_missing_value = "true",
     )]
     pub resolc_compile: Option<bool>,
 
