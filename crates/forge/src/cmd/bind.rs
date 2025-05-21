@@ -120,7 +120,7 @@ impl BindArgs {
         if !self.skip_build {
             let project = self.build.project()?;
             let old_builds: BTreeSet<String> = {
-                if let Some(entries) = std::fs::read_dir(&project.paths.build_infos).ok() {
+                if let Ok(entries) = std::fs::read_dir(&project.paths.build_infos) {
                     entries
                         .filter_map(|x| x.ok())
                         .filter_map(|f| {
