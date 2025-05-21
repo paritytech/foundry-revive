@@ -9,11 +9,9 @@ pub struct ResolcOpts {
         value_name = "RESOLC_COMPILE",
         help = "Enable compiling with resolc",
         long = "resolc-compile",
-        visible_alias = "resolc",
-        num_args = 0..=1,
-        default_missing_value = "true",
+        visible_alias = "resolc"
     )]
-    pub resolc_compile: Option<bool>,
+    pub resolc_compile: bool,
 
     /// Specify the resolc version, or a path to a local resolc, to build with.
     ///
@@ -65,12 +63,13 @@ impl ResolcOpts {
             };
         }
 
+        if self.resolc_compile {
+            resolc.resolc_compile = self.resolc_compile;
+        }
         set_if_some!(
             self.use_resolc.as_ref().map(|v| SolcReq::from(v.trim_start_matches("resolc:"))),
             resolc.resolc
         );
-
-        set_if_some!(self.resolc_compile, resolc.resolc_compile);
         set_if_some!(
             self.optimizer_mode.as_ref().and_then(|mode| mode.parse::<char>().ok()),
             resolc.optimizer_mode
