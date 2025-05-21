@@ -43,7 +43,8 @@ impl ResolcConfig {
             .allowed_path(&config.root)
             .allowed_paths(&config.libs)
             .allowed_paths(&config.allow_paths)
-            .include_paths(&config.include_paths);
+            .include_paths(&config.include_paths)
+            .artifacts(&config.out);
 
         builder.build_with_root(&config.root)
     }
