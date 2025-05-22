@@ -188,8 +188,8 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast nonce 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
-  0
+  > cast nonce 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  1427
   ```
   </details>
 
