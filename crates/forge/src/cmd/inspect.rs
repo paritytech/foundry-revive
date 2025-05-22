@@ -71,7 +71,7 @@ impl InspectArgs {
         let project = modified_build_args.project()?;
         let compiler = ProjectCompiler::new().quiet(true);
         let target_path = find_target_path(&project, &contract)?;
-        if modified_build_args.compiler.resolc_opts.resolc_compile {
+        if modified_build_args.compiler.resolc_opts.resolc_compile.unwrap_or_default() {
             check_resolc_field(&field)?;
         }
         let mut output = compiler.files([target_path.clone()]).compile(&project)?;
