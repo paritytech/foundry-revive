@@ -17,6 +17,8 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 - If the command is listed with a **<span style="color: red;">red</span>** color, it is not supported.
 - If the command is listed with a **<span style="color: green;">green</span>** color, it is supported.
 
+## Known Issues
+
 ## [Forge Commands](https://github.com/paritytech/foundry-polkadot/issues/54)
 
 ### Project Setup and Installation
@@ -122,23 +124,54 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```
   </details>
 
-#### <span style="color: green;">snapshot</span>
+#### <span style="color: red;">snapshot</span>
 - **Command**: `forge snapshot`
+- **Additional Flags**:
+  - `--resolc`: Use the Resolc compiler.
 - **Example**:
   <details>
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > forge snapshot
-  [⠊] Compiling...
-  No files changed, compilation skipped
+  > forge snapshot --resolc
+  [⠃] Compiling...
+  Compiler run successful with warnings:
+  Warning: Warning: Your code or one of its dependencies uses the 'extcodesize' instruction, which is
+  usually needed in the following cases:
+    1. To detect whether an address belongs to a smart contract.
+    2. To detect whether the deploy code execution has finished.
+  Polkadot comes with native account abstraction support (so smart contracts are just accounts
+  coverned by code), and you should avoid differentiating between contracts and non-contract
+  addresses.
+  --> lib/forge-std/src/StdCheats.sol
+  Warning: Warning: Your code or one of its dependencies uses the 'extcodesize' instruction, which is
+  usually needed in the following cases:
+    1. To detect whether an address belongs to a smart contract.
+    2. To detect whether the deploy code execution has finished.
+  Polkadot comes with native account abstraction support (so smart contracts are just accounts
+  coverned by code), and you should avoid differentiating between contracts and non-contract
+  addresses.
+  --> lib/forge-std/src/StdCheats.sol
+  Warning: Warning: Your code or one of its dependencies uses the 'extcodesize' instruction, which is
+  usually needed in the following cases:
+    1. To detect whether an address belongs to a smart contract.
+    2. To detect whether the deploy code execution has finished.
+  Polkadot comes with native account abstraction support (so smart contracts are just accounts
+  coverned by code), and you should avoid differentiating between contracts and non-contract
+  addresses.
+  --> lib/forge-std/src/StdUtils.sol
 
-  Ran 2 tests for test/Counter.t.sol:CounterTest
-  [PASS] testFuzz_SetNumber(uint256) (runs: 256, μ: 32043, ~: 32354)
-  [PASS] test_Increment() (gas: 31851)
-  Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 8.42ms (8.15ms CPU time)
+  Ran 1 test for test/Counter.t.sol:CounterTest
+  [FAIL: EvmError: StackUnderflow] constructor() (gas: 0)
+  Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 1.02ms (0.00ns CPU time)
 
-  Ran 1 test suite in 13.88ms (8.42ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
+  Ran 1 test suite in 110.19ms (1.02ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+  Failing tests:
+  Encountered 1 failing test in test/Counter.t.sol:CounterTest
+  [FAIL: EvmError: StackUnderflow] constructor() (gas: 0)
+
+  Encountered a total of 1 failing tests, 0 tests succeeded
   ```
   </details>
 
@@ -156,23 +189,6 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   Compiler run successful!
   Generating bindings for 2 contracts
   Bindings have been generated to /home/ec2-user/test-foundry/out/bindings
-  ```
-  </details>
-
-#### <span style="color: red;">cache test</span>
-- **Command**: `forge cache [OPTIONS] <COMMAND>`
-- **Required Parameters**: `COMMAND`
-- **Example**:
-  <details>
-  <summary>Click to toggle contents of example</summary>
-
-  ```bash
-  > forge cache test
-  error: unrecognized subcommand 'test'
-
-  Usage: forge cache [OPTIONS] <COMMAND>
-
-  For more information, try '--help'.
   ```
   </details>
 
@@ -268,32 +284,20 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```
   </details>
 
-#### <span style="color: red;">doc (with build)</span>
-- **Command**: `forge doc`
-- **Example**:
-  <details>
-  <summary>Click to toggle contents of example</summary>
-
-  ```bash
-  > forge doc --build --out ./documentation
-  Error: prefix not found
-  ```
-  </details>
-
-#### <span style="color: red;">selectors upload</span>
+#### <span style="color: green;">selectors upload</span>
 - **Command**: `forge selectors upload`
 - **Example**:
   <details>
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > forge upload-selectors Counter
-  error: unrecognized subcommand 'upload-selectors'
-
-    tip: some similar subcommands exist: 'se', 'selectors'
-
-  Usage: forge [OPTIONS] <COMMAND>
-
-  For more information, try '--help'.
+  > forge selectors upload --all
+  [⠃] Compiling...
+  Compiler run successful!
+  Uploading selectors for Counter...
+  Duplicated: Function increment(): 0xd09de08a
+  Duplicated: Function number(): 0x8381f58a
+  Duplicated: Function setNumber(uint256): 0x3fb5c1cb
+  Selectors successfully uploaded to OpenChain
   ```
   </details>

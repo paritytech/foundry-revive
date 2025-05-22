@@ -37,13 +37,13 @@ Foundry consists of:
 
 ---
 
-## Differences Between Foundry and Foundry-Polkadot Fork
+## Differences Between Foundry and Foundry-Polkadot
 
-This section outlines the key differences between the original Foundry toolkit ([Foundry](https://github.com/foundry-rs/foundry)) and the ParityTech Foundry-Polkadot fork ([Foundry-Polkadot](https://github.com/paritytech/foundry-polkadot)). **It is intended for developers already familiar with Foundry who are interested in using the fork for Polkadot blockchain development.** The focus is on new features, changes, and unsupported functionalities in the fork, emphasizing its adaptation for Polkadot.
+This section outlines the key differences between the original Foundry toolkit ([Foundry](https://github.com/foundry-rs/foundry)) and the ParityTech Foundry-Polkadot ([Foundry-Polkadot](https://github.com/paritytech/foundry-polkadot)). **It is intended for developers already familiar with Foundry who are interested in using the Foundry-Polkadot for Polkadot blockchain development.** The focus is on new features, changes, and unsupported functionalities in the Foundry-Polkadot, emphasizing its adaptation for Polkadot.
 
 ### 1. Resolc Compiler Integration
 
-**Purpose**: The most significant addition in the fork is support for compiling Solidity contracts for Polkadot using the Resolc compiler, which targets PolkaVM in the `pallet-revive` framework ([Revive Repository](https://github.com/paritytech/revive)). This contrasts with the original Foundry's use of the Solc compiler for Ethereum's EVM.
+**Purpose**: The main addition in the Foundry-Polkadot is support for compiling Solidity contracts targeting Polkadot, using the Resolc compiler to generate PolkaVM-compatible bytecode. This contrasts with the original Foundry's use of the Solc compiler for Ethereum's EVM.
 
 **Usage**:
 - **Command-Line Flag**: For commands that involve compilation (e.g., `forge build`), you can use the `--resolc` flag to enable Resolc compilation. For example:
@@ -56,29 +56,29 @@ This section outlines the key differences between the original Foundry toolkit (
   [profile.default.resolc]
   resolc_compile = true
   ```
-  Setting `resolc_compile = false` reverts to using Solc, ensuring compatibility with Ethereum projects. By default, the fork may use Solc unless Resolc is explicitly enabled, though this depends on the fork's configuration defaults.
+  Setting `resolc_compile = false` reverts to using Solc, ensuring compatibility with Ethereum projects. By default, Foundry-Polkadot may use Solc unless Resolc is explicitly enabled, though this depends on the Foundry-Polkadot's configuration defaults.
 
 ### 2. Command-Line Interface
 
-**Subcommands**: The fork Foundry currently supports a wide range of subcommands under `forge` ([Forge Commands](./README.forge.md)) and `cast` ([Cast Commands](./README.cast.md)).
+**Subcommands**: Foundry-Polkadot currently supports a wide range of subcommands under `forge` ([Forge Commands](./README.forge.md)) and `cast` ([Cast Commands](./README.cast.md)).
 
-**Potential Differences**: Commands relying on compilation (e.g., `create`, `bind`, `build`, `inspect`) in the fork can use Resolc, altering their output compared to the original Foundry.
+**Potential Differences**: Commands relying on compilation (e.g., `create`, `bind`, `build`, `inspect`) in Foundry-Polkadot can use Resolc, altering their output compared to the original Foundry.
 
 ### 3. Unsupported (yet) or Modified Features
 
-**Potential Unsupported Features**: Some Ethereum-specific features, such as some Ethereum network interactions via Anvil and Chisel, may not be currently fully supported or relevant in the Polkadot context.
+**Potential Unsupported Features**: Support for Anvil and Chisel is not available, which also means commands like `forge test`, `forge snapshot`, and `forge script` are not currently supported.
 
 **Modified Features**:
-- Compilation output: When using Resolc, the bytecode may differ from Solc's output, reflecting PolkaVM's requirements.
-- Project paths: The fork adjusts project paths when `resolc_compile = true`, potentially affecting how source files, libraries, or artifacts are organized.
+- Compilation output: When using Resolc, the bytecode differs from Solc's output, reflecting PolkaVM's requirements.
+- Project paths: Foundry-Polkadot adjusts project paths when `resolc_compile = true`, potentially affecting how source files, libraries, or artifacts are organized.
 
 ### 4. Additional (Contextual) Repositories
 
-The fork is part of ParityTech's ecosystem, which includes related repositories:
+Foundry-Polkadot is part of ParityTech's ecosystem, which includes related repositories:
 - **paritytech/revive**: Hosts the Resolc compiler, providing the backend for Polkadot-targeted Solidity compilation ([Revive Repository](https://github.com/paritytech/revive)).
 - **paritytech/foundry-compilers-polkadot**: Utilities for working with compilers, potentially including Resolc, though primarily focused on Solc ([Foundry Compilers Polkadot](https://github.com/paritytech/foundry-compilers-polkadot)).
 
-These repositories may contain additional tools or documentation relevant to the fork's functionality.
+These repositories may contain additional tools or documentation relevant to Foundry-Polkadot's functionality.
 
 ---
 
