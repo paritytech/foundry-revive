@@ -169,14 +169,16 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
 #### <span style="color: green;">storage</span>
 - **Command**: `cast storage [OPTIONS] <ADDRESS> [SLOT]`
+- **Additional Flags**:
+  - `--resolc`: Use the Resolc compiler.
 - **Required Parameters**: `ADDRESS`
 - **Example**:
   <details>
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast storage 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b 0 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
-  0x000000000000000000000000000000000000000000000000000000000000000a
+  > cast storage 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b 0 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --resolc
+  0x0000000000000000000000000000000000000000000000000000000000000011
   ```
   </details>
 
@@ -203,19 +205,6 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```bash
   > cast code 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
   0x50564d0000b11f000000000000010700c15000c0004003405646ec651416c8d69a8
-  ```
-  </details>
-
-#### <span style="color: red;">storage (with Etherscan)</span>
-- **Command**: `cast storage [OPTIONS] <ADDRESS> [SLOT]`
-- **Required Parameters**: `ADDRESS`
-- **Example**:
-  <details>
-  <summary>Click to toggle contents of example</summary>
-
-  ```bash
-  > cast storage --etherscan-api-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
-  Error: Chain 420420421 not supported
   ```
   </details>
 
