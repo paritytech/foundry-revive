@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["CONTRACT_SIZE_LIMIT","RESOLC_SOLIDITY_FILES_CACHE_FILENAME"],"struct":["ResolcConfig"]};
