@@ -27,8 +27,6 @@ mod revive_block;
 
 mod revive_accounts;
 
-mod revive_wallet;
-
 mod revive_abi_commands;
 
 mod revive_transactions;
