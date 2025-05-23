@@ -56,7 +56,7 @@ This section outlines the key differences between the original Foundry toolkit (
   [profile.default.resolc]
   resolc_compile = true
   ```
-  Setting `resolc_compile = false` reverts to using Solc, ensuring compatibility with Ethereum projects. By default, Foundry-Polkadot may use Solc unless Resolc is explicitly enabled, though this depends on the Foundry-Polkadot's configuration defaults.
+Setting `resolc_compile = false` reverts to using Solc, ensuring compatibility with Ethereum projects. By default, Foundry-Polkadot uses Solc unless Resolc is explicitly enabled.
 
 ### 2. Command-Line Interface
 
