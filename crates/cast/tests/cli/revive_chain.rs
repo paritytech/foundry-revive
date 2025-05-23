@@ -47,6 +47,6 @@ casttest_serial!(test_cast_client, |_prj, cmd| {
             .trim()
             .to_string();
 
-        assert!(!version.is_empty(), "Expected non-empty client version, got `{version}`");
+        assert!(!version.is_empty(), "Expected non-empty client version");
     }
 });
