@@ -61,9 +61,7 @@ casttest!(test_cast_calldata_named, |_prj, cmd| {
 
 casttest!(test_cast_decode_abi, |_prj, cmd| {
     let types = "transfer(address,uint256)";
-    let data = concat!(
-        "0xa9059cbb000000000000000000000000e78388b4ce79068e89bf8aa7f218ef6b9ab0e9d0000000000000000000000000000000000000000000000000008a8e4b1a3d8000"
-    );
+    let data = "0xa9059cbb000000000000000000000000e78388b4ce79068e89bf8aa7f218ef6b9ab0e9d0000000000000000000000000000000000000000000000000008a8e4b1a3d8000";
     let out = cmd
         .cast_fuse()
         .args(["decode-abi", "--input", types, data])
@@ -78,9 +76,7 @@ casttest!(test_cast_decode_abi, |_prj, cmd| {
 
 casttest!(test_cast_decode_calldata, |_prj, cmd| {
     let sig = "transfer(address,uint256)";
-    let data = concat!(
-        "0xa9059cbb000000000000000000000000e78388b4ce79068e89bf8aa7f218ef6b9ab0e9d0000000000000000000000000000000000000000000000000008a8e4b1a3d8000"
-    );
+    let data = "0xa9059cbb000000000000000000000000e78388b4ce79068e89bf8aa7f218ef6b9ab0e9d0000000000000000000000000000000000000000000000000008a8e4b1a3d8000";
     let out = cmd
         .cast_fuse()
         .args(["decode-calldata", sig, data])

@@ -111,7 +111,7 @@ casttest_serial!(test_cast_estimate, |_prj, cmd| {
             .stdout_lossy();
 
         let gas_estimate = output.trim().parse::<u64>();
-        assert!(gas_estimate.is_ok(), "Expected a numeric gas estimate, got: {}", output);
+        assert!(gas_estimate.is_ok(), "Expected a numeric gas estimate, got: {output}");
     }
 });
 
