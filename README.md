@@ -70,7 +70,6 @@ Setting `resolc_compile = false` reverts to using Solc, ensuring compatibility w
 
 **Modified Features**:
 - Compilation output: When using Resolc, the bytecode differs from Solc's output, reflecting PolkaVM's requirements.
-- Project paths: Foundry-Polkadot adjusts project paths when `resolc_compile = true`, potentially affecting how source files, libraries, or artifacts are organized.
 
 ### 4. Additional (Contextual) Repositories
 

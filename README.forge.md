@@ -217,6 +217,21 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```
   </details>
 
+#### <span style="color: green;">bind</span>
+- **Command**: `forge bind-json`
+- **Additional Flags**:
+  - `--resolc`: Use the Resolc compiler.
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge bind-json --resolc
+  [⠒] Compiling...
+  Bindings have been generated to /home/ec2-user/test-foundry/utils/JsonBindings.sol
+  ```
+  </details>
+
 ### Contract Deployment
 
 #### <span style="color: green;">create</span>
@@ -324,5 +339,166 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   Duplicated: Function number(): 0x8381f58a
   Duplicated: Function setNumber(uint256): 0x3fb5c1cb
   Selectors successfully uploaded to OpenChain
+  ```
+  </details>
+
+#### <span style="color: green;">selectors list</span>
+- **Command**: `forge selectors list`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge selectors list
+  Listing selectors for contracts in the project...
+  Counter
+
+  ╭----------+--------------------+------------╮
+  | Type     | Signature          | Selector   |
+  +============================================+
+  | Function | increment()        | 0xd09de08a |
+  |----------+--------------------+------------|
+  | Function | number()           | 0x8381f58a |
+  |----------+--------------------+------------|
+  | Function | setNumber(uint256) | 0x3fb5c1cb |
+  ╰----------+--------------------+------------╯
+  ```
+  </details>
+
+#### <span style="color: green;">selectors find</span>
+- **Command**: `forge selectors find`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge selectors find 0xd09de08a
+  Searching for selector "0xd09de08a" in the project...
+
+  Found 1 instance(s)...
+
+  ╭----------+-------------+------------+----------╮
+  | Type     | Signature   | Selector   | Contract |
+  +================================================+
+  | Function | increment() | 0xd09de08a | Counter  |
+  ╰----------+-------------+------------+----------╯
+  ```
+  </details>
+
+#### <span style="color: green;">selectors cache</span>
+- **Command**: `forge selectors cache`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge selectors cache
+  Caching selectors for contracts in the project...
+  ```
+  </details>
+
+#### <span style="colr: green;">cache clean</span>
+- **Command**: `forge clean`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge clean
+  ```
+  </details>
+
+#### <span style="color: green;">compiler resolve</span>
+- **Command**: `forge compiler resolve`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge compiler resolve
+  Solidity:
+  - 0.8.29
+  ```
+  </details>
+
+#### <span style="color: green;">config</span>
+- **Command**: `forge config`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge config
+  ```
+  </details>
+
+#### <span style="color: red;">coverage</span>
+- **Command**: `forge coverage`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge coverage
+  ```
+  </details>
+
+#### <span style="color: green;">fmt</span>
+- **Command**: `forge fmt`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge fmt
+  ```
+  </details>
+
+#### <span style="color: green;">tree</span>
+- **Command**: `forge tree`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge tree
+  ```
+  </details>
+
+#### <span style="color: green;">update</span>
+- **Command**: `forge update`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge update
+  ```
+  </details>
+
+#### <span style="color: green;">install</span>
+- **Command**: `forge install`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > forge install --no-git transmissions11/solmate
+  Installing solmate in lib/solmate (url: Some("https://github.com/transmissions11/solmate"), tag: None)
+  Cloning into 'lib/solmate'...
+  remote: Enumerating objects: 90, done.
+  remote: Counting objects: 100% (90/90), done.
+  remote: Compressing objects: 100% (76/76), done.
+  remote: Total 90 (delta 11), reused 43 (delta 8), pack-reused 0 (from 0)
+  Receiving objects: 100% (90/90), 220.04 KiB | 1.51 MiB/s, done.
+  Resolving deltas: 100% (11/11), done.
+  Submodule 'lib/ds-test' (https://github.com/dapphub/ds-test) registered for path 'lib/ds-test'
+  Cloning into 'lib/ds-test'...
+  remote: Enumerating objects: 15, done.        
+  remote: Counting objects: 100% (15/15), done.        
+  remote: Compressing objects: 100% (11/11), done.        
+  remote: Total 15 (delta 0), reused 11 (delta 0), pack-reused 0 (from 0)        
+  Receiving objects: 100% (15/15), 18.34 KiB | 481.00 KiB/s, done.
+    Installed solmate
   ```
   </details>
