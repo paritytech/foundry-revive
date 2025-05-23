@@ -385,7 +385,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
   ```bash
   > cast storage-root
-  [Not supported by Westend Asset Hub node]
+  [Not supported by Westend network]
   ```
   </details>
 
