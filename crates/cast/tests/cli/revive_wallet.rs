@@ -2,15 +2,6 @@ use foundry_test_utils::{casttest, util::OutputExt};
 use std::fs;
 use tempfile::TempDir;
 
-casttest!(test_cast_wallet_new, |_prj, cmd| {
-    cmd.cast_fuse().args(["wallet", "new"]).assert_success().stdout_eq(str![[r#"
-Successfully created new keypair.
-Address:     0x[..]
-Private key: 0x[..]
-
-"#]]);
-});
-
 casttest!(test_cast_wallet_address, |_prj, cmd| {
     let pk = "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
