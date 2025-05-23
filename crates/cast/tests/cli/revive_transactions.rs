@@ -47,8 +47,7 @@ casttest_serial!(test_cast_mktx, |_prj, cmd| {
     if let Ok(_node) = tokio::runtime::Runtime::new().unwrap().block_on(PolkadotNode::start()) {
         let (url, deployer_pk, contract_address, _tx_hash) = deploy_contract!(cmd);
 
-        let output = cmd
-            .cast_fuse()
+        cmd.cast_fuse()
             .args([
                 "mktx",
                 &contract_address,
@@ -59,14 +58,10 @@ casttest_serial!(test_cast_mktx, |_prj, cmd| {
                 &deployer_pk,
             ])
             .assert_success()
-            .get_output()
-            .stdout_lossy();
+            .stdout_eq(str![[r#"
+0x[..]
 
-        assert!(
-            output.trim().starts_with("0x") && output.trim().len() > 66,
-            "Expected transaction hash starting with 0x, got: {}",
-            output
-        );
+"#]]);
     }
 });
 
