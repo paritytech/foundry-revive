@@ -123,10 +123,7 @@ casttest_serial!(test_cast_find_block, |_prj, cmd| {
         // The found block should be the same as or very close to the latest block
         assert!(
             found_block <= bn,
-            "find-block({}) returned {}, which is > latest block-number ({})",
-            ts,
-            found_block,
-            bn
+            "find-block({ts}) returned {found_block}, which is > latest block-number ({bn})"
         );
     }
 });
