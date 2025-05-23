@@ -50,14 +50,13 @@ casttest!(test_cast_4byte_event, |_prj, cmd| {
 });
 
 casttest!(test_cast_calldata_named, |_prj, cmd| {
-    let sig = "balanceOf(address)";
-    let data = "0xa16081f360e3847006db660bae1c6d1b2e17ec2a";
-    let out =
-        cmd.cast_fuse().args(["calldata", sig, data]).assert_success().get_output().stdout_lossy();
-    assert!(
-        out.contains("0x70a08231000000000000000000000000a16081f360e3847006db660bae1c6d1b2e17ec2a"),
-        "calldata command failed: {out}"
-    );
+    cmd.cast_fuse()
+        .args(["calldata", "balanceOf(address)", "0xa16081f360e3847006db660bae1c6d1b2e17ec2a"])
+        .assert_success()
+        .stdout_eq(str![[r#"
+0x70a08231000000000000000000000000a16081f360e3847006db660bae1c6d1b2e17ec2a
+
+"#]]);
 });
 
 casttest!(test_cast_decode_abi, |_prj, cmd| {

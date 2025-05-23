@@ -1,11 +1,7 @@
-use foundry_test_utils::{
-    casttest_serial,
-    revive::PolkadotNode,
-    util::{block_on, OutputExt},
-};
+use foundry_test_utils::{casttest_serial, revive::PolkadotNode, util::OutputExt};
 
 casttest_serial!(test_cast_chain_id, |_prj, cmd| {
-    if let Ok(_node) = block_on(PolkadotNode::start()) {
+    if let Ok(_node) = tokio::runtime::Runtime::new().unwrap().block_on(PolkadotNode::start()) {
         let rpc_url = PolkadotNode::http_endpoint();
         let id = cmd
             .cast_fuse()
@@ -21,7 +17,7 @@ casttest_serial!(test_cast_chain_id, |_prj, cmd| {
 });
 
 casttest_serial!(test_cast_chain, |_prj, cmd| {
-    if let Ok(_node) = block_on(PolkadotNode::start()) {
+    if let Ok(_node) = tokio::runtime::Runtime::new().unwrap().block_on(PolkadotNode::start()) {
         let rpc_url = PolkadotNode::http_endpoint();
         let name = cmd
             .cast_fuse()
@@ -40,7 +36,7 @@ casttest_serial!(test_cast_chain, |_prj, cmd| {
 });
 
 casttest_serial!(test_cast_client, |_prj, cmd| {
-    if let Ok(_node) = block_on(PolkadotNode::start()) {
+    if let Ok(_node) = tokio::runtime::Runtime::new().unwrap().block_on(PolkadotNode::start()) {
         let rpc_url = PolkadotNode::http_endpoint();
         let version = cmd
             .cast_fuse()
