@@ -126,10 +126,19 @@ casttest_serial!(test_cast_rpc_eth_get_block_by_number, |_prj, cmd| {
             .get_output()
             .stdout_lossy();
 
-        assert!(output.contains("\"hash\""), "Block response missing hash field");
-        assert!(output.contains("\"number\""), "Block response missing number field");
-        assert!(output.contains("\"parentHash\""), "Block response missing parentHash field");
-        assert!(output.contains("\"transactions\""), "Block response missing transactions field");
+        let block_data = serde_json::from_str::<serde_json::Value>(&output)
+            .expect("Failed to parse JSON output");
+        assert!(block_data.get("hash").is_some(), "Missing 'hash' field");
+        assert!(block_data.get("number").is_some(), "Missing 'number' field");
+        assert!(block_data.get("parentHash").is_some(), "Missing 'parentHash' field");
+        assert!(block_data.get("timestamp").is_some(), "Missing 'timestamp' field");
+        assert!(block_data.get("transactions").is_some(), "Missing 'transactions' field");
+        assert!(block_data.get("gasUsed").is_some(), "Missing 'gasUsed' field");
+        assert!(block_data.get("gasLimit").is_some(), "Missing 'gasLimit' field");
+        let block_number_hex = block_data.get("number").unwrap().as_str().unwrap();
+        let block_number = u64::from_str_radix(block_number_hex.trim_start_matches("0x"), 16);
+        assert!(block_number.is_ok(), "Failed to parse block number as hex: {}", block_number_hex);
+        assert!(block_data.get("miner").is_some(), "Missing 'miner' field");
     }
 });
 
