@@ -154,6 +154,37 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
 ### Account Commands
 
+#### <span style="color: green;">create2</span>
+- **Command**: `cast create2 [OPTIONS]`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > cast create2 --starts-with dead --init-code-hash 0x264be8931c0c9374fe8e909ad1cff3933cf00999663c82a0349eb9fe3f736779
+  Configuration:
+  Init code hash: 0x264be8931c0c9374fe8e909ad1cff3933cf00999663c82a0349eb9fe3f736779
+  Regex patterns: ["^dead"]
+
+  Starting to generate deterministic contract address with 10 threads...
+  Successfully found contract address in 3.025584ms
+  Address: 0xdeaDF7d71C822e3D97E8Cc787e5610433D6fE71F
+  Salt: 0x5adb979f0baaf3ba0898a0c9e331a5d8c475ac3a9b27db2a49a14171bd75fd56 (41096142331239087379598282892033409675720717099425587231937075894065439309142)
+  ```
+  </details>
+
+#### <span style="color: green;">codesize</span>
+- **Command**: `cast codesize [OPTIONS]`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > cast codesize --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b 
+  8113
+  ```
+  </details>
+
 #### <span style="color: green;">balance</span>
 - **Command**: `cast balance [OPTIONS] <WHO>`
 - **Required Parameters**: `WHO`
@@ -204,11 +235,93 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
   ```bash
   > cast code 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
-  0x50564d0000b11f000000000000010700c15000c0004003405646ec651416c8d69a8
   ```
   </details>
 
 ### Transaction and Contract Interaction Commands
+
+#### <span style="color: green;">receipt</span>
+- **Command**: `cast receipt`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > cast receipt 0xecdb6e04858c439381c249bde004ef0d1909a12bfb7963bbded603ce1cedece8 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io/
+  blockHash            0x85d1eae6b745ef378f94ccb75ca66d2742b33b0cdfed11dcd2c782afd131d910
+  blockNumber          11509736
+  contractAddress      
+  cumulativeGasUsed    0
+  effectiveGasPrice    1000
+  from                 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
+  gasUsed              6833072732000
+  logs                 []
+  logsBloom            0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  root                 
+  status               1 (success)
+  transactionHash      0xecdb6e04858c439381c249bde004ef0d1909a12bfb7963bbded603ce1cedece8
+  transactionIndex     3
+  type                 0
+  blobGasPrice         
+  blobGasUsed          
+  to                   0xB6dF9fC2E31C421955D12062b5820fabf44ddc9F
+  ```
+  </details>
+
+#### <span style="color: green;">call</span>
+- **Command**: `cast call`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > cast call 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io "getCount()"
+  0x0000000000000000000000000000000000000000000000000000000000000013
+  ```
+  </details>
+
+#### <span style="color: green;">tx</span>
+- **Command**: `cast tx`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > cast tx --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd
+  blockHash            0xf96b0325737117bd4168b9e0fd572045bb03ba790fab22c2dca7b780b2e25bc1
+  blockNumber          11824968
+  from                 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
+  transactionIndex     2
+  effectiveGasPrice    0
+
+  accessList           []
+  chainId              420420421
+  gasLimit             9673273291600
+  hash                 0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd
+  input                0x5b34b966
+  maxFeePerGas         2001
+  maxPriorityFeePerGas 1
+  nonce                1439
+  r                    0xd8acc1ee4c0891258fc3d3706f45796eb95d4b6df699d3094f27567183ab1f92
+  s                    0x0348a459af54a07bc7bad2cc8a1ff9b29e56808648768600c41d44e8db64660e
+  to                   0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b
+  type                 2
+  value                0
+  yParity              1
+  ```
+  </details>
+
+#### <span style="color: green;">publish</span>
+- **Command**: `cast publish [OPTIONS]`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > cast publish --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0x02f87284190f1b4582059f018207d18608cc3c04b35094c88d454a33610f4c73acc367ccaaf98e7ee78a1b80845b34b966c001a0d8acc1ee4c0891258fc3d3706f45796eb95d4b6df699d3094f27567183ab1f92a00348a459af54a07bc7bad2cc8a1ff9b29e56808648768600c41d44e8db64660e 
+  {"status":"0x1","cumulativeGasUsed":"0x0","logs":[{"address":"0xc88d454a33610f4c73acc367ccaaf98e7ee78a1b","topics":["0xb68ce3d4f35f8b562c4caf11012045e29a80cc1082438f785646ec651416c8d6"],"data":"0x0000000000000000000000000000000000000000000000000000000000000013","blockHash":"0xfddb231ea916a90b34f2f79d5c3374b2dcf667bf06ffed57197e69da788079d6","blockNumber":"0xb46f46","transactionHash":"0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd","transactionIndex":"0x2","logIndex":"0x4","removed":false}],"logsBloom":"0x00020000004000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000020000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x2","transactionHash":"0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd","transactionIndex":"0x2","blockHash":"0xfddb231ea916a90b34f2f79d5c3374b2dcf667bf06ffed57197e69da788079d6","blockNumber":"0xb46f46","gasUsed":"0x751ca8439cf","effectiveGasPrice":"0x3e9","from":"0xf24ff3a9cf04c71dbc94d0b566f7a27b94566cac","to":"0xc88d454a33610f4c73acc367ccaaf98e7ee78a1b","contractAddress":null}
+  ```
+  </details>
 
 #### <span style="color: green;">sig-event</span>
 - **Command**: `cast sig-event [OPTIONS] [EVENT_STRING]`
