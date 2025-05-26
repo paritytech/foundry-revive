@@ -137,7 +137,7 @@ casttest_serial!(test_cast_rpc_eth_get_block_by_number, |_prj, cmd| {
         assert!(block_data.get("gasLimit").is_some(), "Missing 'gasLimit' field");
         let block_number_hex = block_data.get("number").unwrap().as_str().unwrap();
         let block_number = u64::from_str_radix(block_number_hex.trim_start_matches("0x"), 16);
-        assert!(block_number.is_ok(), "Failed to parse block number as hex: {}", block_number_hex);
+        assert!(block_number.is_ok(), "Failed to parse block number as hex: {block_number_hex}");
         assert!(block_data.get("miner").is_some(), "Missing 'miner' field");
     }
 });
