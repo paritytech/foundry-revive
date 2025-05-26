@@ -90,11 +90,12 @@ impl EtherscanFlattenedSource {
 
         let out = compiler.compile(&input)?;
         let compiler_version = compiler.compiler_version(&input);
+        let compund_version = compound_version(compiler_version, &input.version);
         if out.errors.iter().any(|e| e.is_error()) {
             let mut o = AggregatedCompilerOutput::<SolcCompiler>::default();
             o.extend(
                 version,
-                RawBuildInfo::new(&input, &out, &compiler_version, false)?,
+                RawBuildInfo::new(&input, &out, &compund_version, false)?,
                 "default",
                 out,
             );
@@ -125,4 +126,27 @@ fn strip_build_meta(version: Version) -> Version {
     } else {
         version
     }
+}
+
+fn compound_version(mut compiler_version: Version, input_version: &Version) -> Version {
+    if compiler_version != *input_version {
+        let build = if compiler_version.build.is_empty() {
+            semver::BuildMetadata::new(&format!(
+                "{}.{}.{}",
+                input_version.major, input_version.minor, input_version.patch,
+            ))
+            .expect("can't fail due to parsing")
+        } else {
+            semver::BuildMetadata::new(&format!(
+                "{}-{}.{}.{}",
+                compiler_version.build.as_str(),
+                input_version.major,
+                input_version.minor,
+                input_version.patch,
+            ))
+            .expect("can't fail due to parsing")
+        };
+        compiler_version.build = build;
+    };
+    compiler_version
 }
