@@ -86,13 +86,15 @@ impl EtherscanFlattenedSource {
             SolcLanguage::Solidity,
             version.clone(),
         );
+        let compiler = SolcCompiler::Specific(solc);
 
-        let out = SolcCompiler::Specific(solc).compile(&input)?;
+        let out = compiler.compile(&input)?;
+        let compiler_version = compiler.compiler_version(&input);
         if out.errors.iter().any(|e| e.is_error()) {
             let mut o = AggregatedCompilerOutput::<SolcCompiler>::default();
             o.extend(
                 version,
-                RawBuildInfo::new(&input, &out, &input.version, false)?,
+                RawBuildInfo::new(&input, &out, &compiler_version, false)?,
                 "default",
                 out,
             );
