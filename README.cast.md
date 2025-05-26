@@ -476,6 +476,20 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   ```
   </details>
 
+
+#### <span style="color: green;">decode-transaction</span>
+- **Command**: `cast decode-transaction [OPTIONS] [TX]`
+- **Required Parameters**: `TX`
+- **Example**:
+  <details>
+  <summary>Click to toggle contents of example</summary>
+
+  ```bash
+  > cast decode-transaction 0x02f87284190f1b4582059f018207d18608cc3c04b35094c88d454a33610f4c73acc367ccaaf98e7ee78a1b80845b34b966c001a0d8acc1ee4c0891258fc3d3706f45796eb95d4b6df699d3094f27567183ab1f92a00348a459af54a07bc7bad2cc8a1ff9b29e56808648768600c41d44e8db64660e
+  { "signer": "0xf24ff3a9cf04c71dbc94d0b566f7a27b94566cac", "type": "0x2", "chainId": "0x190f1b45", "nonce": "0x59f", "gas": "0x8cc3c04b350", "maxFeePerGas": "0x7d1", "maxPriorityFeePerGas": "0x1", "to": "0xc88d454a33610f4c73acc367ccaaf98e7ee78a1b", "value": "0x0", "accessList": [], "input": "0x5b34b966", "r": "0xd8acc1ee4c0891258fc3d3706f45796eb95d4b6df699d3094f27567183ab1f92", "s": "0x348a459af54a07bc7bad2cc8a1ff9b29e56808648768600c41d44e8db64660e", "yParity": "0x1", "v": "0x1", "hash": "0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd" }
+  ```
+  </details>
+
 #### <span style="color: red;">proof</span>
 - **Command**: `cast proof [OPTIONS] <ADDRESS> [SLOTS]...`
 - **Required Parameters**: `ADDRESS`
