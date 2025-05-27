@@ -161,7 +161,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast codesize --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b 
+  > cast codesize --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223
   8113
   ```
   </details>
@@ -174,7 +174,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast balance 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b -B latest -e --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast balance 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 -B latest -e --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
   10.000000000000000000
   ```
   </details>
@@ -189,7 +189,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast storage 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b 0 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --resolc
+  > cast storage 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 0 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --resolc
   0x0000000000000000000000000000000000000000000000000000000000000011
   ```
   </details>
@@ -215,7 +215,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast code 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast code 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
   ```
   </details>
 
@@ -256,7 +256,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast call 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io "getCount()"
+  > cast call 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io "getCount()"
   0x0000000000000000000000000000000000000000000000000000000000000013
   ```
   </details>
@@ -285,7 +285,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   nonce                1439
   r                    0xd8acc1ee4c0891258fc3d3706f45796eb95d4b6df699d3094f27567183ab1f92
   s                    0x0348a459af54a07bc7bad2cc8a1ff9b29e56808648768600c41d44e8db64660e
-  to                   0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b
+  to                   0x36c09D9A72BE4c2A18dC2537e81A419C8955e223
   type                 2
   value                0
   yParity              1
@@ -441,7 +441,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast logs --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --address 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b --from-block 11462303 --to-block latest 0xb68ce3d4f35f8b562c4caf11012045e29a80cc1082438f785646ec651416c8d6
+  > cast logs --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --address 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --from-block 11462303 --to-block latest 0xb68ce3d4f35f8b562c4caf11012045e29a80cc1082438f785646ec651416c8d6
   ```
   </details>
 
@@ -454,6 +454,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
   ```bash
   > cast mktx 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 "increment()" --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --chain-id 420420421 --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 --format-json 0x02f87284190f1b45820584018207d18608cc3c04b35094c88d454a33610f4c73acc367ccaaf98e7ee78a1b80845b34b966c001a09a64c754b676a1c010d80ec82790c632f16f8fed5e7af8bd0aadaeccf6b2ea10a0232e21cf2b7aa007e4af2140e0aaaca8e33fd4a9d8009fe9be338e58ed3f04f0
+  0x02f87284190f1b458205b6648208348608cc3c04b3509436c09d9a72be4c2a18dc2537e81a419c8955e2238084d09de08ac001a0a3bd6ddb32555199cd9d5e78206a97f33d42eef585fc5380dcb9206a90f3892ea051f3c63a4255f1ce607be047bc765ced164709ec13ac053d3f38ef72786b5c9b
   ```
   </details>
 
@@ -536,7 +537,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast index address 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b 1
-  0xdc8ee9c32ef1c741cf41b54d4aff707dde6381fb94bfb7247e9084679a57d0db
+  > cast index address 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 1
+  0x92c8c144c830b945acdea03888fb08c02db78730388d400fa10f0046965b6d16
   ```
   </details>

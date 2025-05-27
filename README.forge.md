@@ -247,9 +247,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   > forge create Counter --resolc --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 --broadcast -vvvvv --constructor-args 5
   [⠊] Compiling...
   No files changed, compilation skipped
-  Deployer: 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
-  Deployed to: 0xC88d454A33610f4C73acc367cCAAf98E7Ee78a1b
-  Transaction hash: 0xe4c0218c5d934faf4c64e110f5a491aaac92440bc64426a973f78cc06ca22426
+  Deployed to: 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223
   ```
   </details>
 
