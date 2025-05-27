@@ -267,25 +267,15 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   // SPDX-License-Identifier: UNLICENSED
   pragma solidity ^0.8.13;
 
-  // src/Counter.sol
-
   contract Counter {
-      int private count;
+      uint256 public number;
 
-      constructor(int _count) {
-          count = _count;
+      function setNumber(uint256 newNumber) public {
+          number = newNumber;
       }
 
-      function getCount() public view returns (int) {
-          return count;
-      }
-
-      function incrementCounter() public {
-          count +=1;
-      }
-
-      function decrementCounter() public {
-          count -=1;
+      function increment() public {
+          number++;
       }
   }
   ```
