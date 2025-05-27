@@ -169,18 +169,14 @@ macro_rules! deploy_contract {
             .get_output()
             .stdout_lossy();
 
-        let deploy_data = serde_json::from_str::<serde_json::Value>(&output)
-            .expect("Failed to parse JSON output");
+        let receipt: alloy_rpc_types::TransactionReceipt = serde_json::from_str(&output)
+            .expect("Failed to parse transaction receipt");
 
-        let contract_address = deploy_data["contractAddress"]
-            .as_str()
-            .expect("Missing or invalid contractAddress field")
+        let contract_address = receipt.contract_address
+            .expect("Contract address should be present for contract deployment")
             .to_string();
 
-        let tx_hash = deploy_data["transactionHash"]
-            .as_str()
-            .expect("Missing or invalid transactionHash field")
-            .to_string();
+        let tx_hash = receipt.transaction_hash.to_string();
 
         (url, deployer_pk, contract_address, tx_hash)
     }};
