@@ -37,6 +37,22 @@ Foundry consists of:
 
 ---
 
+## Foundry-Polkadot Installation
+
+### via `cargo`
+
+```bash
+cargo install --git https://github.com/paritytech/foundry-polkadot --profile release
+```
+
+### via foundryup
+
+```bash
+> curl -L https://raw.githubusercontent.com/paritytech/foundry-polkadot/refs/heads/master/foundryup/install | bash
+> source /Users/{USER}/.zshenv (optional for Linux users)
+> foundryup
+```
+
 ## Differences Between Foundry and Foundry-Polkadot
 
 This section outlines the key differences between the original Foundry toolkit ([Foundry](https://github.com/foundry-rs/foundry)) and the ParityTech Foundry-Polkadot ([Foundry-Polkadot](https://github.com/paritytech/foundry-polkadot)). **It is intended for developers already familiar with Foundry who are interested in using the Foundry-Polkadot for Polkadot blockchain development.** The focus is on new features, changes, and unsupported functionalities in the Foundry-Polkadot, emphasizing its adaptation for Polkadot.
