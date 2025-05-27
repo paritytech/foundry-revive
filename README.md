@@ -37,21 +37,19 @@ Foundry consists of:
 
 ---
 
-## Foundry-Polkadot Installation
-
-### via `cargo`
-
-```bash
-cargo install --git https://github.com/paritytech/foundry-polkadot --profile release
-```
-
-### via foundryup
+## Installation instruction
+[Foundryup-polkadot](https://github.com/paritytech/foundry-book-polkadot/blob/master/src/getting-started/installation.md#using-foundryup) is the official installer for the Foundry toolchain. To install `foundryup-polkadot`, open your terminal and run the following command:
 
 ```bash
-> curl -L https://raw.githubusercontent.com/paritytech/foundry-polkadot/refs/heads/master/foundryup/install | bash
-> source /Users/{USER}/.zshenv (optional for Linux users)
-> foundryup
+curl -L https://raw.githubusercontent.com/paritytech/foundry-polkadot/refs/heads/master/foundryup/install | bash
 ```
+
+This will install foundryup-polkadot. Simply follow the on-screen instructions, and the foundryup-polkadot command will become available in your CLI.
+
+
+Running `foundryup-polkadot --install v1.1.0-rc2` will automatically install the latest version of the [precompiled binaries](https://github.com/paritytech/foundry-polkadot/releases): forge, cast. For additional options, such as installing a specific version or commit, run `foundryup-polkadot --help`.
+
+ℹ️ Note: if you're using Windows, you'll need to install and use [Git BASH](https://gitforwindows.org/) or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) as your terminal, since Foundryup currently doesn't support Powershell or Command Prompt (CMD).
 
 ## Differences Between Foundry and Foundry-Polkadot
 

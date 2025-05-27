@@ -154,25 +154,6 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
 ### Account Commands
 
-#### <span style="color: green;">create2</span>
-- **Command**: `cast create2 [OPTIONS]`
-- **Example**:
-  <details>
-  <summary>Click to toggle contents of example</summary>
-
-  ```bash
-  > cast create2 --starts-with dead --init-code-hash 0x264be8931c0c9374fe8e909ad1cff3933cf00999663c82a0349eb9fe3f736779
-  Configuration:
-  Init code hash: 0x264be8931c0c9374fe8e909ad1cff3933cf00999663c82a0349eb9fe3f736779
-  Regex patterns: ["^dead"]
-
-  Starting to generate deterministic contract address with 10 threads...
-  Successfully found contract address in 3.025584ms
-  Address: 0xdeaDF7d71C822e3D97E8Cc787e5610433D6fE71F
-  Salt: 0x5adb979f0baaf3ba0898a0c9e331a5d8c475ac3a9b27db2a49a14171bd75fd56 (41096142331239087379598282892033409675720717099425587231937075894065439309142)
-  ```
-  </details>
-
 #### <span style="color: green;">codesize</span>
 - **Command**: `cast codesize [OPTIONS]`
 - **Example**:
