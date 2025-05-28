@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand, ValueHint};
 use eyre::Result;
-use foundry_cli::opts::ResolcOpts;
 use foundry_common::shell;
 use foundry_compilers::{
     artifacts::EvmVersion, multi::MultiCompilerInput, Compiler, CompilerInput, Graph,
@@ -68,24 +67,31 @@ pub struct ResolveArgs {
     #[arg(long, short, value_name = "REGEX")]
     skip: Option<regex::Regex>,
 
-    /// Compiler settings for resolc.
-    #[command(flatten)]
-    pub resolc_opts: ResolcOpts,
+    /// Use resolc.
+    #[arg(
+        value_name = "RESOLC_COMPILE",
+        help = "Enable compiling with resolc",
+        long = "resolc-compile",
+        visible_alias = "resolc",
+        action = clap::ArgAction::SetTrue,
+        default_value = "false"
+    )]
+    resolc_compile: bool,
 }
 
 impl ResolveArgs {
     pub fn run(self) -> Result<()> {
-        let Self { root, skip, resolc_opts } = self;
+        let Self { root, skip, resolc_compile } = self;
 
         let root = root.unwrap_or_else(|| PathBuf::from("."));
 
         let config = {
-            let figment = Config::figment_with_root(&root);
-            let resolc =
-                resolc_opts.apply_overrides(figment.extract_inner("resolc").unwrap_or_default());
+            let mut config = Config::load_with_root(&root)?.canonic_at(root);
 
-            let figment = figment.merge(("resolc", resolc));
-            Config::from_provider(figment)?.canonic_at(root)
+            if resolc_compile {
+                config.resolc.resolc_compile = true;
+            }
+            config
         };
 
         let project = config.project()?;

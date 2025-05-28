@@ -56,8 +56,7 @@ pub struct ResolcOpts {
 }
 
 impl ResolcOpts {
-    /// Applies overrides if they are present
-    pub fn apply_overrides(&self, mut resolc: ResolcConfig) -> ResolcConfig {
+    pub(crate) fn apply_overrides(&self, mut resolc: ResolcConfig) -> ResolcConfig {
         macro_rules! set_if_some {
             ($src:expr, $dst:expr) => {
                 if let Some(src) = $src {
