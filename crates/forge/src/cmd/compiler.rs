@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand, ValueHint};
 use eyre::Result;
+use foundry_cli::opts::ResolcOpts;
 use foundry_common::shell;
 use foundry_compilers::{
     artifacts::EvmVersion, multi::MultiCompilerInput, Compiler, CompilerInput, Graph,
@@ -66,14 +67,24 @@ pub struct ResolveArgs {
     /// Skip files that match the given regex pattern.
     #[arg(long, short, value_name = "REGEX")]
     skip: Option<regex::Regex>,
+
+    /// Compiler settings for resolc.
+    #[command(flatten)]
+    pub resolc_opts: ResolcOpts,
 }
 
 impl ResolveArgs {
     pub fn run(self) -> Result<()> {
-        let Self { root, skip } = self;
+        let Self { root, skip, resolc_opts } = self;
 
         let root = root.unwrap_or_else(|| PathBuf::from("."));
-        let config = Config::load_with_root(&root)?.canonic_at(root);
+
+        let config = {
+            let figment = Config::figment_with_root(&root);
+            let figment = figment.merge(("resolc", resolc_opts));
+            Config::from_provider(figment)?.canonic_at(root)
+        };
+
         let project = config.project()?;
 
         let graph = Graph::resolve(&project.paths)?;
