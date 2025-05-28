@@ -1,14 +1,7 @@
 use clap::Parser;
-use foundry_config::{
-    figment::{
-        self,
-        value::{Dict, Map, Value},
-        Metadata, Profile, Provider,
-    },
-    revive::ResolcConfig,
-    SolcReq,
-};
+use foundry_config::{revive::ResolcConfig, SolcReq};
 use serde::Serialize;
+
 #[derive(Clone, Debug, Default, Serialize, Parser)]
 #[clap(next_help_heading = "Resolc configuration")]
 /// Compiler options for resolc
@@ -63,7 +56,8 @@ pub struct ResolcOpts {
 }
 
 impl ResolcOpts {
-    pub(crate) fn apply_overrides(&self, mut resolc: ResolcConfig) -> ResolcConfig {
+    /// Applies overrides if they are present
+    pub fn apply_overrides(&self, mut resolc: ResolcConfig) -> ResolcConfig {
         macro_rules! set_if_some {
             ($src:expr, $dst:expr) => {
                 if let Some(src) = $src {
@@ -88,39 +82,5 @@ impl ResolcOpts {
         set_if_some!(self.stack_size, resolc.stack_size);
 
         resolc
-    }
-}
-
-impl Provider for ResolcOpts {
-    fn metadata(&self) -> Metadata {
-        Metadata::named("Resolc Compiler Args Provider")
-    }
-
-    fn data(&self) -> Result<Map<Profile, Dict>, figment::Error> {
-        use crate::opts::build::revive::figment::error::Kind::InvalidType;
-        let value = Value::serialize(self)?;
-        let error = InvalidType(value.to_actual(), "map".into());
-        let mut dict = value.into_dict().ok_or(error)?;
-        if let Some(heap_size) = self.heap_size {
-            dict.insert("heap_size".to_owned(), heap_size.into());
-        }
-
-        if let Some(ref optimizer) = self.optimizer_mode {
-            dict.insert("optimizer_mode".to_owned(), optimizer.to_owned().into());
-        }
-
-        if let Some(stack_size) = self.stack_size {
-            dict.insert("stack_size".to_owned(), stack_size.into());
-        }
-
-        if let Some(ref resolc) = self.use_resolc {
-            dict.insert("use_resolc".to_string(), resolc.trim_start_matches("resolc:").into());
-        }
-
-        if let Some(resolc_compile) = self.resolc_compile {
-            dict.insert("resolc_compile".to_string(), resolc_compile.into());
-        }
-
-        Ok(Map::from([(Profile::new("resolc"), dict)]))
     }
 }

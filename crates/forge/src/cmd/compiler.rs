@@ -81,7 +81,10 @@ impl ResolveArgs {
 
         let config = {
             let figment = Config::figment_with_root(&root);
-            let figment = figment.merge(("resolc", resolc_opts));
+            let resolc =
+                resolc_opts.apply_overrides(figment.extract_inner("resolc").unwrap_or_default());
+
+            let figment = figment.merge(("resolc", resolc));
             Config::from_provider(figment)?.canonic_at(root)
         };
 
