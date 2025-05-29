@@ -37,8 +37,3 @@ git push origin --tags                      # push the new stable tag.
 git tag -d "$TAG" || true
 git tag -a "$TAG" -m "Created release tag $TAG" # create an annotated version tag.
 git push origin "$TAG"                          # push the version tag.
-
-### Create a release on GitHub.
-
-gh repo set-default paritytech/foundry-polkadot
-gh release create "$TAG" --title "$TAG" --notes-file "$LATEST_RELEASE_NOTES_FILE"
