@@ -17,13 +17,15 @@ TAG="$1"
 git checkout master
 git pull origin master
 
+# git tag -d "$TAG" || true
+# git push --delete origin "$TAG" 2>/dev/null || true
+
 # cargo build --release
 
 ### Update CHANGELOG.md.
 
-LATEST_TAG=$(git tag --list 'v*' | sort -V | tail -n 1)                             # get the latest tag.
-LATEST_RELEASE_NOTES_FILE="/tmp/release_notes@${LATEST_TAG}.txt"
-git log --oneline --no-merges "$LATEST_TAG"..HEAD > "$LATEST_RELEASE_NOTES_FILE"    # get the latest changes and save to a file.
+LATEST_TAG=$(git tag --list 'v*' | sort -V | tail -n 1) # get the latest tag.
+git log --oneline --no-merges "$LATEST_TAG"..HEAD       # get the latest changes.
 # TODO (@filip-parity): Update CHANGELOG.md with the latest changes.
 
 ### Update stable tag.
@@ -34,6 +36,5 @@ git push origin --tags                      # push the new stable tag.
 
 ### Create and push version tag.
 
-git tag -d "$TAG" || true
 git tag -a "$TAG" -m "Created release tag $TAG" # create an annotated version tag.
 git push origin "$TAG"                          # push the version tag.
