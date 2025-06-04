@@ -28,11 +28,11 @@ LATEST_TAG=$(git tag --list 'v*' | sort -V | tail -n 1) # get the latest tag.
 git log --oneline --no-merges "$LATEST_TAG"..HEAD       # get the latest changes.
 # TODO (@filip-parity): Update CHANGELOG.md with the latest changes.
 
-### Update stable tag.
+### Update stable tag if needed.
 
-git push origin :refs/tags/stable           # delete the remote stable tag.
-git tag -fa stable -m "Update stable tag"   # create or move the local stable tag (force, annotated).
-git push origin --tags                      # push the new stable tag.
+# git push origin :refs/tags/stable           # delete the remote stable tag.
+# git tag -fa stable -m "Update stable tag"   # create or move the local stable tag (force, annotated).
+# git push origin --tags                      # push the new stable tag.
 
 ### Create and push version tag.
 
