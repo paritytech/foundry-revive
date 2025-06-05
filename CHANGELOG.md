@@ -30,7 +30,7 @@
 - Improved CI and use dRPC service (#67) (Sebastian Miasojed) - 2025-03-25
 
 ### Fixed
-- Fixed `forge compiler resolc` to accept `ResolcArgs` (#142) (Pavlo Khrystenko) - 2025-05-29
+- Fixed `forge compiler resolve` to accept `ResolcArgs` (#142) (Pavlo Khrystenko) - 2025-05-29
 - Fixed the resolc config option propagation (#135) (Sebastian Miasojed) - 2025-05-22
 - Fixed `forge bind` with `--resolc` (#132) (Pavlo Khrystenko) - 2025-05-21
 - Fixed clippy CI issue (#94) (Pavlo Khrystenko) - 2025-04-24
