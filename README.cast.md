@@ -30,7 +30,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast chain-id --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast chain-id --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   ```
   </details>
 
@@ -41,8 +41,8 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast chain --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
-  westend-assethub
+  > cast chain --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
+  Paseo PassetHub
   ```
   </details>
 
@@ -53,7 +53,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast client --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast client --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   ```
   </details>
 
@@ -67,7 +67,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast find-block --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 1744868532243
+  > cast find-block --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io 1744868532243
   ```
   </details>
 
@@ -78,7 +78,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast gas-price --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast gas-price --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   ```
   </details>
 
@@ -89,7 +89,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast block-number --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast block-number --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   ```
   </details>
 
@@ -100,7 +100,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast base-fee latest --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast base-fee latest --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   ```
   </details>
 
@@ -111,7 +111,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast block latest --threads 1 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast block latest --threads 1 --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   baseFeePerGas        1000
   difficulty           0
   extraData            0x
@@ -148,7 +148,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast age latest --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast age latest --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   ```
   </details>
 
@@ -161,7 +161,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast codesize --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223
+  > cast codesize --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223
   8113
   ```
   </details>
@@ -174,7 +174,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast balance 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 -B latest -e --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast balance 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 -B latest -e --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   10.000000000000000000
   ```
   </details>
@@ -189,7 +189,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast storage 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 0 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --resolc
+  > cast storage 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 0 --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io --resolc
   0x0000000000000000000000000000000000000000000000000000000000000011
   ```
   </details>
@@ -202,7 +202,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast nonce 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast nonce 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   1427
   ```
   </details>
@@ -215,7 +215,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast code 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io
+  > cast code 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io
   ```
   </details>
 
@@ -228,7 +228,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast receipt 0xecdb6e04858c439381c249bde004ef0d1909a12bfb7963bbded603ce1cedece8 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io/
+  > cast receipt 0xecdb6e04858c439381c249bde004ef0d1909a12bfb7963bbded603ce1cedece8 --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io/
   blockHash            0x85d1eae6b745ef378f94ccb75ca66d2742b33b0cdfed11dcd2c782afd131d910
   blockNumber          11509736
   contractAddress      
@@ -256,7 +256,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast call 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io "getCount()"
+  > cast call 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io "getCount()"
   0x0000000000000000000000000000000000000000000000000000000000000013
   ```
   </details>
@@ -268,7 +268,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast tx --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd
+  > cast tx --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io 0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd
   blockHash            0xf96b0325737117bd4168b9e0fd572045bb03ba790fab22c2dca7b780b2e25bc1
   blockNumber          11824968
   from                 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac
@@ -299,7 +299,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast publish --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0x02f87284190f1b4582059f018207d18608cc3c04b35094c88d454a33610f4c73acc367ccaaf98e7ee78a1b80845b34b966c001a0d8acc1ee4c0891258fc3d3706f45796eb95d4b6df699d3094f27567183ab1f92a00348a459af54a07bc7bad2cc8a1ff9b29e56808648768600c41d44e8db64660e 
+  > cast publish --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io 0x02f87284190f1b4582059f018207d18608cc3c04b35094c88d454a33610f4c73acc367ccaaf98e7ee78a1b80845b34b966c001a0d8acc1ee4c0891258fc3d3706f45796eb95d4b6df699d3094f27567183ab1f92a00348a459af54a07bc7bad2cc8a1ff9b29e56808648768600c41d44e8db64660e 
   {"status":"0x1","cumulativeGasUsed":"0x0","logs":[{"address":"0xc88d454a33610f4c73acc367ccaaf98e7ee78a1b","topics":["0xb68ce3d4f35f8b562c4caf11012045e29a80cc1082438f785646ec651416c8d6"],"data":"0x0000000000000000000000000000000000000000000000000000000000000013","blockHash":"0xfddb231ea916a90b34f2f79d5c3374b2dcf667bf06ffed57197e69da788079d6","blockNumber":"0xb46f46","transactionHash":"0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd","transactionIndex":"0x2","logIndex":"0x4","removed":false}],"logsBloom":"0x00020000004000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000020000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","type":"0x2","transactionHash":"0xc13517c2833395ddd443598ff1a38ae22dc3fff0c6719166b6cd3df3573f0efd","transactionIndex":"0x2","blockHash":"0xfddb231ea916a90b34f2f79d5c3374b2dcf667bf06ffed57197e69da788079d6","blockNumber":"0xb46f46","gasUsed":"0x751ca8439cf","effectiveGasPrice":"0x3e9","from":"0xf24ff3a9cf04c71dbc94d0b566f7a27b94566cac","to":"0xc88d454a33610f4c73acc367ccaaf98e7ee78a1b","contractAddress":null}
   ```
   </details>
@@ -364,7 +364,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast rpc eth_getBlockByNumber --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io 0xB00000 false
+  > cast rpc eth_getBlockByNumber --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io 0xB00000 false
   ```
   </details>
 
@@ -428,7 +428,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast estimate --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 "increment()"
+  > cast estimate --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 "increment()"
   9693273291634
   ```
   </details>
@@ -441,7 +441,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast logs --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --address 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --from-block 11462303 --to-block latest 0xb68ce3d4f35f8b562c4caf11012045e29a80cc1082438f785646ec651416c8d6
+  > cast logs --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io --address 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 --from-block 11462303 --to-block latest 0xb68ce3d4f35f8b562c4caf11012045e29a80cc1082438f785646ec651416c8d6
   ```
   </details>
 
@@ -453,7 +453,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast mktx 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 "increment()" --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --chain-id 420420421 --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 --format-json 0x02f87284190f1b45820584018207d18608cc3c04b35094c88d454a33610f4c73acc367ccaaf98e7ee78a1b80845b34b966c001a09a64c754b676a1c010d80ec82790c632f16f8fed5e7af8bd0aadaeccf6b2ea10a0232e21cf2b7aa007e4af2140e0aaaca8e33fd4a9d8009fe9be338e58ed3f04f0
+  > cast mktx 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 "increment()" --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --chain-id 420420421 --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 --format-json 0x02f87284190f1b45820584018207d18608cc3c04b35094c88d454a33610f4c73acc367ccaaf98e7ee78a1b80845b34b966c001a09a64c754b676a1c010d80ec82790c632f16f8fed5e7af8bd0aadaeccf6b2ea10a0232e21cf2b7aa007e4af2140e0aaaca8e33fd4a9d8009fe9be338e58ed3f04f0
   0x02f87284190f1b458205b6648208348608cc3c04b3509436c09d9a72be4c2a18dc2537e81a419c8955e2238084d09de08ac001a0a3bd6ddb32555199cd9d5e78206a97f33d42eef585fc5380dcb9206a90f3892ea051f3c63a4255f1ce607be047bc765ced164709ec13ac053d3f38ef72786b5c9b
   ```
   </details>
@@ -480,7 +480,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast proof --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io [OPTION]
+  > cast proof --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io [OPTION]
   [Fails due to eth_getProof not being supported]
   ```
   </details>
@@ -494,7 +494,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
   ```bash
   > cast storage-root
-  [Not supported by Westend network]
+  [Not supported by Paseo network]
   ```
   </details>
 
@@ -506,7 +506,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > cast send 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 "increment()" --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --chain-id 420420421 --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133
+  > cast send 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223 "increment()" --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io --from 0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac --chain-id 420420421 --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133
   blockHash            0x5064079f8a51f2f91f16d4b3aac7e9554226f7d222939659109a8b045c812e04
   blockNumber          11833617
   contractAddress      

@@ -244,7 +244,7 @@ This format ensures clarity and ease of navigation, with the color scheme provid
   <summary>Click to toggle contents of example</summary>
 
   ```bash
-  > forge create Counter --resolc --rpc-url https://westend-asset-hub-eth-rpc.polkadot.io --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 --broadcast -vvvvv --constructor-args 5
+  > forge create Counter --resolc --rpc-url https://testnet-passet-hub-eth-rpc.polkadot.io --private-key 5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133 --broadcast -vvvvv --constructor-args 5
   [⠊] Compiling...
   No files changed, compilation skipped
   Deployed to: 0x36c09D9A72BE4c2A18dC2537e81A419C8955e223
