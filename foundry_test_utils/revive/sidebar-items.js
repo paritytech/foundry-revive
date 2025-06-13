@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MAX_ATTEMPTS","NODE_BINARY","RETRY_DELAY","RPC_PROXY_BINARY","RPC_URL","WALLETS"],"struct":["ContractsNodeProcess","PolkadotNode","RpcProxyProcess"]};
