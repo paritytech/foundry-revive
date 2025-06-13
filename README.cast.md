@@ -23,21 +23,6 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
 ### Working Commands
 
-#### ✅ <span style="color: green;">version</span>
-- **Command**: `cast version`
-- **Example**:
-  <details>
-  <summary>Click to toggle contents of example</summary>
-
-  ```bash
-  > cast --version
-  cast Version: 1.1.0-dev
-  Commit SHA: VERGEN_IDEMPOTENT_OUTPUT
-  Build Timestamp: 2025-06-04T11:35:08.527085191Z (1749036908)
-  Build Profile: maxperf
-  ```
-  </details>
-
 #### ✅ <span style="color: green;">4byte</span>
 - **Command**: `cast 4byte [OPTIONS] [TOPIC_0]`
 - **Required Parameters**: `TOPIC_0`

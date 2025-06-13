@@ -23,21 +23,6 @@ This format ensures clarity and ease of navigation, with the color scheme provid
 
 ### Working Commands
 
-#### ✅ <span style="color: green;">version</span>
-- **Command**: `forge version`
-- **Example**:
-  <details>
-  <summary>Click to toggle contents of example</summary>
-
-  ```bash
-  > forge --version
-  forge Version: 1.1.0-dev
-  Commit SHA: VERGEN_IDEMPOTENT_OUTPUT
-  Build Timestamp: 2025-06-04T11:35:08.527085191Z (1749036908)
-  Build Profile: maxperf
-  ```
-  </details>
-
 #### ✅ <span style="color: green;">init</span>
 - **Command**: `forge init`
 - **Example**:
