@@ -51,7 +51,7 @@ Alternatively, you can get the latest changes from the `master` branch to use th
 Comment out the `ENTRYPOINT` line in the `Dockerfile` to use the default entrypoint (and not `ENTRYPOINT ["/bin/sh", "-c"]`).
 
 ```sh
-docker build --platform=linux/amd64 -t foundry .
+docker build --no-cache --platform=linux/amd64 -t foundry .
 ```
 
 Update `forge.sh` and `cast.sh` under `docker_run()` to use `docker run --platform=linux/amd64` instead of `docker run` to run the commands.
